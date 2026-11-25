@@ -20,7 +20,7 @@ if pi is None:
     raise SystemExit('需要 Pi 1.6.0')
 
 
-def run_tui(command, env, root, expected_result, *, expand=False, reload=False, done=b'PROBE_DONE'):
+def run_tui(command, env, root, expected_result, *, expand=False, reload=False, switch_theme=False):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     output = bytearray()
@@ -40,12 +40,16 @@ def run_tui(command, env, root, expected_result, *, expand=False, reload=False, 
                                 raise
                     assert output.find(marker, start) >= 0, output[-4000:].decode(errors='replace')
 
-                receive(done)
+                receive(b'PROBE_DONE')
                 assert expected_result in output, output[-4000:].decode(errors='replace')
                 if reload:
                     start = len(output)
                     os.write(master, b'/reload\r')
                     receive(b'Reloaded keybindings, extensions', start)
+                if switch_theme:
+                    start = len(output)
+                    os.write(master, b'/probe-light\r')
+                    receive(b'PROBE_THEME_CHANGED', start)
                 if not expand:
                     return bytes(output)
                 assert b'PROBE_CALL' in output
@@ -143,3 +147,14 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
         theme_rows.append(entry['rows'])
     assert theme_rows[0] != theme_rows[1], theme_rows
     print('主题与高亮：dark/light 均保留源码，样式不同；故障回退保留自定义下游')
+
+    log.unlink()
+    (root / 'fixture.txt').write_text('fixture from isolated cwd\n')
+    run_tui([*command[:-1], '--use-theme', 'dark', command[-1]], env, root, b'PROBE_RESULT',
+            expand=True, switch_theme=True)
+    events = [json.loads(line) for line in log.read_text().splitlines()]
+    switch = next(i for i, item in enumerate(events) if item['event'] == 'theme-switch')
+    assert any(item.get('rows') == theme_rows[0] for item in events[:switch]), events
+    assert any(item.get('rows') == theme_rows[1] for item in events[switch + 1:]), events
+    assert sum(item['event'] == 'tool-execution' for item in events) == 1, events
+    print('进程内切换主题：重新展开工具行时使用 light 高亮，没有重跑 Read')

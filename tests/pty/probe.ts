@@ -15,6 +15,14 @@ export default function (pi: ExtensionAPI) {
   ]);
   pi.registerProvider(faux.provider);
   pi.on('session_start', (_, ctx) => { log('session', { hasUI: ctx.hasUI }); });
+  pi.registerCommand('probe-light', {
+    description: '切换到浅色探针主题',
+    handler: async (_, ctx) => {
+      const result = ctx.ui.setTheme('light');
+      log('theme-switch', { result });
+      ctx.ui.notify(result.success ? 'PROBE_THEME_CHANGED' : 'PROBE_THEME_FAILED');
+    },
+  });
   const callComponent = Symbol('probe-call');
   pi.on('tool_call', (event) => { if (event.toolName === 'read') log('tool-execution'); });
   const resultComponent = Symbol('probe-result');
