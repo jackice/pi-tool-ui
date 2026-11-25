@@ -1,4 +1,5 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { getLanguageFromPath, highlightCode } from '@earendil-works/pi-coding-agent';
 import { Text } from '@earendil-works/pi-tui';
 import { fauxProvider, fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
 import { appendFileSync } from 'node:fs';
@@ -22,6 +23,21 @@ export default function (pi: ExtensionAPI) {
     const original = next();
     if (name !== 'read' || !original) return original;
     log('resolve', { shell: original.renderShell });
+    if (process.env.PI_TOOL_UI_PROBE_FAIL === '1' && original.renderResult) {
+      const renderOriginal = original.renderResult;
+      const renderProbe = () => { throw new Error('probe-only renderer failure'); };
+      return {
+        ...original,
+        renderResult(result, options, theme, ctx) {
+          try {
+            return renderProbe();
+          } catch {
+            log('fallback');
+          }
+          return renderOriginal.call(original, result, options, theme, ctx);
+        },
+      };
+    }
     if (process.env.PI_TOOL_UI_PROBE_PASS === '1') return original;
     return {
       ...original,
@@ -31,6 +47,10 @@ export default function (pi: ExtensionAPI) {
         return ctx.state[callComponent] ??= new Text('PROBE_CALL', 0, 0);
       },
       renderResult(result, options, _theme, ctx) {
+        const source = 'const value = 42;';
+        const language = getLanguageFromPath('fixture.ts');
+        const highlighted = highlightCode(source, language);
+        log('highlight', { language, rows: highlighted });
         log('result', {
           id: ctx.toolCallId, pad: ctx.outputPad, expanded: options.expanded, partial: options.isPartial,
           shared: !!ctx.state[callComponent], reused: !!ctx.state[resultComponent] && ctx.lastComponent === ctx.state[resultComponent],

@@ -7,8 +7,8 @@
 | T0-01 | running | 已记录本机 CLI/SDK 指纹、安装版本和包导出键；待核对公开源码树、实际解析指纹与全部根导出。 |
 | T0-02 | running | 已登记旧入口、源码指纹、配置分支及锁与实际依赖漂移；待冻结匿名旧视觉 fixture、HTML 及许可归属。 |
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
-| T0-04 | running | 真机已验证共享 state、各 slot 组件复用、`outputPad=1`、Ctrl+O 展开、无 UI、resolver 顺序、自定义下游保留、历史回放与 `/reload`。待验证主题及异常回退。 |
-| T0-05 | running | 实测 Ai 和 TUI 包根可由宿主加载；Ai `/providers/faux` 子路径在本次加载器中不可解析。尚未验证产物入口、peer 与高亮行为。 |
+| T0-04 | running | 真机已验证共享 state、各 slot 组件复用、`outputPad=1`、Ctrl+O、无 UI、resolver 顺序、自定义下游保留、历史回放、`/reload` 和结果构造异常的接入层回退。仍待进程内主题切换。 |
+| T0-05 | running | 宿主可加载 Ai、TUI、coding-agent 包根；Ai `/providers/faux` 子路径在本次加载器中不可解析。公开语言识别和高亮已在 dark/light 两次启动中实测。仍待打包产物入口和 peer 解析。 |
 | T0-I、T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | 当前证据仅为开发者现场验证，尚无独立 Reviewer 签署。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -21,4 +21,8 @@
 
 历史会话中通过 PTY 输入 `/reload`，等待 Pi 自身的重载完成提示。记录到第二次 `session_start` 及新的 result 组件，保存的 final 正文未改变，也未出现 Read `tool_call`。
 
-下一步补主题及异常回退证据，并用隔离环境分别采集旧 Diff 锁定版与实际安装版的视觉基线，再审查 G0-Base。
+探针注入结果构造异常，接入层捕获后调用原 `renderResult`；PTY 显示自定义下游 `PEER_RESULT`，Read 仅触发一次。该结果不证明宿主自动捕获渲染异常，也不覆盖 `Component.render(width)` 抛错。
+
+Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 `.ts` 识别为 TypeScript，`highlightCode` 的 SGR 样式随主题变化，去除 SGR 后两次都保留完整源码。未验证进程内切换与缓存失效。
+
+下一步验证进程内主题切换和打包入口，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。

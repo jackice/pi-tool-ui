@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import pty
 import select
+import re
 import shutil
 import struct
 import subprocess
@@ -121,3 +122,24 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
     assert sum(item['event'] == 'session' for item in replay) == 2, replay
     assert sum(not item['reused'] for item in results) >= 2, replay
     print('历史回放：使用保存的 final，未重跑 Read')
+
+    peer_command = [*base, '-e', str(probe), '-e', str(peer), *tail]
+    log.unlink()
+    screen = run_tui(peer_command, dict(env, PI_TOOL_UI_PROBE_FAIL='1'), root, b'PEER_RESULT')
+    assert b'PROBE_RESULT' not in screen
+    failure = [json.loads(line) for line in log.read_text().splitlines()]
+    assert sum(item['event'] == 'fallback' for item in failure) == 1, failure
+    assert sum(item['event'] == 'tool-execution' for item in failure) == 1, failure
+
+    theme_rows = []
+    for theme in ('dark', 'light'):
+        log.unlink()
+        run_tui([*command[:-1], '--use-theme', theme, command[-1]], env, root, b'PROBE_RESULT')
+        events = [json.loads(line) for line in log.read_text().splitlines()]
+        entry = next(item for item in events if item['event'] == 'highlight')
+        assert entry['language'] in ('ts', 'typescript'), entry
+        assert [re.sub(r'\x1b\[[0-9;]*m', '', line) for line in entry['rows']] == ['const value = 42;'], entry
+        assert any('\x1b[' in line for line in entry['rows']), entry
+        theme_rows.append(entry['rows'])
+    assert theme_rows[0] != theme_rows[1], theme_rows
+    print('主题与高亮：dark/light 均保留源码，样式不同；故障回退保留自定义下游')
