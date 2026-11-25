@@ -19,7 +19,7 @@ if pi is None:
     raise SystemExit('需要 Pi 1.6.0')
 
 
-def run_tui(command, env, root, expected_result, *, expand=False, done=b'PROBE_DONE'):
+def run_tui(command, env, root, expected_result, *, expand=False, reload=False, done=b'PROBE_DONE'):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     output = bytearray()
@@ -41,6 +41,10 @@ def run_tui(command, env, root, expected_result, *, expand=False, done=b'PROBE_D
 
                 receive(done)
                 assert expected_result in output, output[-4000:].decode(errors='replace')
+                if reload:
+                    start = len(output)
+                    os.write(master, b'/reload\r')
+                    receive(b'Reloaded keybindings, extensions', start)
                 if not expand:
                     return bytes(output)
                 assert b'PROBE_CALL' in output
@@ -106,7 +110,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
     assert session.is_file(), 'Pi 未生成历史会话'
     (root / 'fixture.txt').write_text('changed after original execution\n')
     log.unlink()
-    run_tui(saved[:-1], env, root, b'PROBE_RESULT')
+    run_tui(saved[:-1], env, root, b'PROBE_RESULT', reload=True)
     assert b'PROBE_DONE' in session.read_bytes()
     replay = [json.loads(line) for line in log.read_text().splitlines()]
     results = [item for item in replay if item['event'] == 'result']
@@ -114,4 +118,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
                            and not item['partial'] for item in results), replay
     assert results[0]['shared'] and not results[0]['reused'], replay
     assert not any(item['event'] == 'tool-execution' for item in replay), replay
+    assert sum(item['event'] == 'session' for item in replay) == 2, replay
+    assert sum(not item['reused'] for item in results) >= 2, replay
     print('历史回放：使用保存的 final，未重跑 Read')
