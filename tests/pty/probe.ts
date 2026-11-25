@@ -17,9 +17,11 @@ export default function (pi: ExtensionAPI) {
   const callComponent = Symbol('probe-call');
   const resultComponent = Symbol('probe-result');
   pi.registerToolRenderer((name, next) => {
+    if (name === 'read') log('probe-enter');
     const original = next();
     if (name !== 'read' || !original) return original;
     log('resolve', { shell: original.renderShell });
+    if (process.env.PI_TOOL_UI_PROBE_PASS === '1') return original;
     return {
       ...original,
       renderShell: 'self',

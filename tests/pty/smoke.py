@@ -17,15 +17,7 @@ probe = Path(__file__).with_name('probe.ts').resolve()
 pi = shutil.which('pi')
 if pi is None:
     raise SystemExit('需要 Pi 1.6.0')
-with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
-    root = Path(directory)
-    (root / 'fixture.txt').write_text('fixture from isolated cwd\n')
-    env = dict(PATH=os.environ['PATH'], HOME=directory, TERM='xterm-256color',
-               PI_CODING_AGENT_DIR=str(root / 'agent'), PI_TELEMETRY='0',
-               PI_TOOL_UI_PROBE_LOG=str(root / 'events.jsonl'))
-    command = [pi, '--offline', '--no-approve', '-ne', '-ns', '-np', '-nc', '--no-mcp',
-               '--no-session', '-e', str(probe), '--model', 'tool-ui-probe/local',
-               '--tools', 'read', 'Run the local fixture']
+def run_tui(command, env, root, expected_result, *, expand=False):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     output = bytearray()
@@ -46,7 +38,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
                     assert output.find(marker, start) >= 0, output[-4000:].decode(errors='replace')
 
                 receive(b'PROBE_DONE')
-                assert b'PROBE_CALL' in output and b'PROBE_RESULT' in output
+                assert expected_result in output, output[-4000:].decode(errors='replace')
+                if not expand:
+                    return bytes(output)
+                assert b'PROBE_CALL' in output
                 before_expand = len(output)
                 os.write(master, b'\x0f')
                 receive(b'PROBE_RESULT', before_expand)
@@ -62,6 +57,36 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
                 process.wait(timeout=5)
     finally:
         os.close(master)
+    return bytes(output)
+
+
+with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
+    root = Path(directory)
+    (root / 'fixture.txt').write_text('fixture from isolated cwd\n')
+    log = root / 'events.jsonl'
+    env = dict(PATH=os.environ['PATH'], HOME=directory, TERM='xterm-256color',
+               PI_CODING_AGENT_DIR=str(root / 'agent'), PI_TELEMETRY='0',
+               PI_TOOL_UI_PROBE_LOG=str(log))
+    base = [pi, '--offline', '--no-approve', '-ne', '-ns', '-np', '-nc', '--no-mcp', '--no-session']
+    tail = ['--model', 'tool-ui-probe/local', '--tools', 'read', 'Run the local fixture']
+    command = [*base, '-e', str(probe), *tail]
+    run_tui(command, env, root, b'PROBE_RESULT', expand=True)
+
+    peer = probe.with_name('peer.ts')
+    for order, entered, passthrough, shown in [
+        ((probe, peer), ['probe-enter', 'peer-enter'], False, b'PROBE_RESULT'),
+        ((peer, probe), ['peer-enter', 'probe-enter'], False, b'PEER_RESULT'),
+        ((probe, peer), ['probe-enter', 'peer-enter'], True, b'PEER_RESULT'),
+    ]:
+        log.unlink()
+        scenario = [*base, '-e', str(order[0]), '-e', str(order[1]), *tail]
+        screen = run_tui(scenario, dict(env, PI_TOOL_UI_PROBE_PASS=str(int(passthrough))), root, shown)
+        assert (b'PEER_RESULT' in screen) != (b'PROBE_RESULT' in screen)
+        events = [json.loads(line) for line in log.read_text().splitlines()]
+        assert [item['event'] for item in events if item['event'].endswith('-enter')] == entered, events
+        assert sum(item['event'] == 'resolve' for item in events) == 1, events
+        assert sum(item['event'] == 'peer-return' for item in events) == 1, events
+        print(' → '.join(entered), 'pass=' + str(passthrough), shown.decode())
 
     (root / 'events.jsonl').unlink()
     printed = subprocess.run([*command[:-1], '--print', command[-1]], cwd=root, env=env,
