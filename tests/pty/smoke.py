@@ -62,3 +62,11 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
                 process.wait(timeout=5)
     finally:
         os.close(master)
+
+    (root / 'events.jsonl').unlink()
+    printed = subprocess.run([*command[:-1], '--print', command[-1]], cwd=root, env=env,
+                             capture_output=True, text=True, timeout=12, check=True)
+    assert 'PROBE_DONE' in printed.stdout, printed.stdout + printed.stderr
+    headless = [json.loads(line) for line in (root / 'events.jsonl').read_text().splitlines()]
+    assert headless == [{'event': 'session', 'hasUI': False}], headless
+    print('无 UI：原生 read 到达最终回复，未调用 renderer')
