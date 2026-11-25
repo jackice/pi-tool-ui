@@ -17,7 +17,9 @@ probe = Path(__file__).with_name('probe.ts').resolve()
 pi = shutil.which('pi')
 if pi is None:
     raise SystemExit('需要 Pi 1.6.0')
-def run_tui(command, env, root, expected_result, *, expand=False):
+
+
+def run_tui(command, env, root, expected_result, *, expand=False, done=b'PROBE_DONE'):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     output = bytearray()
@@ -37,7 +39,7 @@ def run_tui(command, env, root, expected_result, *, expand=False):
                                 raise
                     assert output.find(marker, start) >= 0, output[-4000:].decode(errors='replace')
 
-                receive(b'PROBE_DONE')
+                receive(done)
                 assert expected_result in output, output[-4000:].decode(errors='replace')
                 if not expand:
                     return bytes(output)
@@ -93,5 +95,23 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
                              capture_output=True, text=True, timeout=12, check=True)
     assert 'PROBE_DONE' in printed.stdout, printed.stdout + printed.stderr
     headless = [json.loads(line) for line in (root / 'events.jsonl').read_text().splitlines()]
-    assert headless == [{'event': 'session', 'hasUI': False}], headless
+    assert headless == [{'event': 'session', 'hasUI': False}, {'event': 'tool-execution'}], headless
     print('无 UI：原生 read 到达最终回复，未调用 renderer')
+
+    log.unlink()
+    session = root / 'history.jsonl'
+    saved = [*base[:-1], '--session', str(session), '-e', str(probe), *tail]
+    subprocess.run([*saved[:-1], '--print', saved[-1]], cwd=root, env=env,
+                   capture_output=True, text=True, timeout=12, check=True)
+    assert session.is_file(), 'Pi 未生成历史会话'
+    (root / 'fixture.txt').write_text('changed after original execution\n')
+    log.unlink()
+    run_tui(saved[:-1], env, root, b'PROBE_RESULT')
+    assert b'PROBE_DONE' in session.read_bytes()
+    replay = [json.loads(line) for line in log.read_text().splitlines()]
+    results = [item for item in replay if item['event'] == 'result']
+    assert results and all(item['content'] == [{'type': 'text', 'text': 'fixture from isolated cwd\n'}]
+                           and not item['partial'] for item in results), replay
+    assert results[0]['shared'] and not results[0]['reused'], replay
+    assert not any(item['event'] == 'tool-execution' for item in replay), replay
+    print('历史回放：使用保存的 final，未重跑 Read')

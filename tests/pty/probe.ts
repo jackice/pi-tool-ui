@@ -15,6 +15,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerProvider(faux.provider);
   pi.on('session_start', (_, ctx) => { log('session', { hasUI: ctx.hasUI }); });
   const callComponent = Symbol('probe-call');
+  pi.on('tool_call', (event) => { if (event.toolName === 'read') log('tool-execution'); });
   const resultComponent = Symbol('probe-result');
   pi.registerToolRenderer((name, next) => {
     if (name === 'read') log('probe-enter');
