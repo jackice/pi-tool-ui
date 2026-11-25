@@ -8,7 +8,7 @@
 | T0-02 | running | 已登记旧入口、源码指纹、配置分支及锁与实际依赖漂移；待冻结匿名旧视觉 fixture、HTML 及许可归属。 |
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
-| T0-05 | running | 宿主可加载 Ai、TUI、coding-agent 包根；Ai `/providers/faux` 子路径在本次加载器中不可解析。公开语言识别和高亮已在 dark/light 两次启动中实测。仍待打包产物入口和 peer 解析。 |
+| T0-05 | running | 已验证公开高亮、宽度和 ESM 打包入口；干净 npm 安装不物化 peer 时，Pi 提供 SDK/TUI，`pi-ui@0.4.2` 可加载。Pi 自带安装器与常规 peer 安装策略仍待验证。 |
 | T0-I、T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | 当前证据仅为开发者现场验证，尚无独立 Reviewer 签署。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -27,4 +27,6 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 在同一 Pi 进程通过公开 `ctx.ui.setTheme('light')` 切换主题，随后以 Ctrl+O 重新展开工具行。高亮输出从 dark 基线变为 light 基线，Read 未重跑。未据此假定主题变更本身一定触发 renderer 回调或 Theme 实例一定更换。
 
-下一步验证打包入口和 peer 解析，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
+打包探针：`python3 tests/pty/package-smoke.py` 创建最小 tarball，用 `npm install --legacy-peer-deps` 装入隔离目录，经 `settings.json` 的本地 package 发现入口。安装树无第二套 Pi SDK/TUI；Pi 加载 manifest 的 `dist/index.js`，可调用宿主语言识别、宽度函数、TUI Text，并导入 `pi-ui@0.4.2` 的 EditView。首次 `--omit=peer` 安装超时，不能据此认定该模式不兼容。未验证 `pi install`，探针不等同于发布候选。
+
+下一步验证 Pi 自带安装器的 peer 处理及完整栈，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
