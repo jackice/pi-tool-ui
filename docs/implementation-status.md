@@ -9,7 +9,8 @@
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
 | T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
-| T0-I、T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
+| T0-I | running | 隔离核心栈启动及无界面 Read 已通过；仍待完整用户扩展组合与 TUI 竞争验证。 |
+| T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | 当前证据仅为开发者现场验证，尚无独立 Reviewer 签署。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 
@@ -31,4 +32,6 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 受管安装探针：`python3 tests/pty/managed-install-smoke.py` 在空白 HOME/Agent dir 使用 `pi install npm:@jackice/pi-session-todo@0.1.2`。安装树只有扩展与 `pi-ui@0.4.2`，未出现独立 Pi SDK/TUI；重启 CLI 后实际注册 `--session-todo-hide-ms`。此证据覆盖已发布参考包的受管安装，不替代 `pi-tool-ui` 候选包验收。
 
-下一步在隔离环境验证完整栈及配置生命周期，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
+核心栈探针共装 Hashline 0.1.2、Approval 0.1.6、TODO 0.1.2、Prompt 0.2.1 和本地 Shell Compressor，排除旧 Diff。Hashline 受管安装两次超时，原因未确定；核心栈改用本机固定版本依赖的只读副本，在临时 HOME、Agent dir 和 cwd 中启动。TODO 与 Approval 注册了 CLI 参数，确定性 provider 在 print 模式下完成一次 Read，未进入 renderer。未覆盖完整用户扩展、真实审批或 Compressor 的 Bash 改写。
+
+下一步补完整栈的 TUI 启动与竞争证据，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
