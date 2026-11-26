@@ -12,6 +12,11 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
   notice: { path: 'notice.txt' },
   truncated: { path: 'long.txt' },
   longline: { path: 'longline.txt' },
+  invalid_offset: { path: 'short.txt', offset: -1 },
+  fractional: { path: 'short.txt', offset: 1.5, limit: 2 },
+  bytes: { path: 'large.txt' },
+  markdown: { path: 'notes.md' },
+  image: { path: 'pixel.png' },
 };
 
 export default function (pi: ExtensionAPI) {
@@ -20,7 +25,8 @@ export default function (pi: ExtensionAPI) {
   if (!target) throw new Error(`未知的 PI_READ_CASE=${String(name)}`);
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
-  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
+  const vision = process.env.PI_READ_VISION === '1';
+  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local', ...(vision ? { input: ['text', 'image'] as const } : {}) }] });
   faux.setResponses([
     fauxAssistantMessage(fauxToolCall('read', target, { id: `read-${name}` }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('READ_T0_DONE'),

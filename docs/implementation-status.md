@@ -17,11 +17,11 @@
 | Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
 | T0-W1 | passed（部分矩阵） | final/args/bytes 与 9–10 次 argsComplete=false 快照成立；替换/缩短/path 变化/abort 未单列。 |
 | T0-W2 | passed（单场景 A/B） | 成功场景 OFF/ON bytes/args/result/次数一致；失败/取消/历史文件修改未做 OFF/ON。 |
-| T0-R1 | running | 基础/范围/EOF/limit=0/空文件/同形 notice/2100 行截断/超长首行已采集；非法 offset/limit、Markdown、多行字节截断与历史待补。 |
-| T0-R2 | pending | 图片/mixed/unsupported 尚未执行。 |
+| T0-R1 | passed | 基础/范围/EOF/limit=0/空文件/同形 notice/行截断/字节截断/超长首行/Markdown/非法 offset/历史回放均采集；非法 fractional limit 未单列。 |
+| T0-R2 | running | 支持图片时 content 含 image block 已采集；不支持的 warning、损坏图片、mixed 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
 | G0-Write | blocked | T0-W1/W2 仅部分矩阵；streaming 预览与历史 call 状态问题已记录。 |
-| G0-Read | running | T0-R1 部分矩阵与 slot/ReadView 未完成。 |
+| G0-Read | running | T0-R1 通过、T0-R2 部分；slot/ReadView 未实现。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |

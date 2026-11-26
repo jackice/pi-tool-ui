@@ -6,6 +6,9 @@
       "args": {
         "path": "short.txt"
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "alpha\nbeta\ngamma\n",
       "truncation": null
     },
@@ -16,6 +19,9 @@
         "offset": 5,
         "limit": 3
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "line 5\nline 6\nline 7\n\n[2094 more lines in file. Use offset=8 to continue.]",
       "truncation": null
     },
@@ -25,6 +31,9 @@
         "path": "short.txt",
         "offset": 99
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "Offset 99 is beyond end of file (4 lines total)",
       "truncation": null
     },
@@ -34,6 +43,9 @@
         "path": "long.txt",
         "limit": 0
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "\n\n[2101 more lines in file. Use offset=1 to continue.]",
       "truncation": null
     },
@@ -42,6 +54,9 @@
       "args": {
         "path": "empty.txt"
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "",
       "truncation": null
     },
@@ -50,6 +65,9 @@
       "args": {
         "path": "notice.txt"
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "alpha\n[Showing lines 1-2 of 99. Use offset=3 to continue.]\ngamma\n",
       "truncation": null
     },
@@ -58,6 +76,9 @@
       "args": {
         "path": "long.txt"
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\nline 21\nline 22\nline 23\nline 24\nline 25\nline 26\nl",
       "truncation": {
         "truncated": true,
@@ -77,6 +98,9 @@
       "args": {
         "path": "longline.txt"
       },
+      "kinds": [
+        "text"
+      ],
       "text_head": "[Line 1 is 58.6KB, exceeds 50.0KB limit. Use bash: sed -n '1p' longline.txt | head -c 51200]",
       "truncation": {
         "truncated": true,
@@ -90,6 +114,76 @@
         "maxLines": 2000,
         "maxBytes": 51200
       }
+    },
+    "invalid_offset": {
+      "error": false,
+      "args": {
+        "path": "short.txt",
+        "offset": -1
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "alpha\nbeta\ngamma\n",
+      "truncation": null
+    },
+    "fractional": {
+      "error": false,
+      "args": {
+        "path": "short.txt",
+        "offset": 1.5,
+        "limit": 2
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "alpha\nbeta\n\n[1.5 more lines in file. Use offset=3.5 to continue.]",
+      "truncation": null
+    },
+    "bytes": {
+      "error": false,
+      "args": {
+        "path": "large.txt"
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "line0001-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0002-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0003-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0004-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0005-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
+      "truncation": {
+        "truncated": true,
+        "truncatedBy": "bytes",
+        "totalLines": 1500,
+        "totalBytes": 60000,
+        "outputLines": 1280,
+        "outputBytes": 51199,
+        "lastLinePartial": false,
+        "firstLineExceedsLimit": false,
+        "maxLines": 2000,
+        "maxBytes": 51200
+      }
+    },
+    "markdown": {
+      "error": false,
+      "args": {
+        "path": "notes.md"
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "# Title\n\n- item\n",
+      "truncation": null
+    },
+    "image": {
+      "error": false,
+      "args": {
+        "path": "pixel.png"
+      },
+      "kinds": [
+        "text",
+        "image"
+      ],
+      "text_head": "Read image file [image/png]",
+      "truncation": null
     }
   }
 }
