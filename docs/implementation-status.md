@@ -5,7 +5,7 @@
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
 | T0-01 | running | 已记录本机 CLI/SDK 指纹、安装版本和包导出键；待核对公开源码树、实际解析指纹与全部根导出。 |
-| T0-02 | running | 已登记旧入口、源码指纹、配置分支及锁与实际依赖漂移；待冻结匿名旧视觉 fixture、HTML 及许可归属。 |
+| T0-02 | passed | 旧源码、配置分支与指纹已冻结；真实 PTY 冻结原生 Edit 与 Hashline 的 0.4.2/0.5.1 卡片 golden，见 `tests/fixtures/migration/`。Hashline `/export` HTML 对账归 T1-02。 |
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
 | T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
@@ -38,4 +38,10 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 完整栈探针：`python3 tests/pty/full-stack-smoke.py` 复制本机全部本地扩展（移除旧 Diff），配置 13 个已安装包指向生产 npm 树的只读路径，在临时 HOME/Agent dir 启动。离线 `--help` 无加载失败，TODO、Approval、Handoff 的 CLI 参数均出现；`--print` 与真实 PTY 各执行一次 Read，PTY 中探针 renderer 收到 Hashline 改写后的 final。生产 npm 树只读引用，未验证真实审批、Compressor 改写或启用 `toolUi` 后的配置生命周期。
 
-下一步审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
+### 旧 Diff 视觉基线（T0-02）
+
+`uv run --with pyte python tests/pty/migration-baseline.py` 用旧扩展源码、`@jackice/hashline@0.1.2` 与本机两份 `pi-ui`（0.4.2、0.5.1）建立隔离 Agent dir，真实 PTY 分别执行一次原生 `edit` 和一次 `hashline`，用 pyte 还原最终帧并只保留卡片区域；耗时、路径与边框长度已归一化。golden 位于 `tests/fixtures/migration/`。
+
+结果：两种工具的卡片在 0.5.1 下完全一致；0.4.2 与 0.5.1 的差异仅为行号 gutter——0.5.x 对 context/removed 行去重，0.4.2 同时显示新旧两列行号。其余标题、摘要、正文、边框一致。当前用户实际运行 0.5.1，因此迁移 parity 以 0.5.1 golden 为准，0.4.2 作为锁文件基线保留。该差异不是本次迁移引入。
+
+下一步审查 G0-Base。

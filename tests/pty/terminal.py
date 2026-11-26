@@ -10,6 +10,43 @@ import termios
 import time
 
 
+def capture_tui(command, env, root, done, expected):
+    master, slave = pty.openpty()
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
+    output = bytearray()
+    try:
+        with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
+            os.close(slave)
+            try:
+                deadline = time.monotonic() + 12
+                while output.find(done) < 0 and time.monotonic() < deadline:
+                    if select.select([master], [], [], 0.2)[0]:
+                        try:
+                            output.extend(os.read(master, 65536))
+                        except OSError as exc:
+                            if exc.errno == errno.EIO:
+                                break
+                            raise
+                assert output.find(done) >= 0, output[-4000:].decode(errors='replace')
+                deadline = time.monotonic() + 12
+                while expected not in output and time.monotonic() < deadline:
+                    if select.select([master], [], [], 0.2)[0]:
+                        try:
+                            output.extend(os.read(master, 65536))
+                        except OSError as exc:
+                            if exc.errno == errno.EIO:
+                                break
+                            raise
+                assert expected in output, output[-4000:].decode(errors='replace')
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                process.wait(timeout=5)
+    finally:
+        os.close(master)
+    return bytes(output)
+
+
 def run_tui(command, env, root, expected_result, *, expand=False, reload=False, switch_theme=False):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
