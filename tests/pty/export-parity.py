@@ -69,18 +69,20 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-export-') as directory:
                     'Run the local edit'], env, root, b'BASELINE_HASHLINE_DONE', str(html))
         outputs[name] = rendered_tools(html)
 
+    fields = ('callHtml', 'resultHtmlCollapsed', 'resultHtmlExpanded')
     ids = {}
     for name, tools in outputs.items():
-        counts = {tool_id: content for tool_id, content in tools.items()}
-        assert len(counts) == 1, counts
-        def visible_text(value):
-            parts = value.values() if isinstance(value, dict) else [value]
-            return html_lib.unescape(re.sub(r'<[^>]+>', '', '\n'.join(str(part) for part in parts)))
-        ids[name] = {key: visible_text(value) for key, value in counts.items()}
-    old_body = sorted(ids['old'].values())
-    new_body = sorted(ids['new'].values())
-    assert old_body == new_body, '旧扩展与新包预渲染的 Hashline HTML 不同'
-    has_diff = any('beta2' in body for body in old_body)
+        assert len(tools) == 1, tools
+        tool_id, value = next(iter(tools.items()))
+        assert isinstance(value, dict), value
+        assert 'resultHtmlExpanded' in value, (name, tool_id, sorted(value))
+        entry = {field: re.sub(r'· \d+(?:\.\d+)?m?s', '· <MS>', value[field]) if field in value else None
+                 for field in fields}
+        visible = html_lib.unescape(re.sub(r'<[^>]+>', '', (entry['resultHtmlCollapsed'] or '') + entry['resultHtmlExpanded']))
+        assert 'beta2' in visible, visible[-400:]
+        ids[name] = entry
+    assert ids['old'] == ids['new'], '旧扩展与新包的 call/collapsed/expanded HTML 不同'
+    has_diff = True
     evidence = repo / 'docs/evidence/export-parity.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)
     evidence.write_text(json.dumps({'tools': len(ids['old']), 'diff_body': has_diff, 'equal': True},

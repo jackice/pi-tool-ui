@@ -79,8 +79,8 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
 | T1-01 | passed | 干净 clone 经 `npm ci` + `npm pack` 产出 dist 入口；tarball 隔离安装、`npm ls` 无 Pi runtime；`npm test` 22、typecheck、oxlint 通过。 |
-| T1-02 | running | 卡片等于 golden；真实 TUI `/export` 预渲染 call/Diff 旧新一致且含正文；tarball 矩阵确认文件字节与工具结果文本一致。`behavior-matrix.py` 已覆盖 light 主题与 edit 错误回退（结果/字节一致，错误不自绘卡片）；待 noop、多文件、expanded 快捷键与完整栈。 |
-| T1-03 | running | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；待命令端到端验证。 |
+| T1-02 | running | 卡片等于 golden；真实 TUI `/export` 预渲染 call/Diff 旧新一致且含正文；tarball 矩阵确认文件字节与工具结果文本一致。`behavior-matrix.py` 覆盖 light 主题与 edit 错误回退；`tarball-matrix.py` 追加 Hashline ON 的 tarball 等价。待 noop、多文件、expanded 快捷键与完整栈。 |
+| T1-03 | running | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；PTY 已验证 dry 不落盘、取消不写入；force 写入由单测覆盖，确认对话框 PTY 未打通。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
 | T1-05 | running | `migration-parity.py` 覆盖旧配置、关闭与 native-only；`tarball-matrix.py` 覆盖真实 tarball、文件字节/结果一致、双加载拒绝。待完整用户栈与自定义下游矩阵。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |

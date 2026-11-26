@@ -18,6 +18,9 @@ repo = workspace / 'pi-tool-ui'
 old = workspace / 'dotfiles/pi/.pi/agent/extensions/hashline-diff'
 library = old / 'node_modules/@jackice/pi-ui'
 provider = repo / 'tests/pty/edit-provider.ts'
+hashline = Path.home() / '.pi/agent/npm/node_modules/@jackice/hashline'
+hashline_provider = repo / 'tests/pty/hashline-provider.ts'
+hashline_golden = (repo / 'tests/fixtures/migration/hashline-0.5.1.txt').read_text().rstrip('\n')
 golden = (repo / 'tests/fixtures/migration/edit-native-0.5.1.txt').read_text().rstrip('\n')
 
 env_base = dict(PATH=os.environ['PATH'], TERM='xterm-256color', PI_TELEMETRY='0')
@@ -33,6 +36,13 @@ def install_old(agent):
     shutil.copytree(old, agent / 'extensions/hashline-diff', ignore=shutil.ignore_patterns('node_modules'))
     (agent / 'extensions/hashline-diff/node_modules/@jackice').mkdir(parents=True)
     shutil.copytree(library, agent / 'extensions/hashline-diff/node_modules/@jackice/pi-ui')
+
+
+def install_hashline(agent):
+    shutil.copytree(hashline, agent / 'extensions/hashline')
+    for native in ('pi-utils', 'pi-natives', 'pi-natives-darwin-arm64'):
+        shutil.copytree(Path.home() / f'.pi/agent/npm/node_modules/@oh-my-pi/{native}',
+                        agent / f'node_modules/@oh-my-pi/{native}')
 
 
 def session_results(session):
@@ -100,6 +110,31 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-matrix-') as directory:
                                 {'packages': [str(package)], 'toolUi': {'enabled': False}})
     assert b'Edit' not in off_screen
 
+    # 3b) 真实 tarball 的 Hashline ON 等价。
+    def hashline_scenario(root, agent, mode):
+        root.mkdir(parents=True, exist_ok=True)
+        agent.mkdir(parents=True, exist_ok=True)
+        (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
+        if mode == 'old':
+            install_old(agent)
+            settings = {'editDiff': {'nativeEdit': True}}
+        else:
+            settings = {'packages': [str(package)], 'toolUi': {'enabled': True, 'tools': {'edit': {'enabled': True}, 'hashline': {'enabled': True}}}}
+        install_hashline(agent)
+        (agent / 'settings.json').write_text(json.dumps(settings))
+        session = root / 'session.jsonl'
+        env = dict(env_base, HOME=str(root), PI_CODING_AGENT_DIR=str(agent),
+                   PI_TOOL_UI_PROBE_LOG=str(root / 'events.jsonl'))
+        screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--session', str(session),
+                              '-e', str(hashline_provider), '--model', 'tool-ui-probe/local', '--tools', 'read,hashline',
+                              'Run the local edit'], env, root, b'BASELINE_HASHLINE_DONE', b'BASELINE_HASHLINE_DONE')
+        return screen, (root / 'notes.txt').read_bytes(), session_results(session)
+
+    old_hash = hashline_scenario(root / 'hash-old', root / 'hash-old-agent', 'old')
+    new_hash = hashline_scenario(root / 'hash-new', root / 'hash-new-agent', 'new')
+    assert '\n'.join(extract_card(new_hash[0], root / 'hash-new')) == hashline_golden
+    assert old_hash[1] == new_hash[1] and old_hash[2] == new_hash[2]
+
     # 4) 双加载：旧目录存在时新包拒绝接管。
     dual = root / 'dual'
     (dual / 'agent').mkdir(parents=True)
@@ -124,5 +159,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-matrix-') as directory:
         'tool_results_equal': True,
         'card_matches_golden': True,
         'dual_load_disabled': True,
+        'hashline_tarball_equal': True,
     }, ensure_ascii=False, indent=2) + '\n')
     print('干净打包 + tarball 安装：入口/依赖树/等价/双加载均通过')

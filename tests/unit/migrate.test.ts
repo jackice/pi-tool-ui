@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
 import { DEFAULT_CONFIG } from '../../src/config.js';
-import { migrateSettingsFile } from '../../src/migration.js';
+import { migrateSettingsFile, migrationReport } from '../../src/migration.js';
 
 function settingsFile(content: object): string {
   const dir = mkdtempSync(join(tmpdir(), 'pi-tool-ui-migrate-'));
@@ -12,6 +12,18 @@ function settingsFile(content: object): string {
   writeFileSync(path, JSON.stringify(content, null, 2));
   return path;
 }
+
+describe('迁移报告', () => {
+  test('记录 schema、源值与目标值', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.tools.hashline.enabled = true;
+    const lines = migrationReport({ nativeEdit: 'true', envHashline: undefined, config });
+    expect(lines[0]).toBe('schema: v1');
+    expect(lines.join('\n')).toContain('editDiff.nativeEdit="true"');
+    expect(lines.join('\n')).toContain('PI_HASHLINE_DIFF=unset');
+    expect(lines.join('\n')).toContain('hashline=true');
+  });
+});
 
 describe('一次性迁移', () => {
   test('保留其他配置并写入 toolUi 与备份', () => {

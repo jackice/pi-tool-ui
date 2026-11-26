@@ -20,5 +20,6 @@
   "file_bytes_equal": true,
   "tool_results_equal": true,
   "card_matches_golden": true,
-  "dual_load_disabled": true
+  "dual_load_disabled": true,
+  "hashline_tarball_equal": true
 }

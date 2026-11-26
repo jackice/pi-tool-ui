@@ -7,6 +7,16 @@ export interface MigrationResult {
   backup: string;
 }
 
+export function migrationReport(input: { nativeEdit: unknown; envHashline: string | undefined; config: ToolUiConfig }): string[] {
+  const raw = (value: unknown): string => (value === undefined ? 'unset' : JSON.stringify(value));
+  return [
+    'schema: v1',
+    `source: editDiff.nativeEdit=${raw(input.nativeEdit)}`,
+    `source: PI_HASHLINE_DIFF=${raw(input.envHashline)}`,
+    `target: edit=${input.config.tools.edit.enabled} · hashline=${input.config.tools.hashline.enabled} · enabled=${input.config.enabled}`,
+  ];
+}
+
 export function migrateSettingsFile(path: string, config: ToolUiConfig, stamp = Date.now()): MigrationResult {
   const original = readFileSync(path, 'utf8');
   const parsed: unknown = JSON.parse(original);

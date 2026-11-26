@@ -6,7 +6,7 @@ import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 
 import { cloneDefaultConfig, mapLegacyConfig, type ToolUiConfig } from './config.js';
 import { createResolver } from './integration/resolver.js';
-import { migrateSettingsFile } from './migration.js';
+import { migrateSettingsFile, migrationReport } from './migration.js';
 import { editFactory, hashlineFactory } from './renderers/diff.js';
 
 interface Settings {
@@ -59,20 +59,21 @@ export default async function (pi: ExtensionAPI) {
         envHashline: process.env.PI_HASHLINE_DIFF,
         legacy: true,
       });
-      const report = [
-        `edit=${result.config.tools.edit.enabled}`,
-        `hashline=${result.config.tools.hashline.enabled}`,
-        `enabled=${result.config.enabled}`,
-      ].join(' · ');
+      const report = migrationReport({
+        nativeEdit: settings.editDiff?.nativeEdit,
+        envHashline: process.env.PI_HASHLINE_DIFF,
+        config: result.config,
+      });
       if (action === '' || action === 'dry') {
-        ctx.ui.notify(`迁移预览: ${report}${action === '' ? '；写入请执行 /tool-ui-migrate force' : ''}`, 'info');
+        for (const line of report) ctx.ui.notify(line, 'info');
+        if (action === '') ctx.ui.notify('写入请执行 /tool-ui-migrate force', 'info');
         return;
       }
       if (action !== 'force') {
         ctx.ui.notify('用法: /tool-ui-migrate | /tool-ui-migrate dry | /tool-ui-migrate force', 'warning');
         return;
       }
-      const confirmed = await ctx.ui.confirm('应用 toolUi 迁移？', `${report}\n\n将备份并写入 settings.json`);
+      const confirmed = await ctx.ui.confirm('应用 toolUi 迁移？', `${report.join('\n')}\n\n将备份并写入 settings.json`);
       if (!confirmed) return;
       try {
         const { backup } = migrateSettingsFile(join(agentDir(), 'settings.json'), result.config);
