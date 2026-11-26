@@ -11,8 +11,12 @@
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
-| T0-B1…B3、T0-W1…W2、T0-R1…R2 | pending | 公共 Read 探针不替代各工具的专用探针。 |
-| G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
+| T0-B1 | passed | 真实 bash：成功/空/非零/流式 partial/final 均采集；final 权威，partial 计数与正文已记录（docs/evidence/bash-cases.json）。 |
+| T0-B2 | passed | 2100 行触发行截断（outputLines 2000）；60KB 输出触发字节截断（outputBytes 51200）；60KB 单行 truncatedBy=bytes 且 lastLinePartial=true。 |
+| T0-B3 | pending | Gate/Compressor 的 allow/deny/超时与执行等价尚未执行。 |
+| T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
+| G0-Bash | running | T0-B1/B2 与 Bash 渲染探针已通过；T0-B3 与独立 Reviewer 待完成。 |
+| G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 

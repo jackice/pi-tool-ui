@@ -1,0 +1,67 @@
+import json
+import os
+from pathlib import Path
+import shutil
+import tempfile
+
+from terminal import capture_tui
+
+
+pi = shutil.which('pi')
+assert pi, '需要 Pi 1.6.0'
+workspace = Path(__file__).resolve().parents[3]
+repo = workspace / 'pi-tool-ui'
+provider = repo / 'tests/pty/bash-cases-provider.ts'
+
+with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
+    root = Path(directory)
+    agent = root / 'agent'
+    agent.mkdir()
+    (agent / 'settings.json').write_text('{}')
+    env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color',
+               PI_CODING_AGENT_DIR=str(agent), PI_TELEMETRY='0')
+    observed = {}
+    for case in ('success', 'empty', 'nonzero', 'lines', 'bytes', 'longline', 'stream'):
+        log = root / f'{case}.jsonl'
+        capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
+                     '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash', 'Run the local bash'],
+                    dict(env, PI_BASH_CASE=case, PI_TOOL_UI_PROBE_LOG=str(log)), root,
+                    b'BASH_DONE', b'BASH_PROBE')
+        events = [json.loads(line) for line in log.read_text().splitlines()]
+        final = next(item for item in events if not item['partial'])
+        partials = [item for item in events if item['partial']]
+        observed[case] = {'final': final, 'partial_count': len(partials), 'first_partial': partials[0] if partials else None}
+
+    success = observed['success']['final']
+    assert [block['text'] for block in success['content'] if block['type'] == 'text'] == ['ok\n']
+    assert isinstance(success['durationMs'], (int, float))
+
+    empty = observed['empty']['final']
+    assert empty['content'] == [] or empty['content'][0].get('text', '').strip() in {'', '(no output)'}
+
+    nonzero = observed['nonzero']['final']
+    assert nonzero['error'] is True
+
+    lines = observed['lines']['final']
+    truncation = lines['details']['truncation']
+    assert truncation['outputLines'] < truncation['totalLines'], truncation
+
+    bytes_case = observed['bytes']['final']
+    assert bytes_case['details']['truncation']['outputBytes'] <= 51200 or 'totalBytes' in bytes_case['details']['truncation']
+
+    longline = observed['longline']['final']
+    trunc = longline['details']['truncation']
+    assert trunc['truncatedBy'] == 'bytes' and trunc['lastLinePartial'] is True, {k: v for k, v in trunc.items() if k != 'content'}
+
+    stream = observed['stream']
+    assert stream['partial_count'] >= 1, stream
+    assert [block['text'] for block in stream['final']['content'] if block['type'] == 'text'] == ['first\nsecond\n']
+
+    evidence = repo / 'docs/evidence/bash-cases.json'
+    evidence.parent.mkdir(parents=True, exist_ok=True)
+    summary = {case: {'partial_count': value['partial_count'],
+                      'error': value['final']['error'],
+                      'truncation': value['final'].get('details', {}).get('truncation')}
+               for case, value in observed.items()}
+    evidence.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
+    print('Bash T0：成功/空/非零/行截断/字节截断/超长行/流式 partial 均已采集')
