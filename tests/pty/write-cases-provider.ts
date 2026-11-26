@@ -10,6 +10,7 @@ const cases: Record<string, { path: string; content: string }> = {
   overwrite: { path: 'out.txt', content: 'replaced\n' },
   many: { path: 'many.txt', content: Array.from({ length: 20 }, (_, index) => `line ${index + 1}`).join('\n') },
   error: { path: 'dir', content: 'x' },
+  code: { path: 'out.ts', content: 'const value = 1;\nexport default value;\n' },
 };
 
 export default function (pi: ExtensionAPI) {

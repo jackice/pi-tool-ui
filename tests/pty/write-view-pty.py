@@ -26,7 +26,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
         'toolUi': {'enabled': True, 'tools': {'write': {'enabled': True}}},
     }))
     observed = {}
-    for case in ('success', 'many', 'error'):
+    for case in ('success', 'many', 'error', 'code'):
         work = root / case
         work.mkdir()
         (work / 'dir').mkdir()
@@ -43,6 +43,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
             card = text
         observed[case] = {'text': text, 'card': card}
 
+    assert 'const value' in observed['code']['card'], observed['code']['card'][-400:]
     print('HAS_WRITE', 'Write' in observed['success']['text'])
     assert 'Write' in observed['success']['card'] and '✓' in observed['success']['card'], observed['success']['text'][-800:]
     assert observed['success']['text'].count('out.txt') == 1

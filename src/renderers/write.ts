@@ -1,4 +1,5 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
+import { highlightCode } from '@earendil-works/pi-coding-agent';
 import { Container } from '@earendil-works/pi-tui';
 import { WriteView, fromPiTheme } from '@jackice/pi-ui';
 
@@ -69,6 +70,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           streamingPreviewLines: write.streamingPreviewLines,
           maxPreviewRows: write.maxPreviewRows,
           lineNumbers: write.lineNumbers,
+          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
         },
       });
       context.state[callKey] = { path: path ?? '', content, config, theme, view };
@@ -105,6 +107,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
             showPath: true,
+            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
           },
         });
         context.state[cacheKey] = {

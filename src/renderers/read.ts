@@ -1,4 +1,5 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
+import { highlightCode } from '@earendil-works/pi-coding-agent';
 import { ReadView, fromPiTheme } from '@jackice/pi-ui';
 
 import { adaptRead } from '../adapters/read.js';
@@ -58,6 +59,7 @@ export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
             maxPreviewRows: read.maxPreviewRows,
             lineNumbers: read.lineNumbers,
             showPath: false,
+            ...(read.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
           },
         });
         context.state[cacheKey] = {
