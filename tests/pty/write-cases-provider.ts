@@ -20,7 +20,7 @@ export default function (pi: ExtensionAPI) {
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
   const stream = process.env.PI_WRITE_STREAM === '1';
-  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }], ...(stream ? { tokensPerSecond: 30, tokenSize: { min: 1, max: 2 } } : {}) });
+  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }], ...(stream ? { tokensPerSecond: Number(process.env.PI_WRITE_TOKENS ?? '30'), tokenSize: { min: 1, max: 2 } } : {}) });
   faux.setResponses([
     fauxAssistantMessage(fauxToolCall('write', target, { id: `write-${name}` }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('WRITE_DONE'),

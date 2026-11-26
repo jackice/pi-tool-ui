@@ -10,7 +10,7 @@ import termios
 import time
 
 
-def capture_tui(command, env, root, done, expected, key=None, after=None, rows=40, cols=100, stop=None):
+def capture_tui(command, env, root, done, expected, key=None, after=None, rows=40, cols=100, stop=None, interrupt=False):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, cols, 0, 0))
     output = bytearray()
@@ -29,6 +29,17 @@ def capture_tui(command, env, root, done, expected, key=None, after=None, rows=4
                                     break
                                 raise
                     assert stop in output, output[-4000:].decode(errors='replace')
+                    if interrupt:
+                        os.write(master, b'\x03')
+                        deadline = time.monotonic() + 3
+                        while time.monotonic() < deadline and process.poll() is None:
+                            if select.select([master], [], [], 0.1)[0]:
+                                try:
+                                    output.extend(os.read(master, 65536))
+                                except OSError as exc:
+                                    if exc.errno == errno.EIO:
+                                        break
+                                    raise
                     return bytes(output)
                 deadline = time.monotonic() + 12
                 while output.find(done) < 0 and time.monotonic() < deadline:
