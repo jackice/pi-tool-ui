@@ -18,7 +18,8 @@ export default function (pi: ExtensionAPI) {
   if (!target) throw new Error('未知的 PI_WRITE_CASE');
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
-  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
+  const stream = process.env.PI_WRITE_STREAM === '1';
+  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }], ...(stream ? { tokensPerSecond: 30, tokenSize: { min: 1, max: 2 } } : {}) });
   faux.setResponses([
     fauxAssistantMessage(fauxToolCall('write', target, { id: `write-${name}` }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('WRITE_DONE'),
@@ -32,6 +33,11 @@ export default function (pi: ExtensionAPI) {
     if (tool !== 'write' || !original) return original;
     return {
       ...original,
+      renderCall(args, _theme, context) {
+        appendFileSync(logPath, JSON.stringify({ event: 'call', args, argsComplete: context.argsComplete }) + '\n');
+        if (original.renderCall) return original.renderCall(args, _theme, context);
+        return new Text('WRITE_CALL', 0, 0);
+      },
       renderResult(result, options, _theme, context) {
         appendFileSync(logPath, JSON.stringify({
           event: 'result', partial: options.isPartial, error: context.isError,

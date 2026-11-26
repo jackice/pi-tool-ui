@@ -15,11 +15,11 @@
 | T0-B2 | passed | 行截断、1500 行/63000B 字节截断、60KB 单行、截断+执行超时；真实 AbortSignal 在 3000 行输出后取消，计数 0。 |
 | T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc/approval 超时/执行超时/AbortSignal 均 0；Gate+Compressor 栈 A/B 真实触发压缩，模型结果逐字一致，originalChars=1000→153。 |
 | Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
-| T0-W1 | running | 成功/空/Unicode/覆盖/错误 final、args、文件 bytes 已采集；流式 args 快照（追加/替换/缩短/argsComplete）尚未采集。 |
+| T0-W1 | passed | 成功/空/Unicode/覆盖/错误 final/args/bytes；faux 低速流产生 10 次 argsComplete=false 快照，final 内容正确。 |
 | T0-W2 | passed | 上述场景执行次数各 1，写入 bytes 与期望一致；产品 WriteView 已接线并验证 head/错误/路径一次。 |
 | T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write | running | T0-W1 流式 args、slot 方案与独立 Reviewer 待完成。 |
+| G0-Write | pending | T0-W1/W2 与产品 slot C 证据齐全；等待独立 Reviewer。 |
 | G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -138,10 +138,10 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
 | T4-02 | passed | `WriteView`：head 6 / streaming tail 12、行号、错误隐藏正文；产品 PTY 通过。 |
-| T4-03 | pending | 有界高亮未实现（lineNumbers 纯文本）。 |
+| T4-03 | pending | 有界高亮未实现；write.highlight 当前应按 unsupported 处理，待实现或文档化。 |
 | T4-04 | passed（slot C） | 保留原生 call/path，仅替换 result；全屏路径一次、head 预览、错误隐藏。 |
-| T4-05 | running | 产品 OFF/ON 文件 bytes/执行次数矩阵待补。 |
-| G4-Write | pending | 待 T4-05 与独立 Reviewer。 |
+| T4-05 | passed | 产品 OFF/ON：bytes/args/result 一致、各执行 1 次、ON 有 Write 卡片、OFF 无。 |
+| G4-Write | pending | T4-01/02/04/05 通过；T4-03 高亮 pending，等待评审。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 
