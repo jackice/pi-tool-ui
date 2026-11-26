@@ -28,18 +28,18 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-slot-') as directory:
     calls = [item for item in events if item['event'] == 'call']
     results = [item for item in events if item['event'] == 'result']
     final_index = max(index for index, item in enumerate(events) if item['event'] == 'result' and not item['partial'])
-    assert any(item['event'] == 'call' and index > final_index for index, item in enumerate(events)), events
-    assert any(item['event'] == 'call' and item['final'] for item in events), events
+    assert not any(item['event'] == 'call' and index > final_index for index, item in enumerate(events)), events
+    assert not any(item['event'] == 'call' and item['final'] for item in events), events
     assert {item['pad'] for item in calls} == {1}, calls
     assert all(not item['partial'] for item in results[-1:]) and any(item['partial'] for item in results)
     assert screen.count(b'BASH_CARD_CALL') == 1, screen.count(b'BASH_CARD_CALL')
     evidence = repo / 'docs/evidence/bash-slot.json'
     evidence.write_text(json.dumps({
-        'candidate': 'A',
-        'call_rerendered_after_final': True,
+        'candidate': 'A-rejected',
+        'call_rerendered_after_final': False,
         'shared_state': True,
         'single_card': True,
         'output_pad': 1,
         'events': events,
     }, ensure_ascii=False, indent=2) + '\n')
-    print('Bash slot 候选 A：result 后 call 重绘、共享 state、单卡片、outputPad=1')
+    print('Bash slot 候选 A：确认 final 后无 call 重绘；共享 state 与单卡片成立，A 否决')

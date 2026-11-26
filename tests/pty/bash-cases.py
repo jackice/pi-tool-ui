@@ -47,7 +47,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
     assert truncation['outputLines'] < truncation['totalLines'], truncation
 
     bytes_case = observed['bytes']['final']
-    assert bytes_case['details']['truncation']['outputBytes'] <= 51200 or 'totalBytes' in bytes_case['details']['truncation']
+    byte_trunc = bytes_case['details']['truncation']
+    assert byte_trunc['truncatedBy'] == 'bytes', byte_trunc
+    assert byte_trunc['totalLines'] < 2000 and byte_trunc['totalBytes'] > 51200, byte_trunc
+    assert 50000 < byte_trunc['outputBytes'] <= 51200, {k: v for k, v in byte_trunc.items() if k != 'content'}
 
     longline = observed['longline']['final']
     trunc = longline['details']['truncation']
@@ -59,9 +62,27 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
 
     evidence = repo / 'docs/evidence/bash-cases.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)
-    summary = {case: {'partial_count': value['partial_count'],
-                      'error': value['final']['error'],
-                      'truncation': value['final'].get('details', {}).get('truncation')}
-               for case, value in observed.items()}
+    def text_of(event):
+        return '\n'.join(block.get('text', '') for block in event['content'] if block.get('type') == 'text')
+
+    def details_of(event):
+        details = event.get('details') or {}
+        truncation = details.get('truncation') or {}
+        return {**{key: value for key, value in details.items() if key != 'truncation'},
+                **({'truncation': {key: value for key, value in truncation.items() if key != 'content'}} if truncation else {})}
+
+    summary = {}
+    for case, value in observed.items():
+        final = value['final']
+        first = value['first_partial']
+        summary[case] = {
+            'partial_count': value['partial_count'],
+            'first_partial_text': text_of(first)[:200] if first else None,
+            'final_text': text_of(final)[:200],
+            'error': final['error'],
+            'args': final['args'],
+            'durationMs': final['durationMs'],
+            'details': details_of(final),
+        }
     evidence.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
     print('Bash T0：成功/空/非零/行截断/字节截断/超长行/流式 partial 均已采集')

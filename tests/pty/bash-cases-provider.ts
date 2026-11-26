@@ -8,7 +8,7 @@ const cases: Record<string, string> = {
   empty: 'true',
   nonzero: 'false',
   lines: 'seq 1 2100',
-  bytes: "yes x | head -c 60000",
+  bytes: "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done",
   longline: "printf 'a%.0s' {1..60000}",
   risky: 'chmod 000 secret.txt',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",

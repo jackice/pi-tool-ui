@@ -1,21 +1,74 @@
 {
   "candidate": "A-rejected",
-  "reason": "final result 之后没有 call slot 重绘，call 卡片无法反映最终状态",
-  "observations": {
-    "call_rerendered_after_final": false,
-    "shared_state": true,
-    "single_card": true,
-    "output_pad": 1,
-    "event_sequence": "call×5 → result(partial)×4 → call → result(partial) → call → result(partial) → call → result(final)"
-  },
-  "next": [
-    "候选 B：call 渲染上部分，result 渲染下部分并共享状态",
-    "候选 C：保留原生 shell，只定制内部 result"
-  ],
-  "candidate_b": {
-    "chosen": true,
-    "single_top_and_bottom": true,
-    "shared_state": true
-  }
+  "call_rerendered_after_final": false,
+  "shared_state": true,
+  "single_card": true,
+  "output_pad": 1,
+  "events": [
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "result",
+      "partial": true
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "result",
+      "partial": true
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "result",
+      "partial": true
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "result",
+      "partial": true
+    },
+    {
+      "event": "call",
+      "final": false,
+      "pad": 1
+    },
+    {
+      "event": "result",
+      "partial": false
+    }
   ]
 }

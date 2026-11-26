@@ -11,12 +11,12 @@
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
-| T0-B1 | passed | 真实 bash：成功/空/非零/流式 partial/final 均采集；final 权威，partial 计数与正文已记录（docs/evidence/bash-cases.json）。 |
-| T0-B2 | passed | 2100 行触发行截断（outputLines 2000）；60KB 输出触发字节截断（outputBytes 51200）；60KB 单行 truncatedBy=bytes 且 lastLinePartial=true。 |
-| T0-B3 | passed | 真实 Gate：允许后 chmod 执行（模式 000）；审批超时返回 Blocked 且模式保持 644、未执行。显式 Esc 拒绝与 Compressor 改写专项未单独跑。 |
-| Bash slot | passed | 候选 A 被拒；候选 B 验证通过：call 渲染上部、result 渲染下部，各一次且顺序正确，共享 `context.state`。T3 原型需继续验证无重复边框。 |
+| T0-B1 | blocked | 成功/空/非零/流式子集已采集；缺空首帧内容、压缩 final、历史、审批/执行取消与超时、执行次数、模型第二轮结果。 |
+| T0-B2 | blocked | 2100 行与 60KB 单行截断已实测；多行字节 fixture 已改为 1500 行 / >51200 字节并断言 truncatedBy=bytes；仍缺截断后 timeout/cancel、Compressor 与诊断专项。 |
+| T0-B3 | blocked | allow/timeout 已证明执行/不执行；缺非幂等执行计数、Esc 拒绝、审批取消、执行取消/超时、OFF/ON 与 Compressor。 |
+| Bash slot | blocked | A 确认 final 后无 call 重绘并否决；B 仅 marker 级验证，缺真实上下边框、无 result 结构与 expanded。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
-| G0-Bash | pending | 已提交 G0BashReview 独立评审；T0-B1/B2/B3 与 slot B 证据见 review handoff。 |
+| G0-Bash | blocked | G0BashReview 首轮 blocked；需补 Gate 非幂等计数、Compressor、OFF/ON、真实 B 边框与压缩 final 证据。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -98,7 +98,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 |---|---|
 | 状态 | T1-01…T1-06 与 G1-Migration 全部 passed |
 | baseline SHA | `2352122097` |
-| implementation SHA | `a36fca048c` |
+| implementation SHA | `baf17470e8` |
 | 命令/环境 | `npm test`、`npm run typecheck`、`npm run lint`；`uv run --with pyte python tests/pty/{migration-parity,export-parity,tarball-matrix,behavior-matrix}.py`；Pi 1.6.0 隔离 HOME/Agent dir |
 | 实际结果 | 28 单测、typecheck、lint 通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；Edit/Hashline 卡片/字节/结果一致；真实 `/export` 逐字段一致且保留 Diff；light、Ctrl+O 展开、错误回退、noop、多文件、完整栈 A/B、迁移 dry/cancel、force 单测通过 |
 | 限制 | migrate force 确认框未打通 PTY（写入/备份由单测覆盖）；`latest=0.1.0` 无法移除（token 403），接受为非阻断；生产切换需用户手动执行 |
