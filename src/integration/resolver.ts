@@ -14,6 +14,7 @@ export type ToolRendererResolver = <T extends RendererLike | undefined>(name: st
 const allowed: Partial<Record<ToolName, readonly (keyof RendererLike)[]>> = {
   edit: ['renderResult'],
   hashline: ['renderShell', 'renderResult'],
+  bash: ['renderResult'],
 };
 
 export function createResolver(getConfig: () => ToolUiConfig, factories: Partial<Record<ToolName, RendererFactory>>): ToolRendererResolver {

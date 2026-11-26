@@ -48,6 +48,14 @@ describe('renderer resolver', () => {
     expect(result.renderCall).toBe(original.renderCall);
   });
 
+  test('Bash 只替换 renderResult，保留 shell 与 call', () => {
+    const resolve = createResolver(() => config({ bash: { ...DEFAULT_CONFIG.tools.bash, enabled: true } }), { bash: factory });
+    const result = resolve('bash', () => original)!;
+    expect(result.renderResult).not.toBe(original.renderResult);
+    expect(result.renderCall).toBe(original.renderCall);
+    expect(result.renderShell).toBe('default');
+  });
+
   test('每次 next 恰好调用一次', () => {
     let calls = 0;
     const resolve = createResolver(() => config({ edit: { enabled: true } }), { edit: factory });

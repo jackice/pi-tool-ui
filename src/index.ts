@@ -7,6 +7,7 @@ import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { cloneDefaultConfig, mapLegacyConfig, type ToolUiConfig } from './config.js';
 import { createResolver } from './integration/resolver.js';
 import { migrateSettingsFile, migrationReport } from './migration.js';
+import { bashFactory } from './renderers/bash.js';
 import { editFactory, hashlineFactory } from './renderers/diff.js';
 
 interface Settings {
@@ -87,5 +88,6 @@ export default async function (pi: ExtensionAPI) {
   pi.registerToolRenderer(createResolver(() => config, {
     edit: editFactory,
     hashline: hashlineFactory,
+    bash: bashFactory,
   }) as never);
 }

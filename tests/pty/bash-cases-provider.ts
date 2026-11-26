@@ -6,6 +6,7 @@ import { appendFileSync } from 'node:fs';
 const cases: Record<string, string> = {
   success: "printf 'ok\\n'",
   empty: 'true',
+  error: "sh -c 'exit 3'",
   nonzero: 'false',
   lines: 'seq 1 2100',
   bytes: "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done",
@@ -24,7 +25,7 @@ const cases: Record<string, string> = {
 export default function (pi: ExtensionAPI) {
   const name = process.env.PI_BASH_CASE;
   const command = name === undefined ? undefined : cases[name];
-  if (!command) throw new Error('未知的 PI_BASH_CASE');
+  if (!command) throw new Error(`未知的 PI_BASH_CASE=${String(name)} LOG=${String(process.env.PI_TOOL_UI_PROBE_LOG)} RENDER=${String(process.env.PI_TOOL_UI_PROBE_RENDER)}`);
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
   const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
