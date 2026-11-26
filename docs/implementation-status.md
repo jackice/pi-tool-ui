@@ -16,7 +16,7 @@
 | T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc/approval 超时/执行超时/AbortSignal 均 0；Gate+Compressor 栈 A/B 真实触发压缩，模型结果逐字一致，originalChars=1000→153。 |
 | Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
 | T0-W1 | running | 成功/空/Unicode/覆盖/错误 final、args、文件 bytes 已采集；流式 args 快照（追加/替换/缩短/argsComplete）尚未采集。 |
-| T0-W2 | passed | 上述场景 OFF/ON 执行次数各 1，写入 bytes 与期望一致；渲染 ON 使用探针，产品 WriteView 未实现。 |
+| T0-W2 | passed | 上述场景执行次数各 1，写入 bytes 与期望一致；产品 WriteView 已接线并验证 head/错误/路径一次。 |
 | T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
 | G0-Write | running | T0-W1 流式 args、slot 方案与独立 Reviewer 待完成。 |
@@ -131,6 +131,17 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 `tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。
 
 Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/export`（会调用扩展 renderer），解析 HTML 内嵌的 base64 sessionData，比较 `renderedTools`。旧扩展与新包的预渲染 call/Diff HTML 一致，正文含 `beta2`。CLI `--export` 不加载扩展 renderer，不能用于此验收。
+
+## T4 Write 进展
+
+| ID | 状态 | 证据 |
+|---|---|---|
+| T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
+| T4-02 | passed | `WriteView`：head 6 / streaming tail 12、行号、错误隐藏正文；产品 PTY 通过。 |
+| T4-03 | pending | 有界高亮未实现（lineNumbers 纯文本）。 |
+| T4-04 | passed（slot C） | 保留原生 call/path，仅替换 result；全屏路径一次、head 预览、错误隐藏。 |
+| T4-05 | running | 产品 OFF/ON 文件 bytes/执行次数矩阵待补。 |
+| G4-Write | pending | 待 T4-05 与独立 Reviewer。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 

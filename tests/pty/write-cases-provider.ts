@@ -8,6 +8,7 @@ const cases: Record<string, { path: string; content: string }> = {
   empty: { path: 'empty.txt', content: '' },
   unicode: { path: 'unicode.txt', content: '中文🙂\nno trailing newline' },
   overwrite: { path: 'out.txt', content: 'replaced\n' },
+  many: { path: 'many.txt', content: Array.from({ length: 20 }, (_, index) => `line ${index + 1}`).join('\n') },
   error: { path: 'dir', content: 'x' },
 };
 
@@ -26,7 +27,7 @@ export default function (pi: ExtensionAPI) {
   pi.on('tool_call', (event) => {
     if (event.toolName === 'write') appendFileSync(logPath, '{"event":"tool-execution"}\n');
   });
-  pi.registerToolRenderer((tool, next) => {
+  if (process.env.PI_TOOL_UI_PROBE_RENDER !== '0') pi.registerToolRenderer((tool, next) => {
     const original = next();
     if (tool !== 'write' || !original) return original;
     return {
