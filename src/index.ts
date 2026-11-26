@@ -8,6 +8,7 @@ import { cloneDefaultConfig, mapLegacyConfig, type ToolUiConfig } from './config
 import { createResolver } from './integration/resolver.js';
 import { migrateSettingsFile, migrationReport } from './migration.js';
 import { createBashFactory } from './renderers/bash.js';
+import { createReadFactory } from './renderers/read.js';
 import { createWriteFactory } from './renderers/write.js';
 import { editFactory, hashlineFactory } from './renderers/diff.js';
 
@@ -91,5 +92,6 @@ export default async function (pi: ExtensionAPI) {
     hashline: hashlineFactory,
     bash: createBashFactory(() => config),
     write: createWriteFactory(() => config),
+    read: createReadFactory(() => config),
   }) as never);
 }

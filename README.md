@@ -6,7 +6,7 @@ Pi 工具结果卡片。当前为 **Migration profile**：只接管 `edit` 与 `
 
 - 默认全部关闭；全新安装不改变原生行为。
 - 存在 `editDiff.nativeEdit` 或 `PI_HASHLINE_DIFF` 时自动迁移旧配置；两者都没有的旧安装用 `/tool-ui-migrate` 显式预览/应用。见 [docs/migration.md](docs/migration.md)。
-- Bash 已交付；Write 预览已接入但门禁仍 blocked（streaming tail/highlight 未完成）；Read 尚未交付。
+- Bash 已交付；Write 预览已接入但门禁仍 blocked（streaming tail/highlight 未完成）；Read 预览已接入但门禁未完成。
 
 ## 安装
 
@@ -14,7 +14,7 @@ Pi 工具结果卡片。当前为 **Migration profile**：只接管 `edit` 与 `
 pi install npm:@jackice/pi-tool-ui
 ```
 
-依赖 `@jackice/pi-ui@0.6.5`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
+依赖 `@jackice/pi-ui@0.6.7`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
 
 ## 配置
 

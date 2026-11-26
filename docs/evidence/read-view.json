@@ -1,0 +1,7 @@
+{
+  "pi_version": "1.6.0",
+  "text_card": true,
+  "truncation_notice": true,
+  "markdown_source": true,
+  "image_native": true
+}

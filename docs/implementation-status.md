@@ -106,7 +106,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi；超大单行/20k 行上限、显式空行保留。 |
 | T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；146 单测通过。 |
 | T2-07 | passed | pi-ui 0.6.x 发布到 next（latest 0.4.2）；README/API、contract 链接、146 单测与 tarball 导出回归完成。 |
-| T2-05 | pending（Bash 不消费） | `command.highlight` 在 slot C 下 unsupported；产品命令由原生 call 独占，不阻断 Bash profile。 |
+| T2-05 | pending（Bash/Write/Read 不消费） | `command.highlight` 在 slot C 下 unsupported；产品命令由原生 call 独占，不阻断 Bash profile。 |
 | G2-Shared（Bash） | passed | G2G3BashReview 签署：T2-02/03/04/06/07 通过；T2-05 仅 command.highlight unsupported。 |
 | T3-01 | passed | `adaptBash`：status/command/output/duration/truncation（含 lastLinePartial/truncatedBy/maxBytes）/fullOutputPath；CRLF 由 View 归一。 |
 | T3-02 | passed | 命令 owner 原生 call；截断/路径安全；配置字段；40 列 cwd/长路径保留标题与 basename；PTY 全屏命令一次。 |
@@ -133,6 +133,19 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 `tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。
 
 Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/export`（会调用扩展 renderer），解析 HTML 内嵌的 base64 sessionData，比较 `renderedTools`。旧扩展与新包的预渲染 call/Diff HTML 一致，正文含 `beta2`。CLI `--export` 不加载扩展 renderer，不能用于此验收。
+
+## T5 Read 进展
+
+| ID | 状态 | 证据 |
+|---|---|---|
+| T5-01 | passed | `adaptRead`：offset/limit 编号、非法 offset 降级、Hashline 原文、image/mixed、truncation；7 单测。 |
+| T5-02 | passed | `ReadView`：head 12/24、真实行号、truncation 提示、原文回退；产品 PTY 通过。 |
+| T5-03 | pending | 未来 Hashline 版本隐藏锚点未实现（0.1.2 保留原文）。 |
+| T5-04 | running | 图片走原生宿主已验证；unsupported warning、损坏图片、mixed 待补。 |
+| T5-05 | pending | 产品 OFF/ON、Hashline/原生 A/B 未完成。 |
+| G0-Read | running | T0-R1 通过、T0-R2 部分；slot/ReadView 已实现。 |
+| G2-Shared（Read） | pending | 待 T0-R2 与独立 Reviewer。 |
+| G5-Read | pending | 依赖 T5 全部与评审。 |
 
 ## T4 Write 进展
 

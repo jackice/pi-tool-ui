@@ -32,7 +32,7 @@ export default function (pi: ExtensionAPI) {
     fauxAssistantMessage('READ_T0_DONE'),
   ]);
   pi.registerProvider(faux.provider);
-  pi.registerToolRenderer((tool, next) => {
+  if (process.env.PI_TOOL_UI_PROBE_RENDER !== '0') pi.registerToolRenderer((tool, next) => {
     const original = next();
     if (tool !== 'read' || !original) return original;
     return {

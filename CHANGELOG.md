@@ -1,7 +1,7 @@
 # Unreleased
 
 - 新增 Bash slot C：保留原生 shell/call，使用 `BashView` 渲染命令、输出、截断与全量路径。
-- 依赖 `@jackice/pi-ui@0.6.5`。
+- 依赖 `@jackice/pi-ui@0.6.7`。
 
 # 0.1.0
 
