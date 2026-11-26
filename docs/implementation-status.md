@@ -92,11 +92,11 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 |---|---|
 | 状态 | 待 G1 复审（T1-01 passed；02/03/05 running；06 pending） |
 | baseline SHA | `2352122097` |
-| implementation SHA | `71dae42e22` |
+| implementation SHA | `9bd7c6d4b9` |
 | 命令/环境 | `npm test`、`npm run typecheck`、`npm run lint`；`uv run --with pyte python tests/pty/{migration-parity,export-parity,tarball-matrix,behavior-matrix}.py`；Pi 1.6.0 隔离 HOME/Agent dir |
-| 实际结果 | 22 单测通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；卡片/字节/结果一致；真实 `/export` 保留 Diff；light 与错误回退通过 |
-| 限制 | 未覆盖 noop、多文件、expanded 快捷键、完整用户栈、自定义下游；`/tool-ui-migrate` 未做端到端 PTY |
-| 独立 Reviewer | G1MigrationReview 首轮 blocked（F1–F5）；整改后退回复审 |
+| 实际结果 | 23 单测、typecheck、lint 通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；Edit/Hashline 卡片/字节/结果一致；真实 `/export` 逐字段一致且保留 Diff；light、错误回退、迁移 dry/cancel 通过 |
+| 限制 | 未覆盖 noop、多文件、expanded 快捷键、完整用户栈、自定义下游；migrate force 确认框未打通 PTY（写入由单测覆盖） |
+| 独立 Reviewer | 首轮 blocked；复审确认 F1/F3 解除、F2/F4 核心缺陷解除；F5 矩阵与 G1 仍待签署 |
 | follow-up | 复审结论写入本表；未通过前 G1 保持非 passed |
 
 ### 迁移等价实测
