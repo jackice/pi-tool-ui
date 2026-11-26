@@ -1,0 +1,18 @@
+{
+  "light_theme": {
+    "card_equal": true,
+    "results_equal": true,
+    "file_bytes_equal": true
+  },
+  "edit_error": {
+    "custom_card": false,
+    "results_equal": true,
+    "file_bytes_equal": true
+  },
+  "not_covered": [
+    "hashline 多文件",
+    "noop",
+    "expanded 快捷键",
+    "完整用户栈 + 自定义下游"
+  ]
+}
