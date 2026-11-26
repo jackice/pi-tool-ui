@@ -46,6 +46,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
     print('HAS_WRITE', 'Write' in observed['success']['text'])
     assert 'Write' in observed['success']['card'] and '✓' in observed['success']['card'], observed['success']['text'][-800:]
     assert observed['success']['text'].count('out.txt') == 1
+    assert observed['success']['text'].count('alpha') == 1 and observed['success']['text'].count('beta') == 1
     assert 'line 1' in observed['many']['card'] and 'line 6' in observed['many']['card']
     assert 'line 7' not in observed['many']['card']
     assert '✗' in observed['error']['card']

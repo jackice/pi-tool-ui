@@ -34,11 +34,9 @@ export function adaptWrite(input: WriteAdapterInput): WriteViewModel {
   const error = input.context.isError === true;
   const status = error
     ? 'error'
-    : input.options.argsComplete === false
-      ? 'streaming'
-      : input.options.isPartial
-        ? 'running'
-        : 'success';
+    : input.options.isPartial
+      ? input.options.argsComplete === false ? 'streaming' : 'running'
+      : 'success';
   const notices = error
     ? input.result.content
       .filter((block) => block.type === 'text' && typeof block.text === 'string')

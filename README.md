@@ -14,7 +14,7 @@ Pi 工具结果卡片。当前为 **Migration profile**：只接管 `edit` 与 `
 pi install npm:@jackice/pi-tool-ui
 ```
 
-依赖 `@jackice/pi-ui@0.6.4`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
+依赖 `@jackice/pi-ui@0.6.5`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
 
 ## 配置
 

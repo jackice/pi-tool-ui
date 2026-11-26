@@ -32,6 +32,14 @@ describe('Write 适配', () => {
     expect(model.content).toBe('alpha\nbeta\n');
   });
 
+  test('历史 final（argsComplete=false 且非 partial）按 success', () => {
+    const model = adaptWrite({
+      ...base,
+      options: { isPartial: false, expanded: false, argsComplete: false },
+    });
+    expect(model.status).toBe('success');
+  });
+
   test('CRLF 归一且单尾换行不多计一空行', () => {
     const model = adaptWrite({
       ...base,

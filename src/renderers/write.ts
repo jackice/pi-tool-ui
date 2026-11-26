@@ -1,4 +1,5 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
+import { Text } from '@earendil-works/pi-tui';
 import { WriteView, fromPiTheme } from '@jackice/pi-ui';
 
 import { adaptWrite } from '../adapters/write.js';
@@ -14,6 +15,7 @@ interface ResultContext {
 }
 
 const cacheKey = Symbol('pi-tool-ui-write');
+const callKey = Symbol('pi-tool-ui-write-call');
 
 interface Cached {
   content: unknown;
@@ -30,6 +32,18 @@ interface Cached {
 
 export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
   return (original) => ({
+    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean }) {
+      const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
+      const path = typeof record.path === 'string' ? record.path : '';
+      const status = context.argsComplete ? 'write' : 'streaming';
+      const cached = context.state[callKey] as { key: string; text: Text } | undefined;
+      const key = `${status}:${path}`;
+      if (cached?.key === key) return cached.text;
+      const prefix = theme.fg(context.argsComplete ? 'muted' : 'accent', `${status} `);
+      const text = new Text(prefix + path, 0, 0);
+      context.state[callKey] = { key, text };
+      return text;
+    },
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       try {
         const write = getConfig().tools.write;
