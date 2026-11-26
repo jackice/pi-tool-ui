@@ -12,7 +12,7 @@
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
 | T0-B1 | running | 成功/空/非零/流式/空首帧/压缩 final/Gate allow/deny/timeout/执行超时/执行次数/模型第二轮结果均已采集；仅历史缺 duration 未单独造样本。 |
-| T0-B2 | running | 行截断、1500 行字节截断、60KB 单行与 Compressor ON/OFF 已实测；仍缺截断后 timeout/cancel 与纯文本诊断专项。 |
+| T0-B2 | running | 行截断、1500 行字节截断、60KB 单行、Compressor ON/OFF 已实测；截断+执行超时组合返回 error 诊断但无 truncation details，已记录。 |
 | T0-B3 | passed | 非幂等计数：allow 恰 1；Esc 拒绝、审批超时、执行超时均 0 且 error；renderer OFF/ON 执行次数与模型 final 一致。 |
 | Bash slot | running | A 否决；B 已验证单上/下边框、顺序、共享 state；仍缺无 result 结构与 expanded。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |

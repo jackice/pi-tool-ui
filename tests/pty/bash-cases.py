@@ -21,11 +21,12 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
     env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color',
                PI_CODING_AGENT_DIR=str(agent), PI_TELEMETRY='0')
     observed = {}
-    for case in ('success', 'empty', 'nonzero', 'lines', 'bytes', 'longline', 'stream'):
+    for case in ('success', 'empty', 'nonzero', 'lines', 'bytes', 'longline', 'stream', 'trunc_timeout'):
         log = root / f'{case}.jsonl'
         capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                      '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash', 'Run the local bash'],
-                    dict(env, PI_BASH_CASE=case, PI_TOOL_UI_PROBE_LOG=str(log)), root,
+                    dict(env, PI_BASH_CASE=case, PI_TOOL_UI_PROBE_LOG=str(log),
+                         PI_BASH_TIMEOUT='1' if case == 'trunc_timeout' else '0'), root,
                     b'BASH_DONE', b'BASH_PROBE')
         events = [json.loads(line) for line in log.read_text().splitlines()]
         final = next(item for item in events if item.get('event') == 'result' and not item['partial'])
@@ -55,6 +56,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
     longline = observed['longline']['final']
     trunc = longline['details']['truncation']
     assert trunc['truncatedBy'] == 'bytes' and trunc['lastLinePartial'] is True, {k: v for k, v in trunc.items() if k != 'content'}
+
+    trunc_timeout = observed['trunc_timeout']['final']
+    timeout_text = '\n'.join(block.get('text', '') for block in trunc_timeout['content'] if block.get('type') == 'text')
+    assert trunc_timeout['error'] is True and timeout_text, {'error': trunc_timeout['error'], 'text': timeout_text[:200]}
 
     stream = observed['stream']
     assert stream['partial_count'] >= 1, stream

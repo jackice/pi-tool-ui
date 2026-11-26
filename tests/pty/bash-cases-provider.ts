@@ -12,6 +12,7 @@ const cases: Record<string, string> = {
   longline: "printf 'a%.0s' {1..60000}",
   risky: "sh -c 'echo run >> count.txt'",
   risky_slow: "sh -c 'sleep 5; echo run >> count.txt'",
+  trunc_timeout: 'seq 1 2100; sleep 5',
   write: "printf 'ok\\n' > out.txt",
   compress: 'for i in $(seq 1 500); do echo same-line; done',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",
