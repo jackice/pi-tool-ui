@@ -10,7 +10,7 @@
 | T0-04 | passed | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。`smoke.py` 现在断言 call 首次不复用、后续复用、两个 slot 均 `outputPad=1`、result 共享 state 且展开前后各渲染一次。 |
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
-| T0-RH | running | 范围改写、错误跳过、截断与 details 共存已实测；待历史与图片路径。 |
+| T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
 | T0-B1…B3、T0-W1…W2、T0-R1…R2 | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -54,6 +54,8 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 - 2101 行文件：正文含 `1:`…`2000:line 2000`、原生 `[Showing lines 1-2000 of 2101. Use offset=2001 to continue.]`、空行与 Hashline 两行提示；`details.truncation` 仍在，未被子类改写清除。
 
 原生 `[Showing lines …]` 与普通源文件文本同形，通用 renderer 无法仅凭外观安全剥离；后续 Read adapter 必须按 §6.3/§6.4 的证据规则降级，不据文本形状推断来源。
+
+图片读取保留原生 `text` + `image` 两块，文本为 `Read image file [image/png]`，Hashline 未写入锚点。历史回放复用同一 `--session` 时，renderer 收到与首次完全相同的改写正文，没有重新执行 Read。0.1.2 未提供 `hideHashAnchors` 行为，隐藏能力标 unsupported。
 
 ## G0-Base 门禁记录
 
