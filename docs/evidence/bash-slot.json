@@ -11,5 +11,10 @@
   "next": [
     "候选 B：call 渲染上部分，result 渲染下部分并共享状态",
     "候选 C：保留原生 shell，只定制内部 result"
-  ]
+  ],
+  "candidate_b": {
+    "chosen": true,
+    "single_top_and_bottom": true,
+    "shared_state": true
+  }
 }
