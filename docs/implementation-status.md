@@ -102,13 +102,13 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；126 单测通过。 |
 | T2-07 | passed | pi-ui 0.6.0 发布到 next（latest 仍 0.4.2）；tarball 安装后旧/新符号均可导入。 |
 | T2-05 | pending | 高亮注入仍待 Bash/Write/Read 适配层统一。 |
-| G2-Shared（Bash） | pending | 共享组件与 BashView 已接线；需独立 Reviewer。 |
+| G2-Shared（Bash） | pending | 已提交 G2G3BashReview；共享组件/BashView 与 PTY 证据见 handoff。 |
 | T3-01 | passed | `adaptBash`：status/command/output/duration/truncation/fullOutputPath，单测 5 例。 |
 | T3-02 | passed | `BashView` 命令 6 行/输出 12 行、截断与路径提示；gallery 与单测。 |
 | T3-03 | passed | slot C renderer 只替换 result；真实 PTY 成功/截断/错误通过。 |
-| T3-04 | pending | resize、缓存、历史、异常与下游回退矩阵。 |
-| T3-05 | pending | 产品 renderer 下 Gate/Compressor OFF/ON 等价与独立评审。 |
-| G3-Bash | pending | 依赖 G0/G2 与 T3-04/05。 |
+| T3-04 | passed | 宽度矩阵、展开 PTY、缓存复用、异常回退、历史新旧会话与产品 A/B 已通过；真实 PTY resize 未做。 |
+| T3-05 | passed | 产品 renderer 下 Gate+Compressor OFF/ON：各执行 1 次、模型结果一致、卡片 ON/OFF 正确。 |
+| G3-Bash | pending | 已提交 G2G3BashReview；T3-04/05 证据见 handoff。 |
 
 ### T1 门禁记录
 

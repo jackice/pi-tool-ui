@@ -9,6 +9,7 @@ const cases: Record<string, string> = {
   error: "sh -c 'exit 3'",
   nonzero: 'false',
   lines: 'seq 1 2100',
+  rows20: 'seq 1 20',
   bytes: "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done",
   longline: "printf 'a%.0s' {1..60000}",
   risky: "sh -c 'echo run >> count.txt'",

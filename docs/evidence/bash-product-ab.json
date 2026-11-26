@@ -1,0 +1,12 @@
+{
+  "pi_version": "1.6.0",
+  "runs_on": 1,
+  "runs_off": 1,
+  "model_text_equal": true,
+  "compressor": {
+    "originalChars": 1000,
+    "compressedChars": 153
+  },
+  "card_on": true,
+  "card_off": false
+}

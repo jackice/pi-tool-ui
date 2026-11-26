@@ -26,14 +26,15 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bashview-') as directory:
         'toolUi': {'enabled': True, 'tools': {'bash': {'enabled': True}}},
     }))
     observed = {}
-    for case in ('success', 'lines', 'error'):
+    for case in ('success', 'lines', 'error', 'rows20'):
         log = root / f'{case}.jsonl'
         env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color', PI_TELEMETRY='0',
                    PI_CODING_AGENT_DIR=str(agent), PI_BASH_CASE=case,
                    PI_TOOL_UI_PROBE_LOG=str(log), PI_TOOL_UI_PROBE_RENDER='0')
         screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                               '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash',
-                              'Run the local bash'], env, root, b'BASH_DONE', b'BASH_DONE')
+                              'Run the local bash'], env, root, b'BASH_DONE', b'BASH_DONE',
+                              key=b'\\x0f' if case == 'rows20' else None)
         try:
             card = '\n'.join(extract_card(screen, root))
         except ValueError:
@@ -46,6 +47,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bashview-') as directory:
     assert 'ok' in observed['success']['card']
     assert '2100' in observed['lines']['card'] and 'truncated' in observed['lines']['card']
     assert '✗' in observed['error']['card']
+    assert '1' in observed['rows20']['card'] and '20' in observed['rows20']['card'], observed['rows20']['card'][-300:]
     evidence = repo / 'docs/evidence/bash-view.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
