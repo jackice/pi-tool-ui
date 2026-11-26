@@ -7,7 +7,7 @@ import tempfile
 from terminal import capture_tui
 
 
-pi = shutil.which('pi')
+pi = os.environ.get('PI_BIN') or shutil.which('pi')
 assert pi, '需要 Pi 1.6.0'
 workspace = Path(__file__).resolve().parents[3]
 repo = workspace / 'pi-tool-ui'

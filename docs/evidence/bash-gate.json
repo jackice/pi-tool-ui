@@ -26,5 +26,6 @@
     "text": [
       "Command timed out after 1 seconds"
     ]
-  }
+  },
+  "pi_version": "1.6.0"
 }

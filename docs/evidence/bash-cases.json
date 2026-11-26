@@ -3,46 +3,50 @@
     "partial_count": 3,
     "first_partial_text": "",
     "final_text": "ok\n",
+    "final_tail": "ok\n",
     "error": false,
     "args": {
       "command": "printf 'ok\\n'"
     },
-    "durationMs": 20,
+    "durationMs": 23,
     "details": {}
   },
   "empty": {
     "partial_count": 2,
     "first_partial_text": "",
     "final_text": "(no output)",
+    "final_tail": "(no output)",
     "error": false,
     "args": {
       "command": "true"
     },
-    "durationMs": 19,
+    "durationMs": 22,
     "details": {}
   },
   "nonzero": {
     "partial_count": 2,
     "first_partial_text": "",
     "final_text": "(no output)\n\nCommand exited with code 1",
+    "final_tail": "(no output)\n\nCommand exited with code 1",
     "error": true,
     "args": {
       "command": "false"
     },
-    "durationMs": 19,
+    "durationMs": 23,
     "details": {}
   },
   "lines": {
     "partial_count": 3,
     "first_partial_text": "",
     "final_text": "101\n102\n103\n104\n105\n106\n107\n108\n109\n110\n111\n112\n113\n114\n115\n116\n117\n118\n119\n120\n121\n122\n123\n124\n125\n126\n127\n128\n129\n130\n131\n132\n133\n134\n135\n136\n137\n138\n139\n140\n141\n142\n143\n144\n145\n146\n147\n148\n149\n150\n",
+    "final_tail": "077\n2078\n2079\n2080\n2081\n2082\n2083\n2084\n2085\n2086\n2087\n2088\n2089\n2090\n2091\n2092\n2093\n2094\n2095\n2096\n2097\n2098\n2099\n2100\n\n[Showing lines 101-2100 of 2100. Full output: /tmp/pi-bash-89251d58f2073933.log]",
     "error": false,
     "args": {
       "command": "seq 1 2100"
     },
-    "durationMs": 22,
+    "durationMs": 26,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-c13069b6a29eb81b.log",
+      "fullOutputPath": "/tmp/pi-bash-89251d58f2073933.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "lines",
@@ -61,13 +65,14 @@
     "partial_count": 3,
     "first_partial_text": "",
     "final_text": "line0282-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0283-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0284-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0285-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0286-xxxxxxxxxxxxxxxxxxxxxxx",
+    "final_tail": "xxxxxxxxxxxxxxxxxxx\nline1499-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline1500-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n[Showing lines 282-1500 of 1500 (50.0KB limit). Full output: /tmp/pi-bash-3787dc5500885220.log]",
     "error": false,
     "args": {
       "command": "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done"
     },
-    "durationMs": 22,
+    "durationMs": 25,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-188b72ac7c8eec67.log",
+      "fullOutputPath": "/tmp/pi-bash-3787dc5500885220.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -83,16 +88,17 @@
     }
   },
   "longline": {
-    "partial_count": 4,
+    "partial_count": 3,
     "first_partial_text": "",
     "final_text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "final_tail": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n[Showing last 50.0KB of line 1 (line is 58.6KB). Full output: /tmp/pi-bash-58d72e17e80efc64.log]",
     "error": false,
     "args": {
       "command": "printf 'a%.0s' {1..60000}"
     },
     "durationMs": 24,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-fb459c29371533dd.log",
+      "fullOutputPath": "/tmp/pi-bash-58d72e17e80efc64.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -111,23 +117,30 @@
     "partial_count": 4,
     "first_partial_text": "",
     "final_text": "first\nsecond\n",
+    "final_tail": "first\nsecond\n",
     "error": false,
     "args": {
       "command": "printf 'first\\n'; sleep 0.4; printf 'second\\n'"
     },
-    "durationMs": 413,
+    "durationMs": 414,
     "details": {}
   },
   "trunc_timeout": {
     "partial_count": 3,
     "first_partial_text": "",
     "final_text": "101\n102\n103\n104\n105\n106\n107\n108\n109\n110\n111\n112\n113\n114\n115\n116\n117\n118\n119\n120\n121\n122\n123\n124\n125\n126\n127\n128\n129\n130\n131\n132\n133\n134\n135\n136\n137\n138\n139\n140\n141\n142\n143\n144\n145\n146\n147\n148\n149\n150\n",
+    "final_tail": "084\n2085\n2086\n2087\n2088\n2089\n2090\n2091\n2092\n2093\n2094\n2095\n2096\n2097\n2098\n2099\n2100\n\n[Showing lines 101-2100 of 2100. Full output: /tmp/pi-bash-8b52b379a2f74456.log]\n\nCommand timed out after 1 seconds",
     "error": true,
     "args": {
       "command": "seq 1 2100; sleep 5",
       "timeout": 1
     },
-    "durationMs": 1008,
+    "durationMs": 1007,
     "details": {}
+  },
+  "pi": {
+    "version": "1.6.0",
+    "cli": "/private/tmp/pi160/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js",
+    "sha256": "e79626f2dd6f94aa45d30f3fa63cd84319a6eefcd150b353cfaf274366926774"
   }
 }

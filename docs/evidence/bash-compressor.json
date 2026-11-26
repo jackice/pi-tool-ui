@@ -4,5 +4,6 @@
     "shellCompressor"
   ],
   "off_lines": 500,
-  "model_sees_compressed": true
+  "model_sees_compressed": true,
+  "pi_version": "1.6.0"
 }

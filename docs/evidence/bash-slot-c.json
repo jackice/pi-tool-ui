@@ -1,0 +1,7 @@
+{
+  "pi_version": "1.6.0",
+  "candidate": "C",
+  "native_shell_preserved": true,
+  "command_once": true,
+  "custom_output_once": true
+}

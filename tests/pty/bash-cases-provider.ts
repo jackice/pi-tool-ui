@@ -13,6 +13,7 @@ const cases: Record<string, string> = {
   risky: "sh -c 'echo run >> count.txt'",
   risky_slow: "sh -c 'sleep 5; echo run >> count.txt'",
   trunc_timeout: 'seq 1 2100; sleep 5',
+  count: 'echo run >> count.txt',
   write: "printf 'ok\\n' > out.txt",
   compress: 'for i in $(seq 1 500); do echo same-line; done',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",
@@ -29,9 +30,11 @@ export default function (pi: ExtensionAPI) {
   faux.setResponses([
     fauxAssistantMessage(fauxToolCall('bash', { command, ...(timeout > 0 ? { timeout } : {}) }, { id: `bash-${name}` }), { stopReason: 'toolUse' }),
     (context: unknown) => {
-      const text = JSON.stringify(context);
-      const marker = text.lastIndexOf('toolResult');
-      appendFileSync(logPath, JSON.stringify({ event: 'model', tail: text.slice(Math.max(0, marker - 100), marker + 1500) }) + '\n');
+      const messages = (context as { messages?: { role?: string; content?: unknown }[] }).messages ?? [];
+      const last = messages.filter((message) => message.role === 'toolResult').at(-1);
+      const blocks = Array.isArray(last?.content) ? last.content as { type?: string; text?: string }[] : [];
+      const text = blocks.filter((block) => block.type === 'text').map((block) => block.text ?? '').join('\n');
+      appendFileSync(logPath, JSON.stringify({ event: 'model', text }) + '\n');
       return fauxAssistantMessage('BASH_DONE');
     },
   ]);

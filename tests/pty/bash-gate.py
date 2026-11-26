@@ -2,6 +2,7 @@ import errno
 import fcntl
 import json
 import os
+import subprocess
 from pathlib import Path
 import pty
 import select
@@ -13,7 +14,9 @@ import termios
 import time
 
 
-pi = shutil.which('pi')
+pi = os.environ.get('PI_BIN') or shutil.which('pi')
+version = subprocess.run([pi, '--version'], capture_output=True, text=True, check=True).stdout.strip()
+assert version == '1.6.0', version
 assert pi, '需要 Pi 1.6.0'
 workspace = Path(__file__).resolve().parents[3]
 repo = workspace / 'pi-tool-ui'
@@ -70,7 +73,7 @@ def interact(work, agent, case, action, timeout_ms=0):
         os.close(master)
     lines = count.read_text().splitlines() if count.exists() else []
     events = [json.loads(line) for line in (work / 'events.jsonl').read_text().splitlines()]
-    final = next(item for item in events if not item['partial'])
+    final = next(item for item in events if item.get('event') == 'result' and not item['partial'])
     return {
         'runs': len(lines),
         'error': final['error'],
@@ -101,5 +104,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-gate-') as directory:
     assert 'Blocked by approval gate' in observed['deny']['text'][0]
     assert 'Blocked by approval gate' in observed['timeout']['text'][0]
     evidence = repo / 'docs/evidence/bash-gate.json'
+    observed['pi_version'] = version
     evidence.write_text(json.dumps(observed, ensure_ascii=False, indent=2) + '\n')
     print('Approval Gate：allow 恰执行 1 次；Esc 拒绝、超时、执行取消均为 0 且 error')

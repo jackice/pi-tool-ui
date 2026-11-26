@@ -1,0 +1,8 @@
+{
+  "pi_version": "1.6.0",
+  "durationMs": 5,
+  "missing_duration_sample": "Pi 1.6.0 无法产生；旧历史未存储时 renderer 代码在 undefined 时省略",
+  "final_text": [
+    "ok\n"
+  ]
+}

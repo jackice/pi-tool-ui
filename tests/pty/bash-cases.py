@@ -1,5 +1,7 @@
+import hashlib
 import json
 import os
+import subprocess
 from pathlib import Path
 import shutil
 import tempfile
@@ -7,11 +9,16 @@ import tempfile
 from terminal import capture_tui
 
 
-pi = shutil.which('pi')
+pi = os.environ.get('PI_BIN') or shutil.which('pi')
 assert pi, '需要 Pi 1.6.0'
 workspace = Path(__file__).resolve().parents[3]
 repo = workspace / 'pi-tool-ui'
 provider = repo / 'tests/pty/bash-cases-provider.ts'
+
+version = subprocess.run([pi, '--version'], capture_output=True, text=True, check=True).stdout.strip()
+assert version == '1.6.0', version
+cli = Path(subprocess.run(['realpath', pi], capture_output=True, text=True, check=True).stdout.strip())
+cli_sha = hashlib.sha256(cli.read_bytes()).hexdigest()
 
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
     root = Path(directory)
@@ -59,7 +66,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
 
     trunc_timeout = observed['trunc_timeout']['final']
     timeout_text = '\n'.join(block.get('text', '') for block in trunc_timeout['content'] if block.get('type') == 'text')
-    assert trunc_timeout['error'] is True and timeout_text, {'error': trunc_timeout['error'], 'text': timeout_text[:200]}
+    assert trunc_timeout['error'] is True and 'timed out' in timeout_text.lower(), {'error': trunc_timeout['error'], 'text': timeout_text[:300]}
 
     stream = observed['stream']
     assert stream['partial_count'] >= 1, stream
@@ -84,11 +91,13 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
             'partial_count': value['partial_count'],
             'first_partial_text': text_of(first)[:200] if first else None,
             'final_text': text_of(final)[:200],
+            'final_tail': text_of(final)[-200:],
             'error': final['error'],
             'args': final['args'],
             'durationMs': final['durationMs'],
             'details': details_of(final),
         }
     assert all(item['first_partial_text'] in (None, '') for item in summary.values()), '首帧应为空'
+    summary['pi'] = {'version': version, 'cli': str(cli), 'sha256': cli_sha}
     evidence.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
     print('Bash T0：成功/空/非零/行截断/字节截断/超长行/流式 partial 均已采集')

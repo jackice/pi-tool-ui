@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 from pathlib import Path
 import shutil
 import tempfile
@@ -7,7 +8,9 @@ import tempfile
 from terminal import capture_tui
 
 
-pi = shutil.which('pi')
+pi = os.environ.get('PI_BIN') or shutil.which('pi')
+version = subprocess.run([pi, '--version'], capture_output=True, text=True, check=True).stdout.strip()
+assert version == '1.6.0', version
 assert pi, '需要 Pi 1.6.0'
 workspace = Path(__file__).resolve().parents[3]
 repo = workspace / 'pi-tool-ui'
@@ -35,7 +38,7 @@ def run(root, enabled):
     final = next(item for item in events if item.get('event') == 'result' and not item['partial'])
     model = next(item for item in events if item.get('event') == 'model')
     text = '\n'.join(block.get('text', '') for block in final['content'] if block.get('type') == 'text')
-    return {'text': text, 'details': final.get('details') or {}, 'model_tail': model['tail'], 'error': final['error']}
+    return {'text': text, 'details': final.get('details') or {}, 'model_tail': model['text'], 'error': final['error']}
 
 
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-compressor-') as directory:
@@ -53,5 +56,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-compressor-') as directory:
         'on_details_keys': sorted(on['details']),
         'off_lines': len(off['text'].splitlines()),
         'model_sees_compressed': True,
+        'pi_version': version,
     }, ensure_ascii=False, indent=2) + '\n')
     print('Compressor OFF/ON：ON final 与模型结果均为压缩文本并带 shellCompressor；OFF 保留 500 行')
