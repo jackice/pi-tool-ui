@@ -1,4 +1,5 @@
 import base64
+import html as html_lib
 import json
 import os
 from pathlib import Path
@@ -58,16 +59,31 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-export-') as directory:
 
     outputs = {}
     for name, agent in agents.items():
+        (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
         log = root / f'{name}.jsonl'
         html = root / f'{name}.html'
-        run([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--export', str(session), str(html)], root,
-            dict(env, PI_CODING_AGENT_DIR=str(agent)))
-        text = html.read_text()
-        outputs[name] = re.sub(r'(session[-_ ]?id|timestamp)[^<]{0,80}', r'\1', text, flags=re.IGNORECASE)
-    assert outputs['old'] == outputs['new'], '旧扩展与新包导出的 Hashline HTML 不同'
-    body = {'old_has_diff_body': 'beta2' in outputs['old'], 'new_has_diff_body': 'beta2' in outputs['new']}
-    assert body['old_has_diff_body'] == body['new_has_diff_body']
+        env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color',
+                   PI_CODING_AGENT_DIR=str(agent), PI_TELEMETRY='0', PI_TOOL_UI_PROBE_LOG=str(log))
+        export_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--session', str(root / f'{name}.session.jsonl'),
+                    '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'read,hashline',
+                    'Run the local edit'], env, root, b'BASELINE_HASHLINE_DONE', str(html))
+        outputs[name] = rendered_tools(html)
+
+    ids = {}
+    for name, tools in outputs.items():
+        counts = {tool_id: content for tool_id, content in tools.items()}
+        assert len(counts) == 1, counts
+        def visible_text(value):
+            parts = value.values() if isinstance(value, dict) else [value]
+            return html_lib.unescape(re.sub(r'<[^>]+>', '', '\n'.join(str(part) for part in parts)))
+        ids[name] = {key: visible_text(value) for key, value in counts.items()}
+    old_body = sorted(ids['old'].values())
+    new_body = sorted(ids['new'].values())
+    assert old_body == new_body, '旧扩展与新包预渲染的 Hashline HTML 不同'
+    has_diff = any('beta2' in body for body in old_body)
     evidence = repo / 'docs/evidence/export-parity.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)
-    evidence.write_text(json.dumps(body, ensure_ascii=False, indent=2) + '\n')
-    print(f"Hashline /export：旧新 HTML 一致；工具正文出现={body['old_has_diff_body']}（Pi 导出模板行为，两版相同）")
+    evidence.write_text(json.dumps({'tools': len(ids['old']), 'diff_body': has_diff, 'equal': True},
+                                   ensure_ascii=False, indent=2) + '\n')
+    print(f'Hashline TUI /export：旧新预渲染 HTML 一致；Diff 正文存在={has_diff}')
+    assert has_diff, '真实 /export 未保留 Diff 正文'

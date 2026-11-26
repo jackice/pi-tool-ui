@@ -35,6 +35,14 @@ describe('旧配置映射', () => {
     expect(result.config.enabled).toBe(false);
   });
 
+  test('显式迁移上下文在无旧键时保留 Hashline 默认', () => {
+    const result = mapLegacyConfig({ legacy: true });
+    expect(result.source).toBe('legacy');
+    expect(result.config.tools.hashline.enabled).toBe(true);
+    expect(result.config.tools.edit.enabled).toBe(false);
+    expect(result.config.enabled).toBe(true);
+  });
+
   test('nativeEdit 非严格 true 不启用 Edit', () => {
     const result = mapLegacyConfig({ editDiff: { nativeEdit: 'true' } });
     expect(result.config.tools.edit.enabled).toBe(false);

@@ -91,6 +91,12 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-matrix-') as directory:
     assert new_card == golden, new_card
     assert old_bytes == new_bytes and old_results == new_results, (old_bytes, new_bytes, old_results, new_results)
 
+    off_root = root / 'off'
+    off_root.mkdir()
+    off_screen, _, _ = scenario(off_root, off_root / 'agent', root / 'off.jsonl',
+                                {'packages': [str(package)], 'toolUi': {'enabled': False}})
+    assert b'Edit' not in off_screen
+
     # 4) 双加载：旧目录存在时新包拒绝接管。
     dual = root / 'dual'
     (dual / 'agent').mkdir(parents=True)

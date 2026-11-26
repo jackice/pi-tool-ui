@@ -12,13 +12,21 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "pi": {
-    "extensions": ["./dist/index.js"]
+    "extensions": [
+      "./dist/index.js"
+    ]
   },
-  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "oxlint src tests/unit",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@jackice/pi-ui": "0.5.1"
@@ -31,6 +39,7 @@
     "@earendil-works/pi-coding-agent": "1.6.0",
     "@earendil-works/pi-tui": "1.6.0",
     "@types/node": "^24.0.0",
+    "oxlint": "^1.95.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
   }

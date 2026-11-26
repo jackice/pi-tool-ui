@@ -76,11 +76,11 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
-| T1-01 | passed | ESM + TypeScript 包，`pi.extensions` 指向 `dist/index.js`；`npm test` 19 通过、typecheck/build 通过、`npm pack --dry-run` 仅含 dist 与文档。 |
-| T1-02 | passed | 旧 `adaptNativeEdit` 原样迁入并通过单测；真实 PTY 下两张卡片与旧 0.5.1 golden 一致。`export-parity.py`：同一真实 Hashline 会话经旧扩展与新包导出的 HTML 完全一致；两版均未把工具正文写入 HTML（Pi 导出模板行为），限制已记录。 |
-| T1-03 | passed | `src/config.ts` 实现 schema 校验、冻结默认值与旧配置 dry-run 映射；覆盖 `PI_HASHLINE_DIFF` 未设置/`0`、`nativeEdit` 非 true、冲突与新配置优先。 |
+| T1-01 | running | ESM/入口/peer 和 `prepack` 已实现，`npm test` 22 通过；待干净 clone 的 pack/安装证据。 |
+| T1-02 | running | 原生适配器单测与原样迁移通过；真实 PTY 卡片等于 0.5.1 golden；真实 TUI `/export` 的预渲染 call/Diff 旧新一致且含正文。待 tarball 矩阵的 schema/结果/blocks 对照。 |
+| T1-03 | running | schema 校验、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入已实现并有单测；入口发布诊断。待端到端命令验证。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
-| T1-05 | passed | `migration-parity.py` 覆盖：旧配置映射后与 golden 一致、`toolUi` 关闭不接管、native-only 无 Hashline 的 Edit 仍一致。完整用户栈未在此脚本重复，T0-I 已单独验证。 |
+| T1-05 | running | `migration-parity.py` 覆盖：旧配置映射后与 golden 一致、`toolUi` 关闭不接管、native-only 无 Hashline 的 Edit 仍一致。完整用户栈未在此脚本重复，T0-I 已单独验证。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
 | G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
 
@@ -88,4 +88,4 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 `tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。
 
-Hashline `/export`：`tests/pty/export-parity.py` 用同一真实会话分别加载旧扩展与新包导出 HTML，两者归一化后完全相同。两版 HTML 都不含 `beta2` 工具正文，说明 Pi 导出模板不消费该 renderer；因此“导出保留 Diff 正文”在当前 Pi 版本无法由 renderer 达成，旧行为同样如此，记为限制而非回归。原始布尔记录在 `docs/evidence/export-parity.json`。
+Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/export`（会调用扩展 renderer），解析 HTML 内嵌的 base64 sessionData，比较 `renderedTools`。旧扩展与新包的预渲染 call/Diff HTML 一致，正文含 `beta2`。CLI `--export` 不加载扩展 renderer，不能用于此验收。

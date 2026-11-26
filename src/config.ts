@@ -52,6 +52,7 @@ export interface LegacyInput {
   toolUi?: unknown;
   editDiff?: { nativeEdit?: unknown };
   envHashline?: string | undefined;
+  legacy?: boolean;
 }
 
 export interface LegacyResult {
@@ -261,7 +262,7 @@ export function mapLegacyConfig(input: LegacyInput): LegacyResult {
     }
     return { config, source: 'new', diagnostics };
   }
-  if (input.editDiff === undefined && input.envHashline === undefined) {
+  if (!input.legacy && input.editDiff === undefined && input.envHashline === undefined) {
     return { config: structuredClone(DEFAULT_CONFIG), source: 'default', diagnostics: [] };
   }
   const legacy = legacyValues(input);

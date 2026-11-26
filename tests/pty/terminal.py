@@ -96,3 +96,35 @@ def run_tui(command, env, root, expected_result, *, expand=False, reload=False, 
     finally:
         os.close(master)
     return bytes(output)
+
+
+def export_tui(command, env, root, done, output_path):
+    master, slave = pty.openpty()
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
+    output = bytearray()
+    try:
+        with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
+            os.close(slave)
+            try:
+                def wait_for(marker, start):
+                    deadline = time.monotonic() + 15
+                    while output.find(marker, start) < 0 and time.monotonic() < deadline:
+                        if select.select([master], [], [], 0.2)[0]:
+                            try:
+                                output.extend(os.read(master, 65536))
+                            except OSError as exc:
+                                if exc.errno == errno.EIO:
+                                    break
+                                raise
+                    assert output.find(marker, start) >= 0, output[-4000:].decode(errors='replace')
+
+                wait_for(done, 0)
+                os.write(master, f'/export {output_path}\r'.encode())
+                wait_for(b'Session exported to:', len(output))
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                process.wait(timeout=5)
+    finally:
+        os.close(master)
+    return bytes(output)
