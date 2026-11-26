@@ -14,7 +14,7 @@ Pi 工具结果卡片。保留原生执行、权限与工具 schema，只替换�
 pi install npm:@jackice/pi-tool-ui
 ```
 
-依赖 `@jackice/pi-ui@0.7.0`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
+依赖 `@jackice/pi-ui@0.7.1`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
 
 ## 配置
 

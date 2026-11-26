@@ -17,7 +17,6 @@ interface ResultContext {
 
 const cacheKey = Symbol('pi-tool-ui-write');
 const callKey = Symbol('pi-tool-ui-write-call');
-const callLineKey = Symbol('pi-tool-ui-write-call-line');
 
 interface CachedCall {
   path: string;
@@ -44,15 +43,11 @@ interface Cached {
 
 export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
   return (original) => ({
-    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean }) {
+    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean; isPartial: boolean }) {
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
       const path = typeof record.path === 'string' ? record.path : undefined;
-      if (context.argsComplete) {
-        const cachedLine = context.state[callLineKey] as { path: string; theme: Theme; component: Text } | undefined;
-        if (cachedLine !== undefined && cachedLine.path === (path ?? '') && cachedLine.theme === theme) return cachedLine.component;
-        const component = new Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
-        context.state[callLineKey] = { path: path ?? '', theme, component };
-        return component;
+      if (context.argsComplete || !context.isPartial) {
+        return new Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
       }
       const rawContent = typeof record.content === 'string' ? record.content : undefined;
       const content = rawContent === undefined ? undefined : rawContent.replace(/\r\n/g, '\n');

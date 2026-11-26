@@ -13,10 +13,10 @@
 Out of scope：Bash/Read 门禁、发布、生产切换。
 
 ## 实现摘要
-- call：argsComplete=false 时显示路径 + streaming tail；argsComplete=true 清空 call。
-- result：最终路径/正文独占；成功 ✓、错误 ✗ 且隐藏正文；失败/取消/历史。
-- 高亮：注入 Pi 公开 `highlightCode`，只处理预览行（展开 200 上限），异常/行数不符回退纯文本。
-- 刻意不做：增量高亮缓存跨渲染复用；未知语言纯文本。
+- call：流式（isPartial）显示路径 + tail；完成/历史（argsComplete 或 !isPartial）只保留 `write <path>` 一行。
+- result：最终正文独占（路径在 call 行）；成功 ✓、错误 ✗ 且隐藏正文；失败/取消/历史。
+- 高亮：注入 Pi 公开 `highlightCode`，折叠只处理 6/12 行，展开 200 上限；输入上限 10k 行/256 KiB；组件缓存；异常/行数不符回退纯文本。
+- 刻意不做：跨组件/跨会话高亮缓存；未知语言由 highlighter 回退纯文本。
 
 ## 验证
 - pi-ui 165 单测；产品 57 单测；typecheck/lint/build。

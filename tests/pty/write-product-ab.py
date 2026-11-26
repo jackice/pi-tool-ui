@@ -20,11 +20,13 @@ provider = repo / 'tests/pty/write-cases-provider.ts'
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-write-ab-') as directory:
     root = Path(directory)
     observed = {}
-    for case in ('success', 'error'):
+    for case in ('success', 'overwrite', 'error'):
         for enabled in (False, True):
             work = root / f'{case}-{"on" if enabled else "off"}'
             work.mkdir()
             (work / 'dir').mkdir()
+            if case == 'overwrite':
+                (work / 'out.txt').write_text('initial\n')
             agent = work / 'agent'
             agent.mkdir()
             settings = {'packages': [str(repo)], 'toolUi': {'enabled': enabled, 'tools': {'write': {'enabled': enabled}}}}
@@ -60,7 +62,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-write-ab-') as directory:
                 'text': '\n'.join(render(screen)),
             }
 
-    for case in ('success', 'error'):
+    for case in ('success', 'overwrite', 'error'):
         on = observed[f'{case}-on']; off = observed[f'{case}-off']
         assert on['bytes'] == off['bytes'], case
         assert on['executions'] == off['executions'] == 1, case
@@ -69,14 +71,16 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-write-ab-') as directory:
         assert '╭─ Write' in on['text'], case
         assert '╭─ Write' not in off['text'], case
     assert observed['success-on']['bytes'] == 'alpha\nbeta\n'
+    assert observed['overwrite-on']['bytes'] == 'replaced\n'
     assert observed['error-on']['bytes'] is None and '✗' in observed['error-on']['text']
     evidence = repo / 'docs/evidence/write-product-ab.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
         'success_bytes_args_result_equal': True,
+        'overwrite_bytes_args_result_equal': True,
         'error_bytes_args_result_equal': True,
         'runs': 1,
         'card_on': True,
         'card_off': False,
     }, ensure_ascii=False, indent=2) + '\n')
-    print('Write 产品 A/B：success/error 的 bytes/args/result 一致，各执行 1 次，ON 有卡片、OFF 无')
+    print('Write 产品 A/B：success/overwrite/error 的 bytes/args/result 一致，各执行 1 次，ON 有卡片、OFF 无')

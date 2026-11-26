@@ -49,10 +49,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-whistory-') as directory:
     assert not any(item.get('event') == 'tool-execution' for item in replayed), replayed
     text = '\n'.join(render(screen))
     assert '✓' in text, text[-600:]
-    assert 'streaming' not in text, [line for line in text.split('\n') if 'streaming' in line]
+    assert text.count('╭─ Write') == 1, text[-800:]
     assert text.count('many.txt') == 1, text[-800:]
     assert 'line 1' in text and 'line 6' in text, text[-800:]
-    assert 'line 7' not in text, text[-800:]
+    assert 'line 7' not in text and 'line 20' not in text, text[-800:]
     assert 'changed' not in text, text[-800:]
     evidence = repo / 'docs/evidence/write-history.json'
     evidence.write_text(json.dumps({'pi_version': version, 'status_success': True, 'head_preview': True,

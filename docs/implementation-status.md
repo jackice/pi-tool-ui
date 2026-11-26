@@ -153,8 +153,8 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
 | T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；argsComplete=false 时 call 显示路径与 streaming tail，完成后 call 清空。证据 `write-call-stream.json`。 |
-| T4-03 | passed | 注入 Pi 公开 `highlightCode`；只高亮预览行（展开 200 上限）；异常/行数不符纯文本；pi-ui 0.7.0。 |
-| T4-04 | passed | 流式 call 预览、完成后 call 清空；result 独占最终正文/路径；全屏 path/正文各一次。 |
+| T4-03 | passed | 注入 Pi 公开 `highlightCode`；折叠 6/12、展开 200；10k 行/256 KiB 上限与组件缓存；pi-ui 0.7.1。 |
+| T4-04 | passed | 流式 call 预览；完成/历史 call 仅 `write path` 行；result 独占正文，path/正文各一次。 |
 | T4-05 | passed | success/error OFF/ON bytes/args/result/次数一致；history 未重跑；参数流式取消不执行/不写文件。 |
 | G4-Write | ready | T4-01..05 通过；待独立评审。 |
 

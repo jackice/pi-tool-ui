@@ -51,7 +51,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
     assert 'line 1' in observed['many']['card'] and 'line 6' in observed['many']['card']
     assert 'line 7' not in observed['many']['card']
     assert '✗' in observed['error']['card']
-    assert 'line 1' not in observed['error']['card']
+    assert 'SECRET_SENTINEL' not in observed['error']['card']
     evidence = repo / 'docs/evidence/write-view.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
