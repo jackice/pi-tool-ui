@@ -155,8 +155,8 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；argsComplete=false 时 call 显示路径与 streaming tail，完成后 call 清空。证据 `write-call-stream.json`。 |
 | T4-03 | pending | 有界高亮未实现；`write.highlight` 标 unsupported（README/contract 已同步）。 |
 | T4-04 | passed | 流式 call 预览、完成后 call 清空；result 独占最终正文/路径；全屏 path/正文各一次。 |
-| T4-05 | running | success 场景 OFF/ON bytes/args/result/次数一致；failure/cancel/history 未做。 |
-| G4-Write | blocked | T4-02 streaming 未交付、T4-03 pending、T4-05 矩阵不足。 |
+| T4-05 | running | success/error OFF/ON bytes/args/result/次数一致；history 回放未重跑；cancel 未做。 |
+| G4-Write | blocked | T4-02 已交付；T4-03 highlight pending、T4-05 cancel 未覆盖。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 

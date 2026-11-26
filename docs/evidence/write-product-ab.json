@@ -1,8 +1,7 @@
 {
   "pi_version": "1.6.0",
-  "bytes_equal": true,
-  "args_equal": true,
-  "result_equal": true,
+  "success_bytes_args_result_equal": true,
+  "error_bytes_args_result_equal": true,
   "runs": 1,
   "card_on": true,
   "card_off": false
