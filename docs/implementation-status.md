@@ -19,7 +19,7 @@
 | T0-W2 | passed | 上述场景执行次数各 1，写入 bytes 与期望一致；产品 WriteView 已接线并验证 head/错误/路径一次。 |
 | T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write | pending | T0-W1/W2 与产品 slot C 证据齐全；等待独立 Reviewer。 |
+| G0-Write | pending | 已提交 G0G4WriteReview；T0-W1 流式参数与 T0-W2 字节证据齐全。 |
 | G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
