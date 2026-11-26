@@ -1,5 +1,6 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { fauxProvider, fauxAssistantMessage, fauxToolCall, type TranscriptContext } from '@earendil-works/pi-ai';
+import { appendFileSync } from 'node:fs';
 
 export default function (pi: ExtensionAPI) {
   const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
@@ -17,4 +18,7 @@ export default function (pi: ExtensionAPI) {
     fauxAssistantMessage('NOOP_DONE'),
   ]);
   pi.registerProvider(faux.provider);
+  pi.on('tool_call', (event) => {
+    if (event.toolName === 'hashline') appendFileSync(process.env.PI_TOOL_UI_PROBE_LOG!, '{"event":"tool-execution"}\n');
+  });
 }

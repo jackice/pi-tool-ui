@@ -33,7 +33,7 @@ def results(session):
     return out
 
 
-def run_scenario(root, kind, extra=()):
+def run_scenario(root, kind, extra=(), expand=False):
     root.mkdir(parents=True, exist_ok=True)
     (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
     return_values = {}
@@ -65,9 +65,9 @@ def run_scenario(root, kind, extra=()):
 
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-behavior-') as directory:
     base = Path(directory)
-    for kind, extra in (('light', ('--use-theme', 'light')), ('error', ())):
+    for kind, extra in (('light', ('--use-theme', 'light')), ('error', ()), ('expanded', ())):
         root = base / kind
-        values = run_scenario(root, kind, extra)
+        values = run_scenario(root, kind, extra, expand=kind == 'expanded')
         if kind == 'error':
             assert b'\xe2\x95\xad\xe2\x94\x80 Edit' not in values['new']['screen'], '错误结果不应自绘卡片'
             old_card = new_card = 'native-error'
@@ -76,7 +76,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-behavior-') as directory:
             new_card = '\n'.join(extract_card(values['new']['screen'], root))
         assert values['old']['results'] == values['new']['results'], kind
         assert values['old']['bytes'] == values['new']['bytes'], kind
-        if kind == 'light':
+        if kind in ('light', 'expanded'):
             assert old_card == new_card, f'{kind} 卡片不同\n{old_card}\n---\n{new_card}'
         else:
             assert 'Could not find' in json.dumps(values['new']['results']), values['new']['results']

@@ -1,0 +1,14 @@
+{
+  "noop": {
+    "card_equal": true,
+    "results_equal": true,
+    "bytes_equal": true,
+    "executions": 1
+  },
+  "multifile": {
+    "card_equal": true,
+    "results_equal": true,
+    "bytes_equal": true,
+    "executions": 1
+  }
+}

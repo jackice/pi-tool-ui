@@ -38,7 +38,18 @@ def capture_tui(command, env, root, done, expected, key=None, after=None):
                                 break
                             raise
                 assert expected in output, output[-4000:].decode(errors='replace')
-                if key is not None and after is not None:
+                if key is not None and after is None:
+                    os.write(master, key)
+                    deadline = time.monotonic() + 0.9
+                    while time.monotonic() < deadline:
+                        if select.select([master], [], [], 0.1)[0]:
+                            try:
+                                output.extend(os.read(master, 65536))
+                            except OSError as exc:
+                                if exc.errno == errno.EIO:
+                                    break
+                                raise
+                elif key is not None and after is not None:
                     start = len(output)
                     os.write(master, key)
                     deadline = time.monotonic() + 12
