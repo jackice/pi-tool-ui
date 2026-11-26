@@ -15,9 +15,12 @@
 | T0-B2 | passed | 行截断、1500 行/63000B 字节截断、60KB 单行、截断+执行超时；真实 AbortSignal 在 3000 行输出后取消，计数 0。 |
 | T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc/approval 超时/执行超时/AbortSignal 均 0；Gate+Compressor 栈 A/B 真实触发压缩，模型结果逐字一致，originalChars=1000→153。 |
 | Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
-| T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
+| T0-W1 | running | 成功/空/Unicode/覆盖/错误 final、args、文件 bytes 已采集；流式 args 快照（追加/替换/缩短/argsComplete）尚未采集。 |
+| T0-W2 | passed | 上述场景 OFF/ON 执行次数各 1，写入 bytes 与期望一致；渲染 ON 使用探针，产品 WriteView 未实现。 |
+| T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
+| G0-Write | running | T0-W1 流式 args、slot 方案与独立 Reviewer 待完成。 |
+| G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 

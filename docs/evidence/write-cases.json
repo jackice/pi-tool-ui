@@ -1,0 +1,71 @@
+{
+  "pi_version": "1.6.0",
+  "success": {
+    "error": false,
+    "args": {
+      "path": "out.txt",
+      "content": "alpha\nbeta\n"
+    },
+    "text": [
+      "Successfully wrote to out.txt"
+    ],
+    "files": {
+      "out.txt": "alpha\nbeta\n"
+    },
+    "executions": 1
+  },
+  "empty": {
+    "error": false,
+    "args": {
+      "path": "empty.txt",
+      "content": ""
+    },
+    "text": [
+      "Successfully wrote to empty.txt"
+    ],
+    "files": {
+      "empty.txt": ""
+    },
+    "executions": 1
+  },
+  "unicode": {
+    "error": false,
+    "args": {
+      "path": "unicode.txt",
+      "content": "中文🙂\nno trailing newline"
+    },
+    "text": [
+      "Successfully wrote to unicode.txt"
+    ],
+    "files": {
+      "unicode.txt": "中文🙂\nno trailing newline"
+    },
+    "executions": 1
+  },
+  "overwrite": {
+    "error": false,
+    "args": {
+      "path": "out.txt",
+      "content": "replaced\n"
+    },
+    "text": [
+      "Successfully wrote to out.txt"
+    ],
+    "files": {
+      "out.txt": "replaced\n"
+    },
+    "executions": 1
+  },
+  "error": {
+    "error": true,
+    "args": {
+      "path": "dir",
+      "content": "x"
+    },
+    "text": [
+      "EISDIR: illegal operation on a directory, open '/private/var/folders/gy/mgqndl815b70zf9p_4spxjw80000gn/T/pi-tool-ui-write-ln1q7c6t/error/dir'"
+    ],
+    "files": {},
+    "executions": 1
+  }
+}
