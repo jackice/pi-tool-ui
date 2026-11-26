@@ -3,5 +3,22 @@
   "candidate": "C",
   "native_shell_preserved": true,
   "command_once": true,
-  "custom_output_once": true
+  "custom_output_once": true,
+  "cases": {
+    "success": {
+      "error": false,
+      "pad": 1,
+      "text_head": "ok\n"
+    },
+    "error": {
+      "error": true,
+      "pad": 1,
+      "text_head": "(no output)\n\nCommand exited with code 1"
+    },
+    "lines": {
+      "error": false,
+      "pad": 1,
+      "text_head": "101\n102\n103\n104\n105\n106\n107\n108\n109\n110\n111\n112\n113\n114\n115\n116\n117\n118\n119\n120\n121\n122\n123\n124\n125\n126\n127\n128\n129\n130\n"
+    }
+  }
 }

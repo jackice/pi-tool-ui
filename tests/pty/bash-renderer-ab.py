@@ -39,13 +39,14 @@ def run(root, render):
     shutil.copyfile(compressor / 'shell-compressor.json', work / '.pi/agent/shell-compressor.json')
     log = work / 'events.jsonl'
     env = dict(PATH=os.environ['PATH'], HOME=str(work), TERM='xterm-256color', PI_TELEMETRY='0',
-               PI_CODING_AGENT_DIR=str(agent), PI_BASH_CASE='count',
-               PI_TOOL_UI_PROBE_LOG=str(log), PI_TOOL_UI_PROBE_RENDER='1' if render else '0')
+               PI_CODING_AGENT_DIR=str(agent), PI_BASH_CASE='count_compress',
+               PI_TOOL_UI_PROBE_LOG=str(log), PI_TOOL_UI_PROBE_RENDER='1' if render else 'log')
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     output = bytearray()
     command = [pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash',
+               '--session', str(work / 'session.jsonl'),
                '--approval-timeout-ms', '9000', '--approval-arm-ms', '100', 'Run the local bash']
     try:
         with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=work, env=env) as process:
@@ -75,10 +76,21 @@ def run(root, render):
         os.close(master)
     events = [json.loads(line) for line in log.read_text().splitlines()]
     model = next(item for item in events if item.get('event') == 'model')
+    finals = [item for item in events if item.get('event') == 'result' and not item['partial']]
     count = work / 'count.txt'
+    session_compressor = None
+    session = work / 'session.jsonl'
+    if session.exists():
+        for line in session.read_text().splitlines():
+            entry = json.loads(line)
+            message = entry.get('message')
+            if entry.get('type') == 'message' and isinstance(message, dict) and message.get('role') == 'toolResult':
+                details = message.get('details') or {}
+                session_compressor = details.get('shellCompressor') or session_compressor
     return {
         'runs': len(count.read_text().splitlines()) if count.exists() else 0,
         'model_text': model['text'],
+        'compressor': ((finals[-1].get('details') or {}).get('shellCompressor') if finals else None) or session_compressor,
     }
 
 
@@ -88,6 +100,9 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-renderer-') as directory:
     off = run(root, False)
     assert on['runs'] == off['runs'] == 1, (on['runs'], off['runs'])
     assert on['model_text'] == off['model_text'], (on['model_text'], off['model_text'])
+    assert on['model_text'].startswith('# shell-compressor'), on['model_text'][:120]
+    assert on['compressor'] and on['compressor']['originalChars'] > on['compressor']['compressedChars'] > 0, on['compressor']
+    assert off['compressor'] == on['compressor'], (off['compressor'], on['compressor'])
     evidence = repo / 'docs/evidence/bash-renderer-ab.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
@@ -95,6 +110,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-renderer-') as directory:
         'runs_off': off['runs'],
         'model_text_equal': True,
         'model_text': on['model_text'][:200],
+        'compressor': on['compressor'],
         'stack': 'approval-gate + shell-compressor',
     }, ensure_ascii=False, indent=2) + '\n')
     print('Bash renderer OFF/ON：Gate+Compressor 栈下各执行 1 次，模型结果逐字一致')

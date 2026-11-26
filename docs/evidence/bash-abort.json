@@ -1,0 +1,13 @@
+{
+  "pi_version": "1.6.0",
+  "approval": {
+    "error": true,
+    "runs": 0,
+    "text_tail": "Blocked by approval gate (cancelled); command was not executed."
+  },
+  "execution": {
+    "error": true,
+    "runs": 0,
+    "text_tail": "Command aborted"
+  }
+}

@@ -11,10 +11,10 @@
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
-| T0-B1 | passed | 成功/空/非零/流式/空首帧/压缩 final/Gate allow/拒绝/超时/执行超时/执行次数/模型第二轮结果/历史回放均已采集。执行取消用执行超时覆盖；1.6.0 历史总能提供 duration。 |
-| T0-B2 | passed | 行截断、1500 行/63000B 字节截断、60KB 单行、Compressor ON/OFF、截断+执行超时（尾部含 timed out 诊断）已实测；截断后取消未单列。 |
-| T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc 拒绝、审批超时、执行超时均 0；Gate+Compressor 栈 renderer OFF/ON 执行次数与模型结果逐字一致。 |
-| Bash slot | passed | A 否决、B 因无 result 结构不足；候选 C 通过：保留原生 shell/call，仅替换 result，命令仅出现一次，无 result 时原生 call 结构完整。 |
+| T0-B1 | passed | 成功/空/非零/流式/空首帧/Gate allow/拒绝/超时/执行超时/计数/模型第二轮结果均采集；`ctx.abort()` 真实 AbortSignal 覆盖审批中与执行中取消（计数 0）；新会话与去掉 durationMs 的旧格式会话均回放验证。 |
+| T0-B2 | passed | 行截断、1500 行/63000B 字节截断、60KB 单行、截断+执行超时；真实 AbortSignal 在 3000 行输出后取消，计数 0。 |
+| T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc/approval 超时/执行超时/AbortSignal 均 0；Gate+Compressor 栈 A/B 真实触发压缩，模型结果逐字一致，originalChars=1000→153。 |
+| Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | pending | 全部证据在固定 Pi 1.6.0 下重跑；等待 G0BashReview 复审（slot 改为 C）。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |

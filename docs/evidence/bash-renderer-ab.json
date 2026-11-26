@@ -3,6 +3,10 @@
   "runs_on": 1,
   "runs_off": 1,
   "model_text_equal": true,
-  "model_text": "(no output)",
+  "model_text": "# shell-compressor 101→2 lines, 1000→26 chars (-97%)\nsame-line  [repeated ×100]\n# Use `PI_NO_COMPRESS=1 <command>` to bypass compression for one command.",
+  "compressor": {
+    "originalChars": 1000,
+    "compressedChars": 153
+  },
   "stack": "approval-gate + shell-compressor"
 }

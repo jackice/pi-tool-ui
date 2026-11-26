@@ -1,8 +1,9 @@
 {
   "pi_version": "1.6.0",
-  "durationMs": 5,
-  "missing_duration_sample": "Pi 1.6.0 无法产生；旧历史未存储时 renderer 代码在 undefined 时省略",
-  "final_text": [
+  "fresh_durationMs": 4,
+  "legacy_durationMs_missing": true,
+  "legacy_final_text": [
     "ok\n"
-  ]
+  ],
+  "fixture": "toolResult.durationMs removed from real 1.6.0 session (pre-duration format)"
 }

@@ -11,9 +11,11 @@ const cases: Record<string, string> = {
   bytes: "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done",
   longline: "printf 'a%.0s' {1..60000}",
   risky: "sh -c 'echo run >> count.txt'",
+  risky_abort: "sh -c 'seq 1 3000; sleep 5; echo run >> count.txt'",
   risky_slow: "sh -c 'sleep 5; echo run >> count.txt'",
   trunc_timeout: 'seq 1 2100; sleep 5',
   count: 'echo run >> count.txt',
+  count_compress: 'echo run >> count.txt; for i in $(seq 1 100); do echo same-line; done',
   write: "printf 'ok\\n' > out.txt",
   compress: 'for i in $(seq 1 500); do echo same-line; done',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",
@@ -42,7 +44,18 @@ export default function (pi: ExtensionAPI) {
   pi.on('tool_call', (event) => {
     if (event.toolName === 'bash') appendFileSync(logPath, '{"event":"tool-execution"}\n');
   });
-  if (process.env.PI_TOOL_UI_PROBE_RENDER !== '0') pi.registerToolRenderer((tool, next) => {
+  if (process.env.PI_TOOL_UI_PROBE_RENDER === 'log') pi.registerToolRenderer((tool, next) => {
+    const original = next();
+    if (tool !== 'bash' || !original) return original;
+    return {
+      ...original,
+      renderResult(result, options, theme, context) {
+        appendFileSync(logPath, JSON.stringify({ event: 'result', partial: options.isPartial, error: context.isError, durationMs: context.durationMs, args: context.args, content: result.content, details: result.details }) + '\n');
+        return original.renderResult!(result, options, theme, context);
+      },
+    };
+  });
+  if (process.env.PI_TOOL_UI_PROBE_RENDER !== '0' && process.env.PI_TOOL_UI_PROBE_RENDER !== 'log') pi.registerToolRenderer((tool, next) => {
     const original = next();
     if (tool !== 'bash' || !original) return original;
     return {
