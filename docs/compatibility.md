@@ -5,6 +5,8 @@
 - SDK 声明 `dist/index.d.ts` SHA-256 `b896b72effa2ee729087181a294cf93c45abc323daad2aadbda5f449acafa54a`；`dist/core/extensions/types.d.ts` SHA-256 `3c1728cdf8f9255273047cb260fddb6827637c55eb4edfe06f78f3e18823afd7`。公开包根导出 `highlightCode`、`getLanguageFromPath` 和 `Theme`，尚未做高亮行为验收。
 - GitHub Commit API 对计划固定的 Pi commit、两个 OMP commit 均返回 200；本地 OMP checkout 不含这两份 commit。源码树与文件指纹、Pi 已安装产物与 commit 的对应关系尚未校验；安装 manifest 无 `gitHead`。
 
+固定 commit `faac585` 的 `packages/coding-agent/src/core/extensions/types.ts` 已下载，SHA-256 `435793cf417501a0182baac154d366335ad9d0397e710490595529fd7806aed6`。其中 `ToolRenderContext` 的字段、注释与顺序与本机 `dist/core/extensions/types.d.ts` 第 367-399 行逐项一致（args、toolCallId、invalidate、lastComponent、state、cwd、executionStarted、argsComplete、isPartial、expanded、showImages、isError、durationMs、outputPad）。这只证明该接口文本对应，不证明整个构建产物来自该 commit。
+
 ## 依赖漂移
 
 | 消费者 | 实际已安装 | 位置（相对各自安装根） |
@@ -15,7 +17,9 @@
 | TODO 0.1.2 | pi-ui 0.4.2 | 它自己的 `node_modules/@jackice/pi-ui` |
 | Hashline | 0.1.2 | Pi npm 根的 `node_modules/@jackice/hashline` |
 
-Registry 实测 `@jackice/pi-ui` 的 `latest=0.4.2`、`next=0.5.1`。实际旧扩展所装 0.5.1 根产物 SHA-256 `3b1f274107e72980dbf3f14207e330f43ca03c247ef37464c176dabf440e54c4`。所见 pi-ui 安装的包导出键一致：`.`、`./diff`、`./views/approval`、`./views/edit`、`./views/todo`；这不证明根导出的符号完全一致。迁移对照需要区分锁定安装 0.4.2 与实际安装 0.5.1，不擅自重装生产目录。
+Registry 实测 `@jackice/pi-ui` 的 `latest=0.4.2`、`next=0.5.1`。实际旧扩展所装 0.5.1 根产物 SHA-256 `3b1f274107e72980dbf3f14207e330f43ca03c247ef37464c176dabf440e54c4`。所见 pi-ui 安装的包导出键一致：`.`、`./diff`、`./views/approval`、`./views/edit`、`./views/todo`。
+
+根声明导出对账（静态解析 `dist/index.d.ts`）：0.4.2 与 0.5.1 共有 `EditView`、`CodeFrame`、`Panel`、`StatusLine`、`TreeList`、`ApprovalView`、`TodoView`、`adaptHashlineDetails`、`fromPiTheme`、`sanitizeText` 等；0.5.1 额外导出 `SegmentBar`、`layoutSegmentBar`、`InlineGauge`、`renderSeparator`、`separatorText` 及对应类型。0.5.1 是 0.4.2 的超集，旧 Edit/Hashline 符号在两版都存在。
 
 ## 旧 Diff 迁移输入
 
@@ -28,4 +32,4 @@ Registry 实测 `@jackice/pi-ui` 的 `latest=0.4.2`、`next=0.5.1`。实际旧�
 | `package.json` | `6f932c4a810781dfcd0fd6602ea9d742d1428fc2debc448a10e268c80fd83dc1` |
 | `package-lock.json` | `af622b38e601bc2d4b72ba434186f187c0f3d29eb5aec70c2bcbe3409ca51929` |
 
-旧 resolver 先调用 `next()`；无下游、未选中时返回原对象。Edit 保留 shell 和 call，只在非 partial、非 error 且 adapter 识别单文件 unified patch 时自绘；空改动、不同文件头、畸形 hunk 等回退。Hashline 改用 `self`，保留 call，非 partial 时交给 pi-ui 的 `adaptHashlineDetails`。两路均使用 SDK 行级 state 缓存；失败时交原 `renderResult`，缺失时以文本块换行拼接。匿名旧视觉 fixture 和 HTML 对照尚未采集。
+旧 resolver 先调用 `next()`；无下游、未选中时返回原对象。Edit 保留 shell 和 call，只在非 partial、非 error 且 adapter 识别单文件 unified patch 时自绘；空改动、不同文件头、畸形 hunk 等回退。Hashline 改用 `self`，保留 call，非 partial 时交给 pi-ui 的 `adaptHashlineDetails`。两路均使用 SDK 行级 state 缓存；失败时交原 `renderResult`，缺失时以文本块换行拼接。真实 PTY 卡片 golden 已冻结于 `tests/fixtures/migration/`；Hashline `/export` HTML 对照尚未采集。

@@ -4,7 +4,7 @@
 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
-| T0-01 | running | 已记录本机 CLI/SDK 指纹、安装版本和包导出键；待核对公开源码树、实际解析指纹与全部根导出。 |
+| T0-01 | passed | 已记录本机 CLI/SDK 指纹、安装版本、包导出键与根导出差异；固定 commit 的 `ToolRenderContext` 文本与安装声明逐项一致。构建产物整体对应关系未证，已记入 compatibility。 |
 | T0-02 | passed | 旧源码、配置分支与指纹已冻结；真实 PTY 冻结原生 Edit 与 Hashline 的 0.4.2/0.5.1 卡片 golden，见 `tests/fixtures/migration/`。Hashline `/export` HTML 对账归 T1-02。 |
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
