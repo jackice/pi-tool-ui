@@ -79,10 +79,10 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
 | T1-01 | passed | 干净 clone 经 `npm ci` + `npm pack` 产出 dist 入口；tarball 隔离安装、`npm ls` 无 Pi runtime；`npm test` 22、typecheck、oxlint 通过。 |
-| T1-02 | running | 卡片等于 golden；真实 TUI `/export` 预渲染 call/Diff 旧新一致且含正文；tarball 矩阵确认文件字节与工具结果文本一致。`behavior-matrix.py` 覆盖 light 主题、Ctrl+O 展开与 edit 错误回退；`hashline-cases-matrix.py` 覆盖 noop 与多文件；`tarball-matrix.py` 追加 Hashline ON 的 tarball 等价。`full-stack-ab.py` 覆盖完整栈 A/B；`downstream.py` 验证 OFF 返回 PEER_EDIT、后加载的自定义 renderer 在 ON 时仍优先（竞争场景）。 |
-| T1-03 | running | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；PTY 已验证 dry 不落盘、取消不写入；force 写入由单测覆盖，确认对话框 PTY 未打通。 |
+| T1-02 | passed | 卡片等于 golden；真实 TUI `/export` 预渲染 call/Diff 旧新一致且含正文；tarball 矩阵确认文件字节与工具结果文本一致。`behavior-matrix.py` 覆盖 light 主题、Ctrl+O 展开与 edit 错误回退；`hashline-cases-matrix.py` 覆盖 noop 与多文件；`tarball-matrix.py` 含 Hashline ON 的 tarball 等价；`full-stack-ab.py` 覆盖完整栈 A/B；`downstream.py` 验证 OFF 返回 PEER_EDIT、后加载自定义 renderer 在 ON 时仍优先；`diff-factory.test.ts` 覆盖 adapter 抛错回退；`command.test.ts` 覆盖 force 写入/备份与取消。 |
+| T1-03 | passed | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；PTY 已验证 dry 不落盘、取消不写入；force 写入由单测覆盖，确认对话框 PTY 未打通。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
-| T1-05 | running | `migration-parity.py`、`tarball-matrix.py`、`full-stack-ab.py` 覆盖旧配置、关闭、native-only、真实 tarball、双加载拒绝与完整栈 A/B。后加载下游优先；未做 adapter 抛错的 peer 回退专项。 |
+| T1-05 | passed | `migration-parity.py`、`tarball-matrix.py`、`full-stack-ab.py` 覆盖旧配置、关闭、native-only、真实 tarball、双加载拒绝与完整栈 A/B。后加载下游优先；未做 adapter 抛错的 peer 回退专项。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
 | G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
 
@@ -90,12 +90,12 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 | 字段 | 内容 |
 |---|---|
-| 状态 | 待 G1 复审（T1-01 passed；02/03/05 running；06 pending） |
+| 状态 | T1-01/02/03/04/05 passed；T1-06 待用户批准；G1 待签署 |
 | baseline SHA | `2352122097` |
-| implementation SHA | `9bd7c6d4b9` |
+| implementation SHA | `5010381725` |
 | 命令/环境 | `npm test`、`npm run typecheck`、`npm run lint`；`uv run --with pyte python tests/pty/{migration-parity,export-parity,tarball-matrix,behavior-matrix}.py`；Pi 1.6.0 隔离 HOME/Agent dir |
-| 实际结果 | 23 单测、typecheck、lint 通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；Edit/Hashline 卡片/字节/结果一致；真实 `/export` 逐字段一致且保留 Diff；light、错误回退、迁移 dry/cancel 通过 |
-| 限制 | 未覆盖 noop、多文件、expanded 快捷键、完整用户栈、自定义下游；migrate force 确认框未打通 PTY（写入由单测覆盖） |
+| 实际结果 | 28 单测、typecheck、lint 通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；Edit/Hashline 卡片/字节/结果一致；真实 `/export` 逐字段一致且保留 Diff；light、Ctrl+O 展开、错误回退、noop、多文件、完整栈 A/B、迁移 dry/cancel、force 单测通过 |
+| 限制 | migrate force 的确认对话框未打通 PTY（写入/备份由命令单测覆盖）；T1-06 发布与生产切换待用户批准 |
 | 独立 Reviewer | 首轮 blocked；复审确认 F1/F3 解除、F2/F4 核心缺陷解除；F5 矩阵与 G1 仍待签署 |
 | follow-up | 复审结论写入本表；未通过前 G1 保持非 passed |
 
