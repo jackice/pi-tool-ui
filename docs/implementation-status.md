@@ -24,7 +24,7 @@
 | G0-Read | signed | 第三轮复审 sign（correct，0.93）：伪行号已消除，T0-R1/R2 证据有效。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
-| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash signed；Read signed；Write/G4 blocked；G5-Read 待最终签收。 |
+| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash/Read/G2-Read/G5-Read signed；Write/G4 blocked；G6/G7 未开始。 |
 
 ### Resolver 顺序实测
 
@@ -145,7 +145,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T5-05 | passed | 原生 OFF/ON 覆盖 basic/range/zero/empty/truncated/process_fail/image；Hashline 0.1.2 range/truncated OFF/ON 锚点保留；content/details 一致、各执行一次。 |
 | G0-Read | signed | 第三轮复审 sign：伪行号已消除，T0-R1/R2 证据有效。 |
 | G2-Shared（Read） | signed | 第三轮复审 sign：ReadView 契约/单测/文档完成。 |
-| G5-Read | ready | G0/G2 已签；T5-01/02/04/05 通过；pi-ui 0.6.9 修复全无编号预览；待 delta 复签。 |
+| G5-Read | signed | 第四轮 delta 复签（correct，0.95）：0.6.9 全无编号预览修复、Hashline 0.1.2 A/B 有效。 |
 
 ## T4 Write 进展
 

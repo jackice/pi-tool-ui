@@ -14,3 +14,5 @@
 - pi-ui 0.6.9：全 null lines 走无行号 CodeBlock head 12/24，1000 行回归测试。
 - 产品升级 0.6.9；`read-view-pty` 增加 long `negative_limit`，断言折叠卡片不含 line 13 且 ≤30 行。
 - Hashline A/B 断言并记录 `hashline_version: 0.1.2`。
+
+最终：G0-Read sign、G2-Shared(Read) 0.6.9 delta sign、G5-Read sign（confidence 0.95）。
