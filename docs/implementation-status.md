@@ -99,16 +99,16 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T2-02 | passed | `ToolCard` 单测 + snapshot；分区行保留白名单 SGR，宽度/空分区/控制字符覆盖。 |
 | T2-03 | passed | `CodeBlock` 单测 + snapshot；head/tail、折行、offset、视觉截断提示、1 MiB/20k 行与超大单行上限。 |
 | T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi；超大单行/20k 行上限、显式空行保留。 |
-| T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；142 单测通过。 |
+| T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；146 单测通过。 |
 | T2-07 | passed | pi-ui 0.6.x 发布到 next（latest 0.4.2）；README/API、contract 链接、146 单测与 tarball 导出回归完成。 |
-| T2-05 | pending | `command.highlight` 在 slot C 下 unsupported（命令由原生 call 独占）；其余高亮待后续。 |
-| G2-Shared（Bash） | pending | 首轮 blocked 已整改（snapshot/上限/SGR/配置）；等待复审。 |
+| T2-05 | pending（Bash 不消费） | `command.highlight` 在 slot C 下 unsupported；产品命令由原生 call 独占，不阻断 Bash profile。 |
+| G2-Shared（Bash） | passed | G2G3BashReview 签署：T2-02/03/04/06/07 通过；T2-05 仅 command.highlight unsupported。 |
 | T3-01 | passed | `adaptBash`：status/command/output/duration/truncation（含 lastLinePartial/truncatedBy/maxBytes）/fullOutputPath；CRLF 由 View 归一。 |
 | T3-02 | passed | 命令 owner 原生 call；截断/路径安全；配置字段；40 列 cwd/长路径保留标题与 basename；PTY 全屏命令一次。 |
 | T3-03 | passed | slot C renderer 只替换 result；产品 PTY 命令/标题/正文各一次，成功/截断/错误/展开通过。 |
 | T3-04 | passed | 宽度矩阵、narrow 60 列卡片、resize 后 60 列重绘、流式 running 卡片、展开、缓存 key、异常回退与历史均通过。 |
-| T3-05 | conditional | 执行/args/result/compressor/命令一次/OFF 无卡片已实测；cwd 由 count 文件间接证明；schema 为静态 resolver 白名单；provider 请求体 hash 未采集；下游为 peer 优先级测试。 |
-| G3-Bash | pending | 首轮 blocked 已整改（重复命令/截断/路径/CRLF/配置/cache/证据）；等待复审。 |
+| T3-05 | conditional（已接受） | 执行/args/result/compressor/命令一次/OFF 无卡片实测；cwd 间接证明、schema 静态白名单、请求体未采集、下游 peer 优先级测试，均记录为已接受限制。 |
+| G3-Bash | conditional pass | G2G3BashReview 签署，接受 T3-05 限制：cwd 间接证明、schema 静态白名单、provider 请求体未采集、下游 peer 优先级测试。 |
 
 ### T1 门禁记录
 
@@ -128,3 +128,12 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 `tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。
 
 Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/export`（会调用扩展 renderer），解析 HTML 内嵌的 base64 sessionData，比较 `renderedTools`。旧扩展与新包的预渲染 call/Diff HTML 一致，正文含 `beta2`。CLI `--export` 不加载扩展 renderer，不能用于此验收。
+
+### G2/G3 Bash 签署后 P3 记录
+
+- `clampChars` 未完全对齐 `clampUtf8` 的 emoji/ZWJ、旗帜边界；`clampUtf8` 末尾组合符+ZWJ 顺序可再统一。
+- 20k 边界处 `takeLines` + `parts.pop` 可能丢掉真实末尾空行。
+- 20 列 `cwd` 行仍可能截掉长 basename 首字符（默认 showCwd=false）。
+- `cwdKind='execution'` 由 adapter 无条件设置；history/spawnHook cwd 未单独区分。
+- 错误结果尾部折叠尚未单独实现；现有 fixture 诊断在尾部可见。
+- resize 后卡片本身仍无直接像素断言，已记录。
