@@ -22,7 +22,10 @@ export default function (pi: ExtensionAPI) {
     fauxAssistantMessage('READ_CASE_DONE'),
   ]);
   pi.registerProvider(faux.provider);
-  pi.registerToolRenderer((tool, next) => {
+  pi.on('tool_call', (event) => {
+    if (event.toolName === 'read') appendFileSync(logPath, '{"event":"tool-execution"}\n');
+  });
+  if (process.env.PI_READ_CASE_PROBE_RENDER !== '0') pi.registerToolRenderer((tool, next) => {
     const original = next();
     if (tool !== 'read' || !original) return original;
     return {

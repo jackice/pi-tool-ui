@@ -18,13 +18,13 @@
 | T0-W1 | passed（部分矩阵） | final/args/bytes 与 9–10 次 argsComplete=false 快照成立；替换/缩短/path 变化/abort 未单列。 |
 | T0-W2 | passed（单场景 A/B） | 成功场景 OFF/ON bytes/args/result/次数一致；失败/取消/历史文件修改未做 OFF/ON。 |
 | T0-R1 | passed | 基础/范围/EOF/limit=0/空文件/同形 notice/行截断/字节截断/超长首行/Markdown/非法 offset/历史回放均采集；非法 fractional limit 未单列。 |
-| T0-R2 | running | 支持图片时 content 含 image block 已采集；不支持的 warning、损坏图片、mixed 尚未执行。 |
+| T0-R2 | passed | 图片/unsupported/processImage 失败/mixed 与 showImages 上下文均已采集。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
 | G0-Write | blocked | T0-W1/W2 仅部分矩阵；streaming 预览与历史 call 状态问题已记录。 |
-| G0-Read | running | T0-R1 通过、T0-R2 部分；slot/ReadView 未实现。 |
+| G0-Read | signed | 第三轮复审 sign（correct，0.93）：伪行号已消除，T0-R1/R2 证据有效。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
-| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
+| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash signed；Read signed；Write/G4 blocked；G5-Read 待最终签收。 |
 
 ### Resolver 顺序实测
 
@@ -140,12 +140,12 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T5-01 | passed | `adaptRead`：offset/limit 编号、非正整数 limit/非法 offset 不编号、续读提示不编号、Hashline/图片诊断原文、truncation 边界；11 单测。 |
 | T5-02 | passed | `ReadView`：head 12/24、真实行号、truncation 提示、原文回退；产品 PTY 通过。 |
-| T5-03 | pending | 未来 Hashline 版本隐藏锚点未实现（0.1.2 保留原文）。 |
+| T5-03 | pending（可选） | 未来 Hashline 锚点隐藏未实现；0.1.2 按原文兼容。 |
 | T5-04 | passed | image block 回退原生；processImage 失败纯文本不编号；unsupported 记录 `imageUnsupportedByModel`；showImages OFF/ON 验证。 |
-| T5-05 | running | 产品 OFF/ON 覆盖 basic/range/zero/empty/truncated/process_fail/image，content/details 一致且各执行一次；Hashline/原生 A/B 待 T6。 |
-| G0-Read | blocked | 两轮发现已修复：续读提示/空文件/图片诊断、负 limit、showImages 上下文；PTY 断言改为匹配 `│`；待最终复审。 |
-| G2-Shared（Read） | blocked | 组件/文档/单测已补；依赖 G0 最终复审。 |
-| G5-Read | pending | 依赖 T5 全部与评审。 |
+| T5-05 | passed | 原生 OFF/ON 覆盖 basic/range/zero/empty/truncated/process_fail/image；Hashline 0.1.2 range/truncated OFF/ON 锚点保留；content/details 一致、各执行一次。 |
+| G0-Read | signed | 第三轮复审 sign：伪行号已消除，T0-R1/R2 证据有效。 |
+| G2-Shared（Read） | signed | 第三轮复审 sign：ReadView 契约/单测/文档完成。 |
+| G5-Read | ready | G0/G2 已签；T5-01/02/04/05 通过，T5-03 为可选未来协议；待最终签收。 |
 
 ## T4 Write 进展
 

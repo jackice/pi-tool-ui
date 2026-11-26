@@ -1,0 +1,9 @@
+{
+  "pi_version": "1.6.0",
+  "range_equal": true,
+  "truncated_equal": true,
+  "runs": 1,
+  "anchors_preserved": true,
+  "card_on": true,
+  "card_off": false
+}

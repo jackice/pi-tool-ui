@@ -40,7 +40,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
         'toolUi': {'enabled': True, 'tools': {'read': {'enabled': True}}},
     }))
     observed = {}
-    for case in ('basic', 'truncated', 'markdown', 'image', 'image_show_on', 'image_show_off', 'range', 'zero', 'empty', 'longline', 'short_negative_limit', 'short_fractional_limit', 'text_like_image', 'process_fail'):
+    for case in ('basic', 'truncated', 'markdown', 'image', 'image_show_on', 'image_show_off', 'range', 'zero', 'empty', 'longline', 'image_unsupported', 'short_negative_limit', 'short_fractional_limit', 'text_like_image', 'process_fail'):
         probe = 'image' if case.startswith('image_show') else case
         settings = {'packages': [str(repo)], 'toolUi': {'enabled': True, 'tools': {'read': {'enabled': True}}}}
         if case.startswith('image_show'):
@@ -67,6 +67,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
     assert 'Read' not in observed['image']['card'] and 'png' in observed['image']['text'], observed['image']['text'][-400:]
     assert not observed['image_show_on']['card'] and '[image/png' not in observed['image_show_on']['text'], observed['image_show_on']['text'][-400:]
     assert 'Read' not in observed['image_show_off']['card'], observed['image_show_off']['text'][-400:]
+    assert 'Read' not in observed['image_unsupported']['card'] and 'placeholder' in observed['image_unsupported']['text'], observed['image_unsupported']['text'][-600:]
     assert 'line 5' in observed['range']['card'] and '[2094 more lines' in observed['range']['card'], observed['range']['card'][-500:]
     assert not any(re.search(r'│\s*(?:8|9)\s+\[2094', line) for line in observed['range']['card'].splitlines()), observed['range']['card'][-500:]
     assert 'more lines' in observed['zero']['card'] and 'line 1' not in observed['zero']['card'], observed['zero']['card'][-500:]
@@ -85,6 +86,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
                                     'markdown_source': True, 'image_native': True,
                                     'range_notice_unnumbered': True, 'zero_notice_only': True,
                                     'empty_no_rows': True, 'longline_raw': True,
-                                    'image_text_diagnostic_raw': True, 'show_images_no_read_card': True},
+                                    'image_text_diagnostic_raw': True, 'show_images_no_read_card': True, 'unsupported_warning_native': True},
                                    ensure_ascii=False, indent=2) + '\n')
     print('ReadView 接线：文本编号/截断提示/Markdown 源码；图片走原生')
