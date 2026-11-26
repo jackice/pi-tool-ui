@@ -1,10 +1,11 @@
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
 
-from screen import render
+from screen import extract_card, render
 from terminal import capture_tui
 
 

@@ -13,6 +13,8 @@ import time
 
 import pyte
 
+from terminal import capture_tui
+
 
 pi = os.environ.get('PI_BIN') or __import__('shutil').which('pi')
 assert pi, '需要 Pi 1.6.0'
@@ -41,10 +43,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-resize-') as directory:
                PI_CODING_AGENT_DIR=str(agent), PI_TOOL_UI_PROBE_LOG=str(root / 'events.jsonl'),
                PI_TOOL_UI_PROBE_RENDER='0')
 
-    def run(case, marker, resize=None):
+    def run(case, marker, resize=None, cols=100, rows=60):
         env_case = dict(env, PI_BASH_CASE=case)
         master, slave = pty.openpty()
-        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 60, 100, 0, 0))
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, cols, 0, 0))
         output = bytearray()
         try:
             with subprocess.Popen([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
@@ -64,8 +66,19 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-resize-') as directory:
                                 raise
                     assert output.find(marker) >= 0, output[-2000:].decode(errors='replace')
                     if resize is not None:
-                        fcntl.ioctl(master, termios.TIOCSWINSZ, struct.pack('HHHH', 60, resize, 0, 0))
-                        time.sleep(0.6)
+                        resize_start = len(output)
+                        fcntl.ioctl(master, termios.TIOCSWINSZ, struct.pack('HHHH', rows, resize, 0, 0))
+                        time.sleep(0.4)
+                        os.write(master, b'\x0f')
+                        time.sleep(0.3)
+                        os.write(master, b'\x0f')
+                        deadline = time.monotonic() + 5
+                        while b'Bash' not in output[resize_start:] and time.monotonic() < deadline:
+                            if select.select([master], [], [], 0.1)[0]:
+                                try:
+                                    output.extend(os.read(master, 65536))
+                                except OSError:
+                                    break
                         while select.select([master], [], [], 0.1)[0]:
                             try:
                                 output.extend(os.read(master, 65536))
@@ -77,17 +90,23 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-resize-') as directory:
                     process.wait(timeout=5)
         finally:
             os.close(master)
-        return bytes(output)
+        result = bytes(output)
+        return (result, resize_start if resize is not None else 0)
 
-    resize_output = run('success', b'BASH_DONE', resize=60)
-    lines = feed(resize_output, 60)
-    assert any('Bash' in line for line in lines), lines[-20:]
-    for line in lines:
-        assert len(line) <= 60, (len(line), line)
+    resize_output, resize_start = run('success', b'BASH_DONE', resize=60)
+    assert ("─" * 60).encode() in resize_output[resize_start:], resize_output[resize_start:][-400:]
 
-    stream_output = run('stream', '●'.encode())
-    stream_text = '\n'.join(feed(stream_output, 100))
-    assert 'Bash' in stream_text and '●' in stream_text, stream_text[-800:]
+    narrow_output = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
+                                 '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash',
+                                 'Run the local bash'], dict(env, PI_BASH_CASE='success'), root,
+                                b'BASH_DONE', b'BASH_DONE', rows=60, cols=60)
+    narrow = feed(narrow_output, 60)
+    borders = [line.lstrip() for line in narrow if 'Bash' in line and '╭' in line]
+    assert borders and borders[-1].startswith('╭') and borders[-1].endswith('╮') and len(borders[-1]) <= 60, borders[-3:]
+
+    stream_output, _ = run('stream', '●'.encode())
+    stream_lines = feed(stream_output, 100)
+    assert any('Bash' in line and '●' in line and '✓' not in line for line in stream_lines), stream_lines[-20:]
 
     evidence = repo / 'docs/evidence/bash-resize-stream.json'
     evidence.write_text(json.dumps({

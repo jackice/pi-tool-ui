@@ -97,17 +97,17 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | ID | 状态 | 证据 |
 |---|---|---|
 | T2-02 | passed | `ToolCard` 单测 + snapshot；分区行保留白名单 SGR，宽度/空分区/控制字符覆盖。 |
-| T2-03 | passed | `CodeBlock` 单测 + snapshot；head/tail、折行、缺省编号、视觉截断提示与安全上限。 |
-| T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi，1 MiB/20k 行上限与提示。 |
-| T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；126 单测通过。 |
+| T2-03 | passed | `CodeBlock` 单测 + snapshot；head/tail、折行、offset、视觉截断提示、1 MiB/20k 行与超大单行上限。 |
+| T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi；超大单行/20k 行上限、显式空行保留。 |
+| T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；138 单测通过。 |
 | T2-07 | passed | pi-ui 0.6.1 发布到 next（latest 0.4.2）；README/API、contract 链接、138 单测与 tarball 导出回归完成。 |
 | T2-05 | pending | 高亮注入仍待 Bash/Write/Read 适配层统一。 |
 | G2-Shared（Bash） | pending | 首轮 blocked 已整改（snapshot/上限/SGR/配置）；等待复审。 |
 | T3-01 | passed | `adaptBash`：status/command/output/duration/truncation（含 lastLinePartial/truncatedBy/maxBytes）/fullOutputPath；CRLF 由 View 归一。 |
-| T3-02 | passed | `BashView`：命令 owner 为原生 call、输出 12 行 tail、截断/路径安全提示、配置字段与展开；PTY 全屏命令一次。 |
+| T3-02 | passed | 命令 owner 原生 call；截断/路径安全；配置字段；40 列 cwd/长路径保留标题与 basename；PTY 全屏命令一次。 |
 | T3-03 | passed | slot C renderer 只替换 result；产品 PTY 命令/标题/正文各一次，成功/截断/错误/展开通过。 |
-| T3-04 | passed | 宽度矩阵、真实 resize 100→60、流式 running、展开、缓存 key、异常回退、历史新旧会话均通过。 |
-| T3-05 | passed | 产品 Gate+Compressor A/B：命令/args/result 一致、各执行 1 次、shellCompressor 1000→153；OFF 无 Bash 卡片；下游 PEER_BASH 回退。 |
+| T3-04 | passed | 宽度矩阵、narrow 60 列卡片、resize 后 60 列重绘、流式 running 卡片、展开、缓存 key、异常回退与历史均通过。 |
+| T3-05 | conditional | 执行/args/result/compressor/命令一次/OFF 无卡片已实测；cwd 由 count 文件间接证明；schema 为静态 resolver 白名单；provider 请求体 hash 未采集；下游为 peer 优先级测试。 |
 | G3-Bash | pending | 首轮 blocked 已整改（重复命令/截断/路径/CRLF/配置/cache/证据）；等待复审。 |
 
 ### T1 门禁记录
