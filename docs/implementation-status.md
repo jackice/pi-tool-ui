@@ -9,7 +9,7 @@
 | T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
 | T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
-| T0-I | running | 隔离核心栈启动及无界面 Read 已通过；仍待完整用户扩展组合与 TUI 竞争验证。 |
+| T0-I | running | 隔离核心栈启动、无界面 Read、TUI 与自定义下游竞争均已通过；仍待完整用户扩展组合。 |
 | T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | 当前证据仅为开发者现场验证，尚无独立 Reviewer 签署。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -34,4 +34,6 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 核心栈探针共装 Hashline 0.1.2、Approval 0.1.6、TODO 0.1.2、Prompt 0.2.1 和本地 Shell Compressor，排除旧 Diff。Hashline 受管安装两次超时，原因未确定；核心栈改用本机固定版本依赖的只读副本，在临时 HOME、Agent dir 和 cwd 中启动。TODO 与 Approval 注册了 CLI 参数，确定性 provider 在 print 模式下完成一次 Read，未进入 renderer。未覆盖完整用户扩展、真实审批或 Compressor 的 Bash 改写。
 
-下一步补完整栈的 TUI 启动与竞争证据，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
+核心栈的真实 PTY 也已验证：Hashline 0.1.2 改写后的 Read final（路径锚点与 `1:` 正文）到达 renderer，Read 只调用一次。另一次运行中前置探针透传，屏幕保留后置自定义 renderer，未显示探针结果。此证据只覆盖核心栈与一条 Hashline 改写路径，不关闭 T0-RH。
+
+下一步补完整用户扩展组合的隔离启动，再审查 G0-Base；旧 Diff 的双版本视觉基线独立归 T0-02/G1。
