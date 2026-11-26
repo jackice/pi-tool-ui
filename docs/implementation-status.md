@@ -11,7 +11,7 @@
 | T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
 | T0-I | running | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。生产开关与真实审批路径仍待独立验收。 |
 | T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
-| G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | 当前证据仅为开发者现场验证，尚无独立 Reviewer 签署。 |
+| G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 
 ### Resolver 顺序实测
