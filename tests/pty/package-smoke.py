@@ -23,18 +23,18 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-pack-') as directory:
     manifest = {
         'name': 'pi-tool-ui-loader-probe', 'version': '0.0.0', 'type': 'module',
         'files': ['dist'], 'pi': {'extensions': ['./dist/index.js']},
-        'dependencies': {'@jackice/pi-ui': '0.4.2'},
+        'dependencies': {'@jackice/pi-ui': '0.7.0'},
         'peerDependencies': {'@earendil-works/pi-coding-agent': '1.6.0', '@earendil-works/pi-tui': '1.6.0'},
     }
     (source / 'package.json').write_text(json.dumps(manifest))
     (dist / 'index.js').write_text('''
 import { getLanguageFromPath } from '@earendil-works/pi-coding-agent';
 import { Text, visibleWidth } from '@earendil-works/pi-tui';
-import { EditView } from '@jackice/pi-ui';
+import { EditView, ReadView, WriteView } from '@jackice/pi-ui';
 
 export default function () {
   if (getLanguageFromPath('fixture.ts') !== 'typescript' || visibleWidth('中') !== 2 ||
-      !new Text('fixture', 0, 0).render(20).some(line => line.includes('fixture')) || typeof EditView !== 'function') {
+      !new Text('fixture', 0, 0).render(20).some(line => line.includes('fixture')) || typeof EditView !== 'function' || typeof ReadView !== 'function' || typeof WriteView !== 'function') {
     throw new Error('unexpected public exports');
   }
   console.log('PACKED_ENTRY_LOADED');
@@ -54,8 +54,8 @@ export default function () {
     modules = install / 'node_modules'
     assert not list(modules.rglob('@earendil-works/pi-*/package.json')), '安装树含第二套 Pi runtime'
     package = modules / manifest['name']
-    assert json.loads((modules / '@jackice/pi-ui/package.json').read_text())['version'] == '0.4.2'
+    assert json.loads((modules / '@jackice/pi-ui/package.json').read_text())['version'] == '0.7.0'
     (agent / 'settings.json').write_text(json.dumps({'packages': [str(package)]}))
     output = run([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--list-models', 'pi-tool-ui-nonexistent'], root, env)
     assert 'PACKED_ENTRY_LOADED' in output, output
-    print('干净安装：Pi 通过 package.json 的 pi.extensions 加载 dist/index.js；宿主 SDK 与 pi-ui@0.4.2 均可用')
+    print('干净安装：Pi 通过 package.json 的 pi.extensions 加载 dist/index.js；宿主 SDK 与 pi-ui@0.7.0 均可用')
