@@ -10,7 +10,8 @@
 | T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
 | T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
 | T0-I | running | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。生产开关与真实审批路径仍待独立验收。 |
-| T0-B1…B3、T0-W1…W2、T0-R1…R2、T0-RH | pending | 公共 Read 探针不替代各工具的专用探针。 |
+| T0-RH | running | 范围改写、错误跳过、截断与 details 共存已实测；待历史与图片路径。 |
+| T0-B1…B3、T0-W1…W2、T0-R1…R2 | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
 | G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 
@@ -43,5 +44,15 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 `uv run --with pyte python tests/pty/migration-baseline.py` 用旧扩展源码、`@jackice/hashline@0.1.2` 与本机两份 `pi-ui`（0.4.2、0.5.1）建立隔离 Agent dir，真实 PTY 分别执行一次原生 `edit` 和一次 `hashline`，用 pyte 还原最终帧并只保留卡片区域；耗时、路径与边框长度已归一化。golden 位于 `tests/fixtures/migration/`。
 
 结果：两种工具的卡片在 0.5.1 下完全一致；0.4.2 与 0.5.1 的差异仅为行号 gutter——0.5.x 对 context/removed 行去重，0.4.2 同时显示新旧两列行号。其余标题、摘要、正文、边框一致。当前用户实际运行 0.5.1，因此迁移 parity 以 0.5.1 golden 为准，0.4.2 作为锁文件基线保留。该差异不是本次迁移引入。
+
+### Hashline Read 实测（T0-RH）
+
+`python3 tests/pty/hashline-read-cases.py` 将 `@jackice/hashline@0.1.2` 放入隔离 Agent dir，用真实 PTY 执行三种 Read；原始结果保存在 `docs/evidence/hashline-read-cases.json`。
+
+- `offset=5, limit=3`：正文改为 `[long.txt#TAG]` 加 `5:line 5`…`7:line 7`，编号来自真实文件行号。
+- 文件不存在：保留原生错误文本，不写入锚点。
+- 2101 行文件：正文含 `1:`…`2000:line 2000`、原生 `[Showing lines 1-2000 of 2101. Use offset=2001 to continue.]`、空行与 Hashline 两行提示；`details.truncation` 仍在，未被子类改写清除。
+
+原生 `[Showing lines …]` 与普通源文件文本同形，通用 renderer 无法仅凭外观安全剥离；后续 Read adapter 必须按 §6.3/§6.4 的证据规则降级，不据文本形状推断来源。
 
 下一步审查 G0-Base。

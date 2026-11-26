@@ -62,7 +62,7 @@ export default function (pi: ExtensionAPI) {
         log('result', {
           id: ctx.toolCallId, pad: ctx.outputPad, expanded: options.expanded, partial: options.isPartial,
           shared: !!ctx.state[callComponent], reused: !!ctx.state[resultComponent] && ctx.lastComponent === ctx.state[resultComponent],
-          error: ctx.isError, content: result.content,
+          error: ctx.isError, content: result.content, details: result.details,
         });
         return ctx.state[resultComponent] ??= new Text('PROBE_RESULT', 0, 0);
       },
