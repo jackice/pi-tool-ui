@@ -12,7 +12,7 @@ export interface ReadAdapterInput {
   context: { isError?: boolean };
 }
 
-const CONTINUATION_NOTICE = /^\[(?:Showing lines \d+-\d+ of \d+|\d+(?:\.\d+)? more lines in file)\. Use offset=\d+(?:\.\d+)? to continue\.\]$/;
+const CONTINUATION_NOTICE = /^\[(?:Showing lines \d+-\d+ of \d+|-?\d+(?:\.\d+)? more lines in file)\. Use offset=-?\d+(?:\.\d+)? to continue\.\]$/;
 
 const CODE_EXTENSIONS = new Set(['ts', 'tsx', 'js', 'jsx', 'json', 'rs', 'py', 'go', 'java', 'c', 'h', 'cpp', 'sh', 'css', 'html', 'yml', 'yaml', 'toml']);
 
@@ -100,7 +100,8 @@ export function adaptRead(input: ReadAdapterInput): ReadViewModel {
   }
   const requestedOffset = positiveInteger(args.offset);
   const requestedLimit = positiveInteger(args.limit);
-  const numbered = args.offset === undefined || args.offset === 0 || requestedOffset !== undefined;
+  const numbered = (args.limit === undefined || requestedLimit !== undefined)
+    && (args.offset === undefined || args.offset === 0 || requestedOffset !== undefined);
   const start = requestedOffset ?? 1;
   const contentCount = truncation?.outputLines === undefined ? metaStart : Math.min(metaStart, truncation.outputLines);
   const lines: ReadLine[] = rawLines.map((line, index) => ({

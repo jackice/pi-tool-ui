@@ -103,6 +103,21 @@ describe('Read 适配', () => {
     expect(model.lines.map((line) => line.number)).toEqual([1, 2, null, null]);
   });
 
+  test('非正整数 limit 不推断行号，负数续读提示也不编号', () => {
+    const model = adaptRead({
+      ...base,
+      args: { path: 'short.txt', limit: -2 },
+      result: { content: [{ type: 'text', text: 'alpha\nbeta\n\n[6 more lines in file. Use offset=-1 to continue.]' }], details: undefined },
+    });
+    expect(model.lines.every((line) => line.number === null)).toBe(true);
+    const fractional = adaptRead({
+      ...base,
+      args: { path: 'short.txt', limit: -1.5 },
+      result: { content: [{ type: 'text', text: 'alpha\nbeta\ngamma\n\n[5.5 more lines in file. Use offset=-0.5 to continue.]' }], details: undefined },
+    });
+    expect(fractional.lines.every((line) => line.number === null)).toBe(true);
+  });
+
   test('Markdown 标记为 markdown-source 并映射 truncation', () => {
     const model = adaptRead({
       ...base,

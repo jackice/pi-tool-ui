@@ -1,12 +1,12 @@
 # @jackice/pi-tool-ui
 
-Pi 工具结果卡片。当前为 **Migration profile**：只接管 `edit` 与 `hashline` 的 Diff 视图，执行、权限、工具 schema 与模型可见结果不变。
+Pi 工具结果卡片。保留原生执行、权限与工具 schema，只替换展示；`edit`/`hashline` 为 Migration profile，Bash/Write/Read 为独立预览。
 
 ## 状态
 
 - 默认全部关闭；全新安装不改变原生行为。
 - 存在 `editDiff.nativeEdit` 或 `PI_HASHLINE_DIFF` 时自动迁移旧配置；两者都没有的旧安装用 `/tool-ui-migrate` 显式预览/应用。见 [docs/migration.md](docs/migration.md)。
-- Bash 已交付；Write 预览已接入但门禁仍 blocked（streaming tail/highlight 未完成）；Read 预览已接入，门禁复审中。
+- Bash 已交付；Write 参数流式预览已接入，highlight 与 failure/cancel 矩阵未完成；Read 预览已接入，门禁复审中。
 
 ## 安装
 

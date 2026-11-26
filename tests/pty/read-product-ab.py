@@ -1,5 +1,8 @@
 import base64
 import json
+import re
+import struct
+import zlib
 import os
 from pathlib import Path
 import shutil
@@ -23,12 +26,16 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-read-ab-') as directory:
     (root / 'short.txt').write_text('alpha\nbeta\ngamma\n')
     (root / 'long.txt').write_text(''.join(f'line {index}\n' for index in range(1, 2101)))
     (root / 'pixel.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='))
+    (root / 'empty.txt').write_text('')
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xffffffff)
+    (root / 'broken.png').write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 1, 1, 8, 6, 0, 0, 0)) + chunk(b'IDAT', b'\x78\x9cbroken-deflate') + chunk(b'IEND', b''))
     observed = {}
-    for case in ('basic', 'truncated', 'image'):
+    for case in ('basic', 'truncated', 'image', 'range', 'zero', 'empty', 'process_fail'):
         for enabled in (False, True):
             work = root / f'{case}-{"on" if enabled else "off"}'
             work.mkdir()
-            for name in ('short.txt', 'long.txt', 'pixel.png'):
+            for name in ('short.txt', 'long.txt', 'pixel.png', 'empty.txt', 'broken.png'):
                 shutil.copyfile(root / name, work / name)
             agent = work / 'agent'
             agent.mkdir()
@@ -64,18 +71,22 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-read-ab-') as directory:
                 'card': card,
             }
 
-    for case in ('basic', 'truncated', 'image'):
+    for case in ('basic', 'truncated', 'image', 'range', 'zero', 'empty', 'process_fail'):
         on = observed[f'{case}-on']; off = observed[f'{case}-off']
         assert on['content'] == off['content'] and on['details'] == off['details'], case
         assert on['executions'] == off['executions'] == 1, case
         if case == 'image':
             assert 'Read' not in on['card'], on['card'][:300]
         else:
-            assert 'Read' in on['card'], on['card'][:300]
+            assert 'Read' in on['text'], on['text'][-600:]
+            if case == 'process_fail':
+                assert not any(re.search(r'│\s*\d+\s+Read image file', line) for line in on['text'].splitlines()), on['text'][-600:]
+            if case == 'zero':
+                assert not any(re.search(r'│\s*\d+\s+\[2101', line) for line in on['text'].splitlines()), on['text'][-600:]
         assert 'Read' not in off['card'], off['card'][:300]
 
     evidence = repo / 'docs/evidence/read-product-ab.json'
     evidence.write_text(json.dumps({'pi_version': version, 'content_details_equal': True, 'runs': 1,
-                                    'card_on': True, 'card_off': False, 'image_native': True},
+                                    'card_on': True, 'card_off': False, 'image_native': True, 'range_zero_empty_fail': True},
                                    ensure_ascii=False, indent=2) + '\n')
     print('Read 产品 A/B：content/details 一致、各读一次；文本 ON 有卡片、图片/ OFF 无')

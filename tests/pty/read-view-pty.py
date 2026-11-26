@@ -40,15 +40,16 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
         'toolUi': {'enabled': True, 'tools': {'read': {'enabled': True}}},
     }))
     observed = {}
-    for case in ('basic', 'truncated', 'markdown', 'image', 'image_show_off', 'range', 'zero', 'empty', 'longline', 'text_like_image', 'process_fail'):
-        probe = 'image' if case == 'image_show_off' else case
+    for case in ('basic', 'truncated', 'markdown', 'image', 'image_show_on', 'image_show_off', 'range', 'zero', 'empty', 'longline', 'short_negative_limit', 'short_fractional_limit', 'text_like_image', 'process_fail'):
+        probe = 'image' if case.startswith('image_show') else case
         settings = {'packages': [str(repo)], 'toolUi': {'enabled': True, 'tools': {'read': {'enabled': True}}}}
-        if case == 'image_show_off':
-            settings['terminal'] = {'showImages': False}
+        if case.startswith('image_show'):
+            settings['terminal'] = {'showImages': case == 'image_show_on'}
         (agent / 'settings.json').write_text(json.dumps(settings))
         env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color', PI_TELEMETRY='0',
                    PI_CODING_AGENT_DIR=str(agent), PI_READ_CASE=probe, PI_READ_VISION='1' if case != 'image_unsupported' else '0',
-                   PI_TOOL_UI_PROBE_LOG=str(root / f'{case}.log'), PI_TOOL_UI_PROBE_RENDER='0')
+                   PI_TOOL_UI_PROBE_LOG=str(root / f'{case}.log'), PI_TOOL_UI_PROBE_RENDER='0',
+                   **({'TERM_PROGRAM': 'herdr'} if case.startswith('image_show') else {}))
         screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                               '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'read',
                               'Run the local read'], env, root, b'READ_T0_DONE', b'READ_T0_DONE', rows=60)
@@ -64,22 +65,26 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
     assert 'truncated' in observed['truncated']['card'], observed['truncated']['card'][-400:]
     assert '# Title' in observed['markdown']['card'], observed['markdown']['card'][-400:]
     assert 'Read' not in observed['image']['card'] and 'png' in observed['image']['text'], observed['image']['text'][-400:]
-    assert 'Read' not in observed['image_show_off']['card'] and 'png' in observed['image_show_off']['text'], observed['image_show_off']['text'][-400:]
+    assert not observed['image_show_on']['card'] and '[image/png' not in observed['image_show_on']['text'], observed['image_show_on']['text'][-400:]
+    assert 'Read' not in observed['image_show_off']['card'], observed['image_show_off']['text'][-400:]
     assert 'line 5' in observed['range']['card'] and '[2094 more lines' in observed['range']['card'], observed['range']['card'][-500:]
-    assert not any(re.match(r'\s*(?:8|9)\s+\[2094', line) for line in observed['range']['card'].splitlines()), observed['range']['card'][-500:]
+    assert not any(re.search(r'│\s*(?:8|9)\s+\[2094', line) for line in observed['range']['card'].splitlines()), observed['range']['card'][-500:]
     assert 'more lines' in observed['zero']['card'] and 'line 1' not in observed['zero']['card'], observed['zero']['card'][-500:]
-    assert 'alpha' not in observed['empty']['card'], observed['empty']['card'][-400:]
+    assert not re.search(r'│\s*\d+\s+\[2101', observed['zero']['card']), observed['zero']['card'][-500:]
+    assert 'offset=-1' in observed['short_negative_limit']['card'] and not re.search(r'│\s*\d+\s+(?:alpha|beta|\[6)', observed['short_negative_limit']['card']), observed['short_negative_limit']['card'][-500:]
+    assert 'offset=-0.5' in observed['short_fractional_limit']['card'] and not re.search(r'│\s*\d+\s+(?:alpha|beta|gamma|\[5)', observed['short_fractional_limit']['card']), observed['short_fractional_limit']['card'][-500:]
+    assert 'alpha' not in observed['empty']['card'] and len(observed['empty']['card'].splitlines()) == 2, observed['empty']['card'][-400:]
     assert 'Line 1 is' in observed['longline']['card'], observed['longline']['card'][-500:]
-    assert not any(re.match(r'\s*1\s+\[Line', line) for line in observed['longline']['card'].splitlines()), observed['longline']['card'][-500:]
+    assert not any(re.search(r'│\s*1\s+\[Line', line) for line in observed['longline']['card'].splitlines()), observed['longline']['card'][-500:]
     assert 'Read image file' in observed['text_like_image']['card'], observed['text_like_image']['card'][-500:]
-    assert not any(re.match(r'\s*1\s+Read image file', line) for line in observed['text_like_image']['card'].splitlines()), observed['text_like_image']['card'][-500:]
+    assert not any(re.search(r'│\s*1\s+Read image file', line) for line in observed['text_like_image']['card'].splitlines()), observed['text_like_image']['card'][-500:]
     assert 'Image omitted' in observed['process_fail']['card'], observed['process_fail']['card'][-500:]
-    assert not any(re.match(r'\s*1\s+Read image file', line) for line in observed['process_fail']['card'].splitlines()), observed['process_fail']['card'][-500:]
+    assert not any(re.search(r'│\s*1\s+Read image file', line) for line in observed['process_fail']['card'].splitlines()), observed['process_fail']['card'][-500:]
     evidence = repo / 'docs/evidence/read-view.json'
     evidence.write_text(json.dumps({'pi_version': version, 'text_card': True, 'truncation_notice': True,
                                     'markdown_source': True, 'image_native': True,
                                     'range_notice_unnumbered': True, 'zero_notice_only': True,
                                     'empty_no_rows': True, 'longline_raw': True,
-                                    'image_text_diagnostic_raw': True, 'show_images_off_native': True},
+                                    'image_text_diagnostic_raw': True, 'show_images_no_read_card': True},
                                    ensure_ascii=False, indent=2) + '\n')
     print('ReadView 接线：文本编号/截断提示/Markdown 源码；图片走原生')

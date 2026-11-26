@@ -9,5 +9,5 @@
   "empty_no_rows": true,
   "longline_raw": true,
   "image_text_diagnostic_raw": true,
-  "show_images_off_native": true
+  "show_images_no_read_card": true
 }

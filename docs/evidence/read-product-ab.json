@@ -4,5 +4,6 @@
   "runs": 1,
   "card_on": true,
   "card_off": false,
-  "image_native": true
+  "image_native": true,
+  "range_zero_empty_fail": true
 }

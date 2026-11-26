@@ -296,6 +296,32 @@
       "text_head": "line 1\n\n[2099.5 more lines in file. Use offset=2.5 to continue.]",
       "imageUnsupportedByModel": null,
       "truncation": null
+    },
+    "short_negative_limit": {
+      "error": false,
+      "args": {
+        "path": "short.txt",
+        "limit": -2
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "alpha\nbeta\n\n[6 more lines in file. Use offset=-1 to continue.]",
+      "imageUnsupportedByModel": null,
+      "truncation": null
+    },
+    "short_fractional_limit": {
+      "error": false,
+      "args": {
+        "path": "short.txt",
+        "limit": -1.5
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "alpha\nbeta\ngamma\n\n[5.5 more lines in file. Use offset=-0.5 to continue.]",
+      "imageUnsupportedByModel": null,
+      "truncation": null
     }
   }
 }

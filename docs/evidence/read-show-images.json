@@ -1,0 +1,8 @@
+{
+  "pi_version": "1.6.0",
+  "showImages": {
+    "off": false,
+    "on": true
+  },
+  "owner": "native renderer"
+}

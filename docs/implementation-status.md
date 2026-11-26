@@ -138,13 +138,13 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 
 | ID | 状态 | 证据 |
 |---|---|---|
-| T5-01 | passed | `adaptRead`：offset/limit 编号、非法 offset 降级、Hashline 原文、image/mixed、truncation；7 单测。 |
+| T5-01 | passed | `adaptRead`：offset/limit 编号、非正整数 limit/非法 offset 不编号、续读提示不编号、Hashline/图片诊断原文、truncation 边界；11 单测。 |
 | T5-02 | passed | `ReadView`：head 12/24、真实行号、truncation 提示、原文回退；产品 PTY 通过。 |
 | T5-03 | pending | 未来 Hashline 版本隐藏锚点未实现（0.1.2 保留原文）。 |
 | T5-04 | passed | image block 回退原生；processImage 失败纯文本不编号；unsupported 记录 `imageUnsupportedByModel`；showImages OFF/ON 验证。 |
-| T5-05 | running | 产品 OFF/ON content/details 一致、各执行一次、文本卡片与图片原生已验证；Hashline/原生 A/B 待 T6。 |
-| G0-Read | blocked | 首轮评审发现续读提示/空文件/图片诊断伪行号，已修复；待复审。 |
-| G2-Shared（Read） | blocked | 首轮评审 block；修复见 `docs/review/g0-read-response.md`，待复审。 |
+| T5-05 | running | 产品 OFF/ON 覆盖 basic/range/zero/empty/truncated/process_fail/image，content/details 一致且各执行一次；Hashline/原生 A/B 待 T6。 |
+| G0-Read | blocked | 两轮发现已修复：续读提示/空文件/图片诊断、负 limit、showImages 上下文；PTY 断言改为匹配 `│`；待最终复审。 |
+| G2-Shared（Read） | blocked | 组件/文档/单测已补；依赖 G0 最终复审。 |
 | G5-Read | pending | 依赖 T5 全部与评审。 |
 
 ## T4 Write 进展

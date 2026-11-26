@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     agent.mkdir()
     (agent / 'settings.json').write_text('{}')
     observed = {}
-    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image', 'corrupt', 'image_unsupported', 'process_fail', 'text_like_image', 'limit_one', 'negative_limit', 'fractional_limit'):
+    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image', 'corrupt', 'image_unsupported', 'process_fail', 'text_like_image', 'limit_one', 'negative_limit', 'fractional_limit', 'short_negative_limit', 'short_fractional_limit'):
         log = root / f'{case}.jsonl'
         env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color', PI_TELEMETRY='0',
                    PI_CODING_AGENT_DIR=str(agent), PI_READ_CASE=case, PI_READ_VISION='1' if case != 'image_unsupported' else '0', PI_TOOL_UI_PROBE_LOG=str(log))
@@ -69,6 +69,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     assert 'image' not in observed['process_fail']['kinds'] and 'Image omitted' in observed['process_fail']['text'], observed['process_fail']
     assert observed['text_like_image']['kinds'] == ['text'], observed['text_like_image']
     assert observed['limit_one']['text'] and observed['negative_limit']['text'] and observed['fractional_limit']['text']
+    assert 'offset=-1' in observed['short_negative_limit']['text'], observed['short_negative_limit']['text'][-200:]
+    assert 'offset=-0.5' in observed['short_fractional_limit']['text'], observed['short_fractional_limit']['text'][-200:]
     assert observed['invalid_offset']['error'] is True or observed['invalid_offset']['text']
     assert observed['fractional']['args']
 

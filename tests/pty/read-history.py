@@ -47,6 +47,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rhistory-') as directory:
     text = output.decode(errors='replace')
     assert 'alpha' in text and 'changed' not in text, text[-800:]
     evidence = repo / 'docs/evidence/read-history.json'
-    evidence.write_text(json.dumps({'pi_version': version, 'content_equal': True, 'details_equal': True,
-                                    'reexecuted': False, 'shows_original': True}, ensure_ascii=False, indent=2) + '\n')
+    evidence.write_text(json.dumps({'pi_version': version, 'reexecuted': False, 'shows_original': True},
+                                   ensure_ascii=False, indent=2) + '\n')
     print('Read 历史：未重新执行，仍显示保存的原文')

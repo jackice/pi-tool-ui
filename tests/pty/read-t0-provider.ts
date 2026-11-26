@@ -22,6 +22,8 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
   limit_one: { path: 'long.txt', limit: 1 },
   negative_limit: { path: 'long.txt', limit: -1 },
   fractional_limit: { path: 'long.txt', limit: 1.5 },
+  short_negative_limit: { path: 'short.txt', limit: -2 },
+  short_fractional_limit: { path: 'short.txt', limit: -1.5 },
   corrupt: { path: 'bad.png' },
   image_unsupported: { path: 'pixel.png' },
 };
@@ -49,7 +51,7 @@ export default function (pi: ExtensionAPI) {
       ...original,
       renderResult(result, options, _theme, context) {
         appendFileSync(logPath, JSON.stringify({
-          event: 'result', partial: options.isPartial, error: context.isError,
+          event: 'result', partial: options.isPartial, error: context.isError, showImages: context.showImages,
           args: context.args, content: result.content, details: result.details,
         }) + '\n');
         return new Text('READ_T0_PROBE', 0, 0);
