@@ -16,7 +16,7 @@
 | T0-B3 | passed | 非幂等计数：批准前 0、allow 恰 1；Esc/approval 超时/执行超时/AbortSignal 均 0；Gate+Compressor 栈 A/B 真实触发压缩，模型结果逐字一致，originalChars=1000→153。 |
 | Bash slot | passed | A 否决、B 无 result 结构不足；候选 C 通过成功/错误/截断：原生 shell 与 outputPad=1，命令一次，诊断文本进入 result。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
-| G0-Bash | pending | 全部证据在固定 Pi 1.6.0 下重跑；等待 G0BashReview 复审（slot 改为 C）。 |
+| G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -91,6 +91,17 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T1-05 | passed | `migration-parity.py`、`tarball-matrix.py`、`full-stack-ab.py` 覆盖旧配置、关闭、native-only、真实 tarball、双加载拒绝与完整栈 A/B。后加载下游优先；未做 adapter 抛错的 peer 回退专项。 |
 | T1-06 | passed | 用户批准后已发布 `0.1.0`；`pi install` 干净安装、golden 卡片、无 Pi runtime 均通过。npm 自动写入 `latest` 且 token 无权限移除，偏差见 release-evidence。 |
 | G1-Migration | passed | G1MigrationReview 最终签署（correct，0.99）；`latest` 偏差接受为非阻断限制。 |
+
+## T2 / Bash 进展
+
+| ID | 状态 | 证据 |
+|---|---|---|
+| T2-02 | passed | pi-ui `ToolCard`，单测宽度/空分区/控制字符。 |
+| T2-03 | passed | pi-ui `CodeBlock`，单测 head/tail、折行、缺省编号、零宽。 |
+| T2-04 | passed | pi-ui `OutputBlock` + 受限 SGR；剥离 OSC/CSI/bidi。 |
+| T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；126 单测通过。 |
+| T2-05/T2-07 | pending | 高亮注入与 pi-ui 版本/发布/旧消费者回归。 |
+| G2-Shared（Bash） | pending | 需独立 Reviewer；T3 仍待 adapter/BashView 接线。 |
 
 ### T1 门禁记录
 
