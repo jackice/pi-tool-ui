@@ -63,7 +63,7 @@ export function adaptBash(input: BashAdapterInput): BashViewModel {
     ...(command === undefined ? {} : { command }),
     output,
     ...(durationMs === undefined ? {} : { durationMs }),
-    ...(cwd === undefined ? {} : { cwd }),
+    ...(cwd === undefined ? {} : { cwd, cwdKind: 'execution' as const }),
     ...(truncation === undefined ? {} : { truncation }),
     ...(fullOutputPath === undefined ? {} : { fullOutputPath }),
   };

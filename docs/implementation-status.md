@@ -100,7 +100,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T2-03 | passed | `CodeBlock` 单测 + snapshot；head/tail、折行、offset、视觉截断提示、1 MiB/20k 行与超大单行上限。 |
 | T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi；超大单行/20k 行上限、显式空行保留。 |
 | T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；142 单测通过。 |
-| T2-07 | passed | pi-ui 0.6.1 发布到 next（latest 0.4.2）；README/API、contract 链接、142 单测与 tarball 导出回归完成。 |
+| T2-07 | passed | pi-ui 0.6.x 发布到 next（latest 0.4.2）；README/API、contract 链接、146 单测与 tarball 导出回归完成。 |
 | T2-05 | pending | `command.highlight` 在 slot C 下 unsupported（命令由原生 call 独占）；其余高亮待后续。 |
 | G2-Shared（Bash） | pending | 首轮 blocked 已整改（snapshot/上限/SGR/配置）；等待复审。 |
 | T3-01 | passed | `adaptBash`：status/command/output/duration/truncation（含 lastLinePartial/truncatedBy/maxBytes）/fullOutputPath；CRLF 由 View 归一。 |

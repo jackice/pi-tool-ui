@@ -20,6 +20,7 @@ describe('Bash 适配', () => {
       output: 'a\nb',
       durationMs: 2800,
       cwd: '/tmp/project',
+      cwdKind: 'execution',
     });
   });
 

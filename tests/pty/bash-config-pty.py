@@ -42,9 +42,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bashcfg-') as directory:
         observed[case] = {'screen': screen, 'text': '\n'.join(render(screen))}
 
     ansi = observed['ansi_rows']
-    assert 'ms' not in ansi['text'], ansi['text']
-    assert 'bashcfg' in ansi['text'], ansi['text']
-    assert 'row 18' in ansi['text'] and 'row 17' not in ansi['text'] and 'row 20' in ansi['text'], ansi['text']
+    card = '\n'.join(extract_card(ansi['screen'], root))
+    assert 'ms' not in card, card
+    assert 'cwd' in card and '<ROOT>' in card, card
+    assert 'row 18' in card and 'row 17' not in card and 'row 20' in card, card
     assert b'\x1b[31m' not in ansi['screen'], 'ansi=false 仍输出颜色'
     lines = observed['lines']
     assert 'output truncated:' not in lines['text'], lines['text'][-400:]
