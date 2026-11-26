@@ -3,5 +3,11 @@
   "text_card": true,
   "truncation_notice": true,
   "markdown_source": true,
-  "image_native": true
+  "image_native": true,
+  "range_notice_unnumbered": true,
+  "zero_notice_only": true,
+  "empty_no_rows": true,
+  "longline_raw": true,
+  "image_text_diagnostic_raw": true,
+  "show_images_off_native": true
 }

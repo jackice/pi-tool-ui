@@ -17,6 +17,11 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
   bytes: { path: 'large.txt' },
   markdown: { path: 'notes.md' },
   image: { path: 'pixel.png' },
+  process_fail: { path: 'broken.png' },
+  text_like_image: { path: 'image-text.txt' },
+  limit_one: { path: 'long.txt', limit: 1 },
+  negative_limit: { path: 'long.txt', limit: -1 },
+  fractional_limit: { path: 'long.txt', limit: 1.5 },
   corrupt: { path: 'bad.png' },
   image_unsupported: { path: 'pixel.png' },
 };
@@ -28,7 +33,7 @@ export default function (pi: ExtensionAPI) {
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
   const vision = process.env.PI_READ_VISION === '1';
-  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local', ...(vision ? { input: ['text', 'image'] as const } : {}) }] });
+  const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local', input: vision ? ['text', 'image'] as const : ['text'] as const }] });
   faux.setResponses([
     fauxAssistantMessage(fauxToolCall('read', target, { id: `read-${name}` }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('READ_T0_DONE'),

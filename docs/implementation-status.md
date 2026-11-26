@@ -141,10 +141,10 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T5-01 | passed | `adaptRead`：offset/limit 编号、非法 offset 降级、Hashline 原文、image/mixed、truncation；7 单测。 |
 | T5-02 | passed | `ReadView`：head 12/24、真实行号、truncation 提示、原文回退；产品 PTY 通过。 |
 | T5-03 | pending | 未来 Hashline 版本隐藏锚点未实现（0.1.2 保留原文）。 |
-| T5-04 | passed | 图片/不支持视觉/损坏图片均返回 image block 或原生错误，产品渲染器统一回退原生；mixed 保留。 |
+| T5-04 | passed | image block 回退原生；processImage 失败纯文本不编号；unsupported 记录 `imageUnsupportedByModel`；showImages OFF/ON 验证。 |
 | T5-05 | running | 产品 OFF/ON content/details 一致、各执行一次、文本卡片与图片原生已验证；Hashline/原生 A/B 待 T6。 |
-| G0-Read | running | T0-R1/T0-R2 通过（含 unsupported、损坏图片）；slot/ReadView 已实现，待独立评审。 |
-| G2-Shared（Read） | pending | 待 T0-R2 与独立 Reviewer。 |
+| G0-Read | blocked | 首轮评审发现续读提示/空文件/图片诊断伪行号，已修复；待复审。 |
+| G2-Shared（Read） | blocked | 首轮评审 block；修复见 `docs/review/g0-read-response.md`，待复审。 |
 | G5-Read | pending | 依赖 T5 全部与评审。 |
 
 ## T4 Write 进展

@@ -1,4 +1,6 @@
 import base64
+import struct
+import zlib
 import json
 import os
 from pathlib import Path
@@ -28,11 +30,16 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     (root / 'notes.md').write_text('# Title\n\n- item\n')
     (root / 'pixel.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='))
     (root / 'bad.png').write_bytes(b'not-a-png')
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xffffffff)
+    header = struct.pack('>IIBBBBB', 1, 1, 8, 6, 0, 0, 0)
+    (root / 'broken.png').write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', header) + chunk(b'IDAT', b'\x78\x9cbroken-deflate') + chunk(b'IEND', b''))
+    (root / 'image-text.txt').write_text('Read image file [image/png]\n[Image omitted: test]\n')
     agent = root / 'agent'
     agent.mkdir()
     (agent / 'settings.json').write_text('{}')
     observed = {}
-    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image', 'corrupt', 'image_unsupported'):
+    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image', 'corrupt', 'image_unsupported', 'process_fail', 'text_like_image', 'limit_one', 'negative_limit', 'fractional_limit'):
         log = root / f'{case}.jsonl'
         env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color', PI_TELEMETRY='0',
                    PI_CODING_AGENT_DIR=str(agent), PI_READ_CASE=case, PI_READ_VISION='1' if case != 'image_unsupported' else '0', PI_TOOL_UI_PROBE_LOG=str(log))
@@ -58,6 +65,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     assert 'image' in observed['image']['kinds'], observed['image']['kinds']
     assert 'image' not in observed['corrupt']['kinds'] and observed['corrupt']['text'], observed['corrupt']
     assert 'image' in observed['image_unsupported']['kinds'] and 'Read image file' in observed['image_unsupported']['text'], observed['image_unsupported']
+    assert (observed['image_unsupported']['details'] or {}).get('imageUnsupportedByModel') =='local', observed['image_unsupported']['details']
+    assert 'image' not in observed['process_fail']['kinds'] and 'Image omitted' in observed['process_fail']['text'], observed['process_fail']
+    assert observed['text_like_image']['kinds'] == ['text'], observed['text_like_image']
+    assert observed['limit_one']['text'] and observed['negative_limit']['text'] and observed['fractional_limit']['text']
     assert observed['invalid_offset']['error'] is True or observed['invalid_offset']['text']
     assert observed['fractional']['args']
 
@@ -66,7 +77,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     evidence = repo / 'docs/evidence/read-t0.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
-        'cases': {case: {'error': item['error'], 'args': item['args'], 'kinds': item['kinds'], 'text_head': item['text'][:200],
+        'cases': {case: {'error': item['error'], 'args': item['args'], 'kinds': item['kinds'], 'text_head': item['text'][:400],
+                         'imageUnsupportedByModel': (item.get('details') or {}).get('imageUnsupportedByModel'),
                          'truncation': (item.get('details') or {}).get('truncation') and
                          {key: value for key, value in item['details']['truncation'].items() if key != 'content'}}
                   for case, item in observed.items()},

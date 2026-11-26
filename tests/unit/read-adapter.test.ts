@@ -60,6 +60,49 @@ describe('Read 适配', () => {
     expect(limited.truncation?.firstLineExceedsLimit).toBe(true);
   });
 
+  test('原生续读提示不编号，纯提示回退原文', () => {
+    const range = adaptRead({
+      ...base,
+      args: { path: 'long.txt', offset: 5, limit: 3 },
+      result: { content: [{ type: 'text', text: 'line 5\nline 6\nline 7\n\n[2094 more lines in file. Use offset=8 to continue.]' }], details: undefined },
+    });
+    expect(range.lines.slice(0, 3).map((line) => line.number)).toEqual([5, 6, 7]);
+    expect(range.lines.slice(3).every((line) => line.number === null)).toBe(true);
+    const zero = adaptRead({
+      ...base,
+      args: { path: 'long.txt', limit: 0 },
+      result: { content: [{ type: 'text', text: '\n\n[2101 more lines in file. Use offset=1 to continue.]' }], details: undefined },
+    });
+    expect(zero.lines).toEqual([]);
+    expect(zero.rawFallback).toContain('more lines');
+    const embedded = adaptRead({
+      ...base,
+      args: { path: 'notice.txt' },
+      result: { content: [{ type: 'text', text: 'alpha\n[Showing lines 1-2 of 99. Use offset=3 to continue.]\ngamma\n' }], details: undefined },
+    });
+    expect(embedded.lines.map((line) => line.number)).toEqual([1, 2, 3]);
+  });
+
+  test('空文件与图片纯文本诊断不编号', () => {
+    const empty = adaptRead({ ...base, result: { content: [{ type: 'text', text: '' }], details: undefined } });
+    expect(empty.lines).toEqual([]);
+    const diagnostic = adaptRead({
+      ...base,
+      args: { path: 'broken.png' },
+      result: { content: [{ type: 'text', text: 'Read image file [image/png]\n[Image omitted: decode failed]' }], details: undefined },
+    });
+    expect(diagnostic.lines).toEqual([]);
+    expect(diagnostic.rawFallback).toContain('[Image omitted');
+  });
+
+  test('truncation.outputLines 限定编号边界', () => {
+    const model = adaptRead({
+      ...base,
+      result: { content: [{ type: 'text', text: 'one\ntwo\nthree\nfour' }], details: { truncation: { totalLines: 4, outputLines: 2, truncatedBy: 'lines' } } },
+    });
+    expect(model.lines.map((line) => line.number)).toEqual([1, 2, null, null]);
+  });
+
   test('Markdown 标记为 markdown-source 并映射 truncation', () => {
     const model = adaptRead({
       ...base,

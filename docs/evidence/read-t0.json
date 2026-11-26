@@ -10,6 +10,7 @@
         "text"
       ],
       "text_head": "alpha\nbeta\ngamma\n",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "range": {
@@ -23,6 +24,7 @@
         "text"
       ],
       "text_head": "line 5\nline 6\nline 7\n\n[2094 more lines in file. Use offset=8 to continue.]",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "eof": {
@@ -35,6 +37,7 @@
         "text"
       ],
       "text_head": "Offset 99 is beyond end of file (4 lines total)",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "zero": {
@@ -47,6 +50,7 @@
         "text"
       ],
       "text_head": "\n\n[2101 more lines in file. Use offset=1 to continue.]",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "empty": {
@@ -58,6 +62,7 @@
         "text"
       ],
       "text_head": "",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "notice": {
@@ -69,6 +74,7 @@
         "text"
       ],
       "text_head": "alpha\n[Showing lines 1-2 of 99. Use offset=3 to continue.]\ngamma\n",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "truncated": {
@@ -79,7 +85,8 @@
       "kinds": [
         "text"
       ],
-      "text_head": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\nline 21\nline 22\nline 23\nline 24\nline 25\nline 26\nl",
+      "text_head": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\nline 21\nline 22\nline 23\nline 24\nline 25\nline 26\nline 27\nline 28\nline 29\nline 30\nline 31\nline 32\nline 33\nline 34\nline 35\nline 36\nline 37\nline 38\nline 39\nline 40\nline 41\nline 42\nline 43\nline 44\nline 45\nline 46\nline 47\nline 48\nline 49\nline 50\nline 51\nl",
+      "imageUnsupportedByModel": null,
       "truncation": {
         "truncated": true,
         "truncatedBy": "lines",
@@ -102,6 +109,7 @@
         "text"
       ],
       "text_head": "[Line 1 is 58.6KB, exceeds 50.0KB limit. Use bash: sed -n '1p' longline.txt | head -c 51200]",
+      "imageUnsupportedByModel": null,
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -125,6 +133,7 @@
         "text"
       ],
       "text_head": "alpha\nbeta\ngamma\n",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "fractional": {
@@ -138,6 +147,7 @@
         "text"
       ],
       "text_head": "alpha\nbeta\n\n[1.5 more lines in file. Use offset=3.5 to continue.]",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "bytes": {
@@ -148,7 +158,8 @@
       "kinds": [
         "text"
       ],
-      "text_head": "line0001-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0002-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0003-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0004-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0005-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
+      "text_head": "line0001-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0002-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0003-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0004-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0005-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0006-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0007-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0008-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0009-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nline0010-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
+      "imageUnsupportedByModel": null,
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -171,6 +182,7 @@
         "text"
       ],
       "text_head": "# Title\n\n- item\n",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "image": {
@@ -183,6 +195,7 @@
         "image"
       ],
       "text_head": "Read image file [image/png]",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "corrupt": {
@@ -194,6 +207,7 @@
         "text"
       ],
       "text_head": "not-a-png",
+      "imageUnsupportedByModel": null,
       "truncation": null
     },
     "image_unsupported": {
@@ -206,6 +220,81 @@
         "image"
       ],
       "text_head": "Read image file [image/png]",
+      "imageUnsupportedByModel": "local",
+      "truncation": null
+    },
+    "process_fail": {
+      "error": false,
+      "args": {
+        "path": "broken.png"
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "Read image file [image/png]\n[Image omitted: could not be resized below the inline image size limit.]",
+      "imageUnsupportedByModel": null,
+      "truncation": null
+    },
+    "text_like_image": {
+      "error": false,
+      "args": {
+        "path": "image-text.txt"
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "Read image file [image/png]\n[Image omitted: test]\n",
+      "imageUnsupportedByModel": null,
+      "truncation": null
+    },
+    "limit_one": {
+      "error": false,
+      "args": {
+        "path": "long.txt",
+        "limit": 1
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "line 1\n\n[2100 more lines in file. Use offset=2 to continue.]",
+      "imageUnsupportedByModel": null,
+      "truncation": null
+    },
+    "negative_limit": {
+      "error": false,
+      "args": {
+        "path": "long.txt",
+        "limit": -1
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\nline 21\nline 22\nline 23\nline 24\nline 25\nline 26\nline 27\nline 28\nline 29\nline 30\nline 31\nline 32\nline 33\nline 34\nline 35\nline 36\nline 37\nline 38\nline 39\nline 40\nline 41\nline 42\nline 43\nline 44\nline 45\nline 46\nline 47\nline 48\nline 49\nline 50\nline 51\nl",
+      "imageUnsupportedByModel": null,
+      "truncation": {
+        "truncated": true,
+        "truncatedBy": "lines",
+        "totalLines": 2100,
+        "totalBytes": 19892,
+        "outputLines": 2000,
+        "outputBytes": 18892,
+        "lastLinePartial": false,
+        "firstLineExceedsLimit": false,
+        "maxLines": 2000,
+        "maxBytes": 51200
+      }
+    },
+    "fractional_limit": {
+      "error": false,
+      "args": {
+        "path": "long.txt",
+        "limit": 1.5
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "line 1\n\n[2099.5 more lines in file. Use offset=2.5 to continue.]",
+      "imageUnsupportedByModel": null,
       "truncation": null
     }
   }

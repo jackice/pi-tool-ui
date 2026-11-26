@@ -12,6 +12,8 @@ export interface ReadAdapterInput {
   context: { isError?: boolean };
 }
 
+const CONTINUATION_NOTICE = /^\[(?:Showing lines \d+-\d+ of \d+|\d+(?:\.\d+)? more lines in file)\. Use offset=\d+(?:\.\d+)? to continue\.\]$/;
+
 const CODE_EXTENSIONS = new Set(['ts', 'tsx', 'js', 'jsx', 'json', 'rs', 'py', 'go', 'java', 'c', 'h', 'cpp', 'sh', 'css', 'html', 'yml', 'yaml', 'toml']);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -72,6 +74,9 @@ export function adaptRead(input: ReadAdapterInput): ReadViewModel {
       ...(text === '' ? {} : { rawFallback: text }),
     };
   }
+  if (text.startsWith('Read image file [')) {
+    return { status: 'success', ...(path === undefined ? {} : { path }), source: 'native', contentKind: 'unknown', lines: [], rawFallback: text };
+  }
   if (/^\[[^\]]+#[0-9a-fA-F]+\]\n/.test(text)) {
     return { status: 'success', ...(path === undefined ? {} : { path }), source: 'hashline', contentKind: contentKind(path), lines: [], rawFallback: text };
   }
@@ -83,13 +88,25 @@ export function adaptRead(input: ReadAdapterInput): ReadViewModel {
   }
 
   const normalized = text.replace(/\r\n/g, '\n');
-  const rawLines = normalized.split('\n');
+  const rawLines = normalized === '' ? [] : normalized.split('\n');
   if (rawLines.length > 1 && rawLines.at(-1) === '') rawLines.pop();
+  let metaStart = rawLines.length;
+  if (CONTINUATION_NOTICE.test(rawLines.at(-1) ?? '')) {
+    metaStart = rawLines.length - 1;
+    while (metaStart > 0 && rawLines[metaStart - 1] === '') metaStart--;
+  }
+  if (metaStart === 0) {
+    return { status: 'success', ...(path === undefined ? {} : { path }), source: 'native', contentKind: contentKind(path), lines: [], ...(text === '' ? {} : { rawFallback: text }) };
+  }
   const requestedOffset = positiveInteger(args.offset);
   const requestedLimit = positiveInteger(args.limit);
   const numbered = args.offset === undefined || args.offset === 0 || requestedOffset !== undefined;
   const start = requestedOffset ?? 1;
-  const lines: ReadLine[] = rawLines.map((line, index) => ({ text: line, number: numbered ? start + index : null }));
+  const contentCount = truncation?.outputLines === undefined ? metaStart : Math.min(metaStart, truncation.outputLines);
+  const lines: ReadLine[] = rawLines.map((line, index) => ({
+    text: line,
+    number: numbered && index < contentCount ? start + index : null,
+  }));
   return {
     status: 'success',
     ...(path === undefined ? {} : { path }),
