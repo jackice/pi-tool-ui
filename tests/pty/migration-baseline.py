@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-from screen import render
+from screen import extract_card as card
 from terminal import capture_tui
 
 
@@ -23,14 +23,6 @@ scenarios = {
     'hashline': ('hashline-provider.ts', 'BASELINE_HASHLINE_DONE', ('read', 'hashline')),
 }
 fixtures = workspace / 'pi-tool-ui/tests/fixtures/migration'
-
-
-def card(output, root):
-    frame = [line.replace(str(root), '<ROOT>').replace(str(Path(root).resolve()), '<ROOT>') for line in render(output)]
-    start = max(index for index, line in enumerate(frame) if '╭─' in line)
-    end = next(index for index in range(start, len(frame)) if frame[index].lstrip().startswith('╰'))
-    card = [re.sub(r'· \d+(?:\.\d+)?m?s', '· <MS>', line) for line in frame[start:end + 1]]
-    return [re.sub(r'─+', '─', line) if line.startswith(('╭', '╰')) else line for line in card]
 
 
 def capture(version, root, provider, done, tools):

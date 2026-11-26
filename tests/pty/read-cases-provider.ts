@@ -12,12 +12,13 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
 
 export default function (pi: ExtensionAPI) {
   const name = process.env.PI_TOOL_UI_READ_CASE;
-  if (!name || !(name in cases)) throw new Error('未知的 PI_TOOL_UI_READ_CASE');
+  const entry = name === undefined ? undefined : cases[name];
+  if (!entry) throw new Error('未知的 PI_TOOL_UI_READ_CASE');
   const logPath = process.env.PI_TOOL_UI_PROBE_LOG;
   if (!logPath) throw new Error('PI_TOOL_UI_PROBE_LOG is required');
   const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
   faux.setResponses([
-    fauxAssistantMessage(fauxToolCall('read', cases[name], { id: `case-${name}` }), { stopReason: 'toolUse' }),
+    fauxAssistantMessage(fauxToolCall('read', entry, { id: `case-${name}` }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('READ_CASE_DONE'),
   ]);
   pi.registerProvider(faux.provider);
