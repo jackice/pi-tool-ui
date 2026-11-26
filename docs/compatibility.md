@@ -2,10 +2,21 @@
 
 - Pi 1.6.0（Bun 全局安装），Bun 1.3.14，Node v25.9.0，macOS 26.7.3 (25G342) arm64。
 - 实际 CLI：全局 `@earendil-works/pi-coding-agent/dist/bundle/cli.js`。SHA-256 `e79626f2dd6f94aa45d30f3fa63cd84319a6eefcd150b353cfaf274366926774`。
-- SDK 声明 `dist/index.d.ts` SHA-256 `b896b72effa2ee729087181a294cf93c45abc323daad2aadbda5f449acafa54a`；`dist/core/extensions/types.d.ts` SHA-256 `3c1728cdf8f9255273047cb260fddb6827637c55eb4edfe06f78f3e18823afd7`。公开包根导出 `highlightCode`、`getLanguageFromPath` 和 `Theme`，尚未做高亮行为验收。
-- GitHub Commit API 对计划固定的 Pi commit、两个 OMP commit 均返回 200；本地 OMP checkout 不含这两份 commit。源码树与文件指纹、Pi 已安装产物与 commit 的对应关系尚未校验；安装 manifest 无 `gitHead`。
+- SDK 声明 `dist/index.d.ts` SHA-256 `b896b72effa2ee729087181a294cf93c45abc323daad2aadbda5f449acafa54a`；`dist/core/extensions/types.d.ts` SHA-256 `3c1728cdf8f9255273047cb260fddb6827637c55eb4edfe06f78f3e18823afd7`。公开包根导出 `highlightCode`、`getLanguageFromPath` 和 `Theme`；前两者的行为已在真实 PTY 中验证。
+- GitHub Commit API 对计划固定的 Pi commit、两个 OMP commit 均返回 200；本地 OMP checkout 不含这两份 commit。安装 manifest 无 `gitHead`，构建产物无法从源码逐字节复现。
 
-固定 commit `faac585` 的 `packages/coding-agent/src/core/extensions/types.ts` 已下载，SHA-256 `435793cf417501a0182baac154d366335ad9d0397e710490595529fd7806aed6`。其中 `ToolRenderContext` 的字段、注释与顺序与本机 `dist/core/extensions/types.d.ts` 第 367-399 行逐项一致（args、toolCallId、invalidate、lastComponent、state、cwd、executionStarted、argsComplete、isPartial、expanded、showImages、isError、durationMs、outputPad）。这只证明该接口文本对应，不证明整个构建产物来自该 commit。
+固定 commit 已在 `/tmp` 隔离浅取：commit `faac585884ae2c013a6b1400f3e9e77f10b34bac`，tree `7b395e942aa81ffe0dba09ae2939184c200e4d3b`。相关源码文件 SHA-256：
+
+| 文件 | SHA-256 |
+|---|---|
+| `core/extensions/types.ts` | `435793cf417501a0182baac154d366335ad9d0397e710490595529fd7806aed6` |
+| `core/tools/read.ts` | `d590d463083fb909aa3d20134825b3455b6d92a447ed1e8fa20ccebc5695a778` |
+| `core/tools/write.ts` | `b93b6a83eaee6959ae713934bbcdba834a39b023694a3ca986c73b331f771a3d` |
+| `core/tools/bash.ts` | `dc97c3fa2a23e13981920bea85e6b135fc627610682bfadcdae6888b4ef1778e` |
+| `core/tools/renderers/read.ts` | `524b4dd080192736d92fc5181ab02b2c1e68a8b208d01cf80a2075aa26c58843` |
+| `core/tools/renderers/write.ts` | `59723b9e77710ef6bef218728bbc585debf53d2320955e7697cbc3e4d1c3bd20` |
+
+`types.ts` 中 `ToolRenderContext` 的字段、注释与顺序与本机 `dist/core/extensions/types.d.ts` 第 367-399 行逐项一致（args、toolCallId、invalidate、lastComponent、state、cwd、executionStarted、argsComplete、isPartial、expanded、showImages、isError、durationMs、outputPad）。这只证明该接口文本对应，不证明整个构建产物由该 commit 生成；工具数据契约仍以本机安装产物与 T0 运行探针为准。
 
 ## 依赖漂移
 

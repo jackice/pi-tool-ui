@@ -6,10 +6,10 @@
 |---|---|---|
 | T0-01 | passed | 已记录本机 CLI/SDK 指纹、安装版本、包导出键与根导出差异；固定 commit 的 `ToolRenderContext` 文本与安装声明逐项一致。构建产物整体对应关系未证，已记入 compatibility。 |
 | T0-02 | passed | 旧源码、配置分支与指纹已冻结；真实 PTY 冻结原生 Edit 与 Hashline 的 0.4.2/0.5.1 卡片 golden，见 `tests/fixtures/migration/`。Hashline `/export` HTML 对账归 T1-02。 |
-| T0-03 | running | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
-| T0-04 | running | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。 |
-| T0-05 | running | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。仍待实际迁移候选包的安装验证。 |
-| T0-I | running | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。生产开关与真实审批路径仍待独立验收。 |
+| T0-03 | passed | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
+| T0-04 | passed | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。`smoke.py` 现在断言 call 首次不复用、后续复用、两个 slot 均 `outputPad=1`、result 共享 state 且展开前后各渲染一次。 |
+| T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
+| T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | running | 范围改写、错误跳过、截断与 details 共存已实测；待历史与图片路径。 |
 | T0-B1…B3、T0-W1…W2、T0-R1…R2 | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
@@ -55,4 +55,18 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 原生 `[Showing lines …]` 与普通源文件文本同形，通用 renderer 无法仅凭外观安全剥离；后续 Read adapter 必须按 §6.3/§6.4 的证据规则降级，不据文本形状推断来源。
 
-下一步审查 G0-Base。
+## G0-Base 门禁记录
+
+| 字段 | 内容 |
+|---|---|
+| 状态 | 待复审（首轮独立评审 blocked，整改已提交） |
+| owner | Main |
+| baseline SHA | `d02227b01fea8d9770b1dd8d5d22043b258902d8` |
+| implementation SHA | 本文件所在提交之后的最新 `test:` 提交 |
+| 命令/环境 | `python3 tests/pty/smoke.py`、`package-smoke.py`、`managed-install-smoke.py`、`full-stack-smoke.py`、`uv run --with pyte python tests/pty/migration-baseline.py`；Pi 1.6.0，隔离 HOME/Agent dir/cwd |
+| 实际结果 | 脚本全部退出 0；T0-01 新增固定 commit tree 与源码 SHA；T0-04 新增 `outputPad`、call slot 复用断言 |
+| 限制 | 构建产物无法逐字节复现；未验证真实审批/Compressor；T0-RH 仅部分完成 |
+| 独立 Reviewer | G0BaseReview（首轮 2026-11-26）结论 blocked，原因 T0-01 缺隔离 checkout、T0-04 缺 `outputPad`/call 复用断言；整改后请求复审 |
+| follow-up | 复审结果写入本表；未通过前 G0-Base 保持非 passed |
+
+下一步复审 G0-Base；通过后进入 T1 迁移。

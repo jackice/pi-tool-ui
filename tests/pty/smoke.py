@@ -25,6 +25,13 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-') as directory:
     tail = ['--model', 'tool-ui-probe/local', '--tools', 'read', 'Run the local fixture']
     command = [*base, '-e', str(probe), *tail]
     run_tui(command, env, root, b'PROBE_RESULT', expand=True)
+    initial = [json.loads(line) for line in log.read_text().splitlines()]
+    calls = [item for item in initial if item['event'] == 'call']
+    results = [item for item in initial if item['event'] == 'result']
+    assert calls and calls[0]['reused'] is False and all(item['reused'] for item in calls[1:]), calls
+    assert {item['pad'] for item in calls + results} == {1}, initial
+    assert all(item['shared'] for item in results), results
+    assert {item['expanded'] for item in results} == {False, True}, results
 
     peer = probe.with_name('peer.ts')
     for order, entered, passthrough, shown in [
