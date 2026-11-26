@@ -1,10 +1,12 @@
+import base64
 import json
 import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import tempfile
+
+from terminal import export_tui
 
 
 pi = shutil.which('pi')
@@ -17,12 +19,6 @@ library = old / 'node_modules/@jackice/pi-ui'
 provider = repo / 'tests/pty/hashline-provider.ts'
 
 
-def run(command, cwd, env):
-    result = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, timeout=60)
-    assert result.returncode == 0, result.stdout + result.stderr
-    return result.stdout
-
-
 def install_hashline(agent):
     shutil.copytree(hashline, agent / 'extensions/hashline')
     for native in ('pi-utils', 'pi-natives', 'pi-natives-darwin-arm64'):
@@ -30,32 +26,39 @@ def install_hashline(agent):
                         agent / f'node_modules/@oh-my-pi/{native}')
 
 
+def rendered_tools(html_path):
+    html = html_path.read_text()
+    match = re.search(r'<script id="session-data" type="application/json">([^<]+)</script>', html)
+    assert match, '导出 HTML 缺少 session-data'
+    data = json.loads(base64.b64decode(match.group(1)))
+    tools = data.get('renderedTools')
+    assert tools, '导出 HTML 未预渲染自定义工具'
+    return tools
+
+
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-export-') as directory:
     root = Path(directory)
     (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
-    session_agent = root / 'session-agent'
-    install_hashline(session_agent)
-    shutil.copytree(old, session_agent / 'extensions/hashline-diff', ignore=shutil.ignore_patterns('node_modules'))
-    (session_agent / 'extensions/hashline-diff/node_modules/@jackice').mkdir(parents=True)
-    shutil.copytree(library, session_agent / 'extensions/hashline-diff/node_modules/@jackice/pi-ui')
-    (session_agent / 'settings.json').write_text(json.dumps({'editDiff': {'nativeEdit': True}}))
-    session = root / 'session.jsonl'
-    env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color',
-               PI_CODING_AGENT_DIR=str(session_agent), PI_TELEMETRY='0',
-               PI_TOOL_UI_PROBE_LOG=str(root / 'events.jsonl'))
-    run([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--session', str(session),
-         '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'read,hashline',
-         '--print', 'Run the local edit'], root, env)
-    assert session.is_file() and b'beta2' in session.read_bytes()
+    agents = {}
+    old_agent = root / 'old-agent'
+    install_hashline(old_agent)
+    shutil.copytree(old, old_agent / 'extensions/hashline-diff', ignore=shutil.ignore_patterns('node_modules'))
+    (old_agent / 'extensions/hashline-diff/node_modules/@jackice').mkdir(parents=True)
+    shutil.copytree(library, old_agent / 'extensions/hashline-diff/node_modules/@jackice/pi-ui')
+    (old_agent / 'settings.json').write_text(json.dumps({'editDiff': {'nativeEdit': True}}))
+    agents['old'] = old_agent
 
-    agents = {'old': session_agent, 'new': root / 'new-agent'}
-    install_hashline(agents['new'])
-    (agents['new'] / 'settings.json').write_text(json.dumps({
+    new_agent = root / 'new-agent'
+    install_hashline(new_agent)
+    (new_agent / 'settings.json').write_text(json.dumps({
         'packages': [str(repo)],
         'toolUi': {'enabled': True, 'tools': {'edit': {'enabled': True}, 'hashline': {'enabled': True}}},
     }))
+    agents['new'] = new_agent
+
     outputs = {}
     for name, agent in agents.items():
+        log = root / f'{name}.jsonl'
         html = root / f'{name}.html'
         run([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--export', str(session), str(html)], root,
             dict(env, PI_CODING_AGENT_DIR=str(agent)))
