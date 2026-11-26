@@ -22,12 +22,14 @@ scenarios = {
 goldens = {name: (fixtures / f'{name}-0.5.1.txt').read_text().rstrip('\n') for name in scenarios}
 
 
-def capture(root, settings, provider, done, tools):
+def capture(root, settings, provider, done, tools, *, with_hashline=True):
     agent = root / 'agent'
-    shutil.copytree(hashline, agent / 'extensions/hashline')
-    for native in ('pi-utils', 'pi-natives', 'pi-natives-darwin-arm64'):
-        shutil.copytree(Path.home() / f'.pi/agent/npm/node_modules/@oh-my-pi/{native}',
-                        agent / f'node_modules/@oh-my-pi/{native}')
+    agent.mkdir(parents=True, exist_ok=True)
+    if with_hashline:
+        shutil.copytree(hashline, agent / 'extensions/hashline')
+        for native in ('pi-utils', 'pi-natives', 'pi-natives-darwin-arm64'):
+            shutil.copytree(Path.home() / f'.pi/agent/npm/node_modules/@oh-my-pi/{native}',
+                            agent / f'node_modules/@oh-my-pi/{native}')
     (agent / 'settings.json').write_text(json.dumps(settings))
     (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
     env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color',
@@ -53,3 +55,9 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-parity-') as directory:
         screen = capture(off, {'packages': [package], 'toolUi': {'enabled': False}}, provider, done, tools)
         assert b'\xe2\x95\xad\xe2\x94\x80 Edit' not in screen, f'{name} 关闭后仍接管'
         print(f'{name}：旧配置映射后与 golden 一致；toolUi 关闭时保留原生渲染')
+    root = base / 'native-only'
+    root.mkdir()
+    screen = capture(root, {'packages': [package], 'toolUi': {'enabled': True, 'tools': {'edit': {'enabled': True}}}},
+                     'edit-provider.ts', 'BASELINE_DONE', ('edit',), with_hashline=False)
+    assert '\n'.join(extract_card(screen, root)) == goldens['edit-native']
+    print('native-only：无 Hashline 时 Edit 卡片仍与 golden 一致')

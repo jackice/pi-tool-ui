@@ -5,7 +5,7 @@
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
 | T0-01 | passed | 已记录本机 CLI/SDK 指纹、安装版本、包导出键与根导出差异；固定 commit 的 `ToolRenderContext` 文本与安装声明逐项一致。构建产物整体对应关系未证，已记入 compatibility。 |
-| T0-02 | passed | 旧源码、配置分支与指纹已冻结；真实 PTY 冻结原生 Edit 与 Hashline 的 0.4.2/0.5.1 卡片 golden，见 `tests/fixtures/migration/`。Hashline `/export` HTML 对账归 T1-02。 |
+| T0-02 | passed | 旧源码、配置分支与指纹已冻结；真实 PTY 冻结原生 Edit 与 Hashline 的 0.4.2/0.5.1 卡片 golden，见 `tests/fixtures/migration/`。 |
 | T0-03 | passed | `python3 tests/pty/smoke.py` 在隔离 HOME、Agent dir、临时 cwd 和空白 session 中成功执行真实 Pi 1.6.0；本地 SDK faux provider 发起一次 `read`，屏幕出现 `PROBE_DONE`，无真实认证或付费模型。 |
 | T0-04 | passed | 已实测行级 state、slot 组件复用、`outputPad=1`、展开、无 UI、resolver 顺序、下游回退、历史回放、`/reload`、结果构造异常回退及进程内主题切换。`smoke.py` 现在断言 call 首次不复用、后续复用、两个 slot 均 `outputPad=1`、result 共享 state 且展开前后各渲染一次。 |
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
@@ -77,13 +77,15 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
 | T1-01 | passed | ESM + TypeScript 包，`pi.extensions` 指向 `dist/index.js`；`npm test` 19 通过、typecheck/build 通过、`npm pack --dry-run` 仅含 dist 与文档。 |
-| T1-02 | running | 旧 `adaptNativeEdit` 原样迁入并通过单测；真实 PTY 下 `edit-native` 与 `hashline` 卡片均与旧 0.5.1 golden 一致。Hashline `/export` 的 call/Diff HTML 对照未做。 |
+| T1-02 | passed | 旧 `adaptNativeEdit` 原样迁入并通过单测；真实 PTY 下两张卡片与旧 0.5.1 golden 一致。`export-parity.py`：同一真实 Hashline 会话经旧扩展与新包导出的 HTML 完全一致；两版均未把工具正文写入 HTML（Pi 导出模板行为），限制已记录。 |
 | T1-03 | passed | `src/config.ts` 实现 schema 校验、冻结默认值与旧配置 dry-run 映射；覆盖 `PI_HASHLINE_DIFF` 未设置/`0`、`nativeEdit` 非 true、冲突与新配置优先。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
-| T1-05 | running | `uv run --with pyte python tests/pty/migration-parity.py`：旧配置映射后与 golden 一致，`toolUi` 关闭时不接管。原生-only 无 Hashline 与完整用户栈 A/B 尚未用新包重跑。 |
+| T1-05 | passed | `migration-parity.py` 覆盖：旧配置映射后与 golden 一致、`toolUi` 关闭不接管、native-only 无 Hashline 的 Edit 仍一致。完整用户栈未在此脚本重复，T0-I 已单独验证。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
-| G1-Migration | pending | 依赖 T1-02 的导出对照、T1-05 剩余环境及独立评审。 |
+| G1-Migration | pending | T1-01..05 开发者证据齐全；等待独立评审签署。T1-06 与生产切换需用户批准。 |
 
 ### 迁移等价实测
 
 `tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。
+
+Hashline `/export`：`tests/pty/export-parity.py` 用同一真实会话分别加载旧扩展与新包导出 HTML，两者归一化后完全相同。两版 HTML 都不含 `beta2` 工具正文，说明 Pi 导出模板不消费该 renderer；因此“导出保留 Diff 正文”在当前 Pi 版本无法由 renderer 达成，旧行为同样如此，记为限制而非回归。原始布尔记录在 `docs/evidence/export-parity.json`。
