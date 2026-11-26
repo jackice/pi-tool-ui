@@ -1,0 +1,8 @@
+{
+  "on_header": "# shell-compressor 501→2 lines, 5000→26 chars (-99%)",
+  "on_details_keys": [
+    "shellCompressor"
+  ],
+  "off_lines": 500,
+  "model_sees_compressed": true
+}

@@ -21,11 +21,12 @@ gate = workspace / 'pi-approval-gate'
 provider = repo / 'tests/pty/bash-cases-provider.ts'
 
 
-def interact(root, agent, env, marker, approve):
+def interact(work, agent, case, action, timeout_ms=0):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
     env = dict(PATH=os.environ['PATH'], HOME=str(work), TERM='xterm-256color', PI_TELEMETRY='0',
                PI_CODING_AGENT_DIR=str(agent), PI_BASH_CASE=case,
+               PI_BASH_TIMEOUT=str(timeout_ms),
                PI_TOOL_UI_PROBE_LOG=str(work / 'events.jsonl'))
     command = [pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash',
@@ -92,16 +93,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-gate-') as directory:
         (agent / 'extensions').mkdir(parents=True)
         shutil.copytree(gate, agent / 'extensions/approval-gate')
         (agent / 'settings.json').write_text('{}')
-        log = work / 'events.jsonl'
-        env = dict(base_env, PI_CODING_AGENT_DIR=str(agent), PI_BASH_CASE='risky', PI_TOOL_UI_PROBE_LOG=str(log))
-        interact(work, agent, env, b'navigate', approve)
-        events = [json.loads(line) for line in log.read_text().splitlines()]
-        final = next(item for item in events if not item['partial'])
-        observed[name] = {
-            'error': final['error'],
-            'text': [block.get('text', '') for block in final['content']],
-            'mode': stat.S_IMODE((work / 'secret.txt').stat().st_mode),
-        }
+        observed[name] = interact(work, agent, case, action, 1 if name == 'cancel' else 0)
 
     assert observed['allow']['runs'] == 1 and observed['allow']['error'] is False, observed
     for name in ('deny', 'timeout', 'cancel'):

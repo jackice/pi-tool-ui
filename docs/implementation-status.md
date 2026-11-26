@@ -11,12 +11,12 @@
 | T0-05 | passed | 已验证公开高亮、宽度、ESM 打包入口和 Pi 受管安装的 peer 处理；宿主 SDK/TUI 与 `pi-ui@0.4.2` 可用。实际候选包安装归 T1/T7。 |
 | T0-I | passed | 隔离核心栈与完整用户扩展栈均启动成功；完整栈的 TUI 读取已进入 renderer。真实审批与 Compressor 改写不属本任务。 |
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
-| T0-B1 | blocked | 成功/空/非零/流式子集已采集；缺空首帧内容、压缩 final、历史、审批/执行取消与超时、执行次数、模型第二轮结果。 |
-| T0-B2 | blocked | 2100 行与 60KB 单行截断已实测；多行字节 fixture 已改为 1500 行 / >51200 字节并断言 truncatedBy=bytes；仍缺截断后 timeout/cancel、Compressor 与诊断专项。 |
-| T0-B3 | blocked | allow/timeout 已证明执行/不执行；缺非幂等执行计数、Esc 拒绝、审批取消、执行取消/超时、OFF/ON 与 Compressor。 |
-| Bash slot | blocked | A 确认 final 后无 call 重绘并否决；B 仅 marker 级验证，缺真实上下边框、无 result 结构与 expanded。 |
+| T0-B1 | running | 成功/空/非零/流式/空首帧/压缩 final/Gate allow/deny/timeout/执行超时/执行次数/模型第二轮结果均已采集；仅历史缺 duration 未单独造样本。 |
+| T0-B2 | running | 行截断、1500 行字节截断、60KB 单行与 Compressor ON/OFF 已实测；仍缺截断后 timeout/cancel 与纯文本诊断专项。 |
+| T0-B3 | passed | 非幂等计数：allow 恰 1；Esc 拒绝、审批超时、执行超时均 0 且 error；renderer OFF/ON 执行次数与模型 final 一致。 |
+| Bash slot | running | A 否决；B 已验证单上/下边框、顺序、共享 state；仍缺无 result 结构与 expanded。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
-| G0-Bash | blocked | G0BashReview 首轮 blocked；需补 Gate 非幂等计数、Compressor、OFF/ON、真实 B 边框与压缩 final 证据。 |
+| G0-Bash | pending | 首轮整改已完成大部分；等待 G0BashReview 复审。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |

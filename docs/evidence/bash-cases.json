@@ -7,7 +7,7 @@
     "args": {
       "command": "printf 'ok\\n'"
     },
-    "durationMs": 21,
+    "durationMs": 20,
     "details": {}
   },
   "empty": {
@@ -29,7 +29,7 @@
     "args": {
       "command": "false"
     },
-    "durationMs": 19,
+    "durationMs": 20,
     "details": {}
   },
   "lines": {
@@ -42,7 +42,7 @@
     },
     "durationMs": 21,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-40224b11443ffd33.log",
+      "fullOutputPath": "/tmp/pi-bash-a4d9638d20075c1a.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "lines",
@@ -67,7 +67,7 @@
     },
     "durationMs": 22,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-e2558b23c1d04f16.log",
+      "fullOutputPath": "/tmp/pi-bash-0ee598a67029a376.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -92,7 +92,7 @@
     },
     "durationMs": 22,
     "details": {
-      "fullOutputPath": "/tmp/pi-bash-ab07f2a591343f15.log",
+      "fullOutputPath": "/tmp/pi-bash-f581b99dab7a3fdc.log",
       "truncation": {
         "truncated": true,
         "truncatedBy": "bytes",
@@ -115,7 +115,7 @@
     "args": {
       "command": "printf 'first\\n'; sleep 0.4; printf 'second\\n'"
     },
-    "durationMs": 409,
+    "durationMs": 415,
     "details": {}
   }
 }

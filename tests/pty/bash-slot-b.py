@@ -29,8 +29,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-slotb-') as directory:
     assert all(item['shared'] for item in results), results
     assert screen.count(b'BASH_TOP') == 1 and screen.count(b'BASH_BOTTOM') == 1, (screen.count(b'BASH_TOP'), screen.count(b'BASH_BOTTOM'))
     assert screen.find(b'BASH_TOP') < screen.find(b'BASH_BOTTOM')
+    assert screen.count(b'\xe2\x95\xad') == 1 and screen.count(b'\xe2\x95\xb0') == 1, (screen.count(b'\xe2\x95\xad'), screen.count(b'\xe2\x95\xb0'))
+    assert screen.find(b'\xe2\x95\xad') < screen.find(b'BASH_BOTTOM') < screen.find(b'\xe2\x95\xb0')
     evidence = repo / 'docs/evidence/bash-slot.json'
     data = json.loads(evidence.read_text())
-    data['candidate_b'] = {'chosen': True, 'single_top_and_bottom': True, 'shared_state': True}
+    data['candidate_b'] = {'chosen': True, 'single_top_and_bottom': True, 'single_border': True, 'shared_state': True}
     evidence.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
     print('Bash slot 候选 B：call/result 各渲染一部分，各一次且顺序正确，共享状态')

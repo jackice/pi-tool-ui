@@ -1,16 +1,30 @@
 {
   "allow": {
+    "runs": 1,
     "error": false,
     "text": [
       "(no output)"
-    ],
-    "mode": 0
+    ]
   },
   "deny": {
+    "runs": 0,
+    "error": true,
+    "text": [
+      "Blocked by approval gate (deny); command was not executed."
+    ]
+  },
+  "timeout": {
+    "runs": 0,
     "error": true,
     "text": [
       "Blocked by approval gate (timeout); command was not executed."
-    ],
-    "mode": 420
+    ]
+  },
+  "cancel": {
+    "runs": 0,
+    "error": true,
+    "text": [
+      "Command timed out after 1 seconds"
+    ]
   }
 }

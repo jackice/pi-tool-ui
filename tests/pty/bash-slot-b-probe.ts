@@ -24,12 +24,12 @@ export default function (pi: ExtensionAPI) {
       renderCall(_args, theme, context) {
         (context.state[stateKey] ??= { calls: 0 }) as { calls: number };
         log('call', { pad: context.outputPad });
-        return new Text(theme.fg('muted', 'BASH_TOP'), 0, 0);
+        return new Text(theme.fg('muted', 'BASH_TOP\n╭─ Bash ─╮\n│ $ command │'), 0, 0);
       },
       renderResult(_result, options, _theme, context) {
         const state = context.state[stateKey] as { calls: number } | undefined;
         log('result', { partial: options.isPartial, shared: state !== undefined });
-        return new Text('BASH_BOTTOM', 0, 0);
+        return new Text('│ output │\nBASH_BOTTOM\n╰─────────╯', 0, 0);
       },
     };
   });

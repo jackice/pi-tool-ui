@@ -28,8 +28,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
                     dict(env, PI_BASH_CASE=case, PI_TOOL_UI_PROBE_LOG=str(log)), root,
                     b'BASH_DONE', b'BASH_PROBE')
         events = [json.loads(line) for line in log.read_text().splitlines()]
-        final = next(item for item in events if not item['partial'])
-        partials = [item for item in events if item['partial']]
+        final = next(item for item in events if item.get('event') == 'result' and not item['partial'])
+        partials = [item for item in events if item.get('event') == 'result' and item['partial']]
         observed[case] = {'final': final, 'partial_count': len(partials), 'first_partial': partials[0] if partials else None}
 
     success = observed['success']['final']
@@ -84,5 +84,6 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bash-') as directory:
             'durationMs': final['durationMs'],
             'details': details_of(final),
         }
+    assert all(item['first_partial_text'] in (None, '') for item in summary.values()), '首帧应为空'
     evidence.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
     print('Bash T0：成功/空/非零/行截断/字节截断/超长行/流式 partial 均已采集')

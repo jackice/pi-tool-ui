@@ -70,5 +70,11 @@
       "event": "result",
       "partial": false
     }
-  ]
+  ],
+  "candidate_b": {
+    "chosen": true,
+    "single_top_and_bottom": true,
+    "single_border": true,
+    "shared_state": true
+  }
 }
