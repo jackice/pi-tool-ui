@@ -6,7 +6,7 @@
 
 ## 范围
 
-- 仓库 pi-tool-ui HEAD 9e20f01cbd；pi-ui 0.6.4（WriteView）。
+- 仓库 pi-tool-ui HEAD 以最新提交为准；pi-ui 0.6.5（WriteView）。
 - 证据：`tests/pty/write-cases.py`、`write-stream.py`、`write-view-pty.py`、`write-product-ab.py`、`docs/evidence/write-*.json`、`tests/unit/write-adapter.test.ts`、pi-ui `write-view.test.ts`。
 - 计划 §6.2、§8 T0-W、T4、§12。
 
@@ -15,7 +15,7 @@
 - 成功/空/Unicode/覆盖/错误写入 bytes 与 final 一致；各执行一次。
 - 低速 faux 流产生 10 次 `argsComplete=false` 参数快照，final 内容正确。
 - `adaptWrite`：path/content/CRLF/lineCount/argsComplete/error notices。
-- `WriteView`：head 6、streaming tail 12、行号、错误隐藏正文；产品 PTY 路径仅一次。
+- `WriteView`：head 6、行号、错误隐藏正文；产品 PTY 路径/正文各一次。streaming tail 未交付（T4-02 blocked）。
 - 产品 OFF/ON：bytes/args/result 一致、各 1 次、ON 有 Write 卡片、OFF 无。
 - slot C：保留原生 call/path，仅替换 result。
 

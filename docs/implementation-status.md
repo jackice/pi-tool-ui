@@ -19,7 +19,7 @@
 | T0-W2 | passed（单场景 A/B） | 成功场景 OFF/ON bytes/args/result/次数一致；失败/取消/历史文件修改未做 OFF/ON。 |
 | T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write | pending | 已提交 G0G4WriteReview；T0-W1 流式参数与 T0-W2 字节证据齐全。 |
+| G0-Write | blocked | T0-W1/W2 仅部分矩阵；streaming 预览与历史 call 状态问题已记录。 |
 | G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
@@ -137,11 +137,11 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | ID | 状态 | 证据 |
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
-| T4-02 | conditional | head 6、尾随 LF、expanded error、多行诊断、错误隐藏均通过；实时 streaming tail 在产品不可达（宿主 call 不随 args 完成后重绘），call 仅显示 path/状态。 |
-| T4-03 | pending | 有界高亮未实现；write.highlight 当前应按 unsupported 处理，待实现或文档化。 |
-| T4-04 | passed | call 仅 path/状态、result 独占正文；全屏 path/正文各一次，历史 final 显示 ✓ 与 head，无重复。 |
-| T4-05 | passed | 产品 OFF/ON：bytes/args/result 一致、各执行 1 次、ON 有 Write 卡片、OFF 无。 |
-| G4-Write | pending | T4-01/02/04/05 通过；T4-03 高亮 pending，等待评审。 |
+| T4-02 | blocked | head 6、expanded error、尾随 LF、多行诊断、错误隐藏通过；实时 streaming tail 未交付（call 仅 path，历史/实时均不显示正文）。 |
+| T4-03 | pending | 有界高亮未实现；`write.highlight` 标 unsupported（README/contract 已同步）。 |
+| T4-04 | passed | call 仅 path、result 独占正文；全屏 path/正文各一次；历史 final 显示 ✓ 与 head，无 streaming 误标。 |
+| T4-05 | running | 仅 success 场景 OFF/ON bytes/args/result/次数一致；failure/cancel/history 未做。 |
+| G4-Write | blocked | T4-02 streaming 未交付、T4-03 pending、T4-05 矩阵不足。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 

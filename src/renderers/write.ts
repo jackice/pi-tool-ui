@@ -17,6 +17,7 @@ interface ResultContext {
 const cacheKey = Symbol('pi-tool-ui-write');
 const callKey = Symbol('pi-tool-ui-write-call');
 
+
 interface Cached {
   content: unknown;
   details: unknown;
@@ -32,17 +33,14 @@ interface Cached {
 
 export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
   return (original) => ({
-    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean }) {
+    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown> }) {
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
       const path = typeof record.path === 'string' ? record.path : '';
-      const status = context.argsComplete ? 'write' : 'streaming';
-      const cached = context.state[callKey] as { key: string; text: Text } | undefined;
-      const key = `${status}:${path}`;
-      if (cached?.key === key) return cached.text;
-      const prefix = theme.fg(context.argsComplete ? 'muted' : 'accent', `${status} `);
-      const text = new Text(prefix + path, 0, 0);
-      context.state[callKey] = { key, text };
-      return text;
+      const cached = context.state[callKey] as { path: string; theme: Theme; component: Text } | undefined;
+      if (cached?.path === path && cached.theme === theme) return cached.component;
+      const component = new Text(theme.fg('muted', `write ${path}`), 0, 0);
+      context.state[callKey] = { path, theme, component };
+      return component;
     },
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       try {

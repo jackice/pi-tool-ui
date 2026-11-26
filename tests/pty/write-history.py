@@ -43,6 +43,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-whistory-') as directory:
                          root, b'WRITE_DONE', b'WRITE_DONE', rows=60)
     text = '\n'.join(render(screen))
     assert '✓' in text, text[-600:]
+    assert 'streaming' not in text, [line for line in text.split('\n') if 'streaming' in line]
     assert 'line 1' in text and 'line 6' in text, text[-800:]
     assert 'line 7' not in text, text[-800:]
     evidence = repo / 'docs/evidence/write-history.json'
