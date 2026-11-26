@@ -16,7 +16,7 @@
 | T0-B3 | passed | 真实 Gate：允许后 chmod 执行（模式 000）；审批超时返回 Blocked 且模式保持 644、未执行。显式 Esc 拒绝与 Compressor 改写专项未单独跑。 |
 | Bash slot | passed | 候选 A 被拒；候选 B 验证通过：call 渲染上部、result 渲染下部，各一次且顺序正确，共享 `context.state`。T3 原型需继续验证无重复边框。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
-| G0-Bash | running | T0-B1/B2/B3 与候选 B slot 探针通过；等待独立 Reviewer。 |
+| G0-Bash | pending | 已提交 G0BashReview 独立评审；T0-B1/B2/B3 与 slot B 证据见 review handoff。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
