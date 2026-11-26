@@ -80,14 +80,14 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-hashline-cases-') as directo
     assert noop['old']['results'] == noop['new']['results'], noop
     assert noop['old']['bytes'] == noop['new']['bytes']
     assert noop['old']['card'] == noop['new']['card'], noop
-    assert noop['new']['executions'] == 1, noop['new']['executions']
+    assert noop['old']['executions'] == noop['new']['executions'] == 1, (noop['old']['executions'], noop['new']['executions'])
 
     multi = run_case(base / 'multi', 'multi', {'a.txt': 'alpha\n', 'b.txt': 'beta\n'},
                      'hashline-multifile-provider.ts', 'MULTI_DONE')
     assert multi['old']['results'] == multi['new']['results'], multi
     assert multi['old']['bytes'] == multi['new']['bytes']
     assert multi['old']['card'] == multi['new']['card'], multi
-    assert multi['new']['executions'] == 1, multi['new']['executions']
+    assert multi['old']['executions'] == multi['new']['executions'] == 1, (multi['old']['executions'], multi['new']['executions'])
 
     evidence = repo / 'docs/evidence/hashline-cases.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)

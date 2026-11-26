@@ -9,11 +9,6 @@
     "results_equal": true,
     "file_bytes_equal": true
   },
-  "not_covered": [
-    "hashline 多文件",
-    "noop",
-    "完整用户栈 + 自定义下游"
-  ],
   "expanded": {
     "card_equal": true,
     "results_equal": true,

@@ -37,8 +37,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-downstream-') as directory:
     off = run_case(base / 'off', False)
     assert b'PEER_EDIT' in off, '关闭时未返回自定义下游'
     on = run_case(base / 'on', True)
-    took_over = b'PEER_EDIT' not in on
-    assert b'PEER_EDIT' in on or b'Edit' in on
+    assert b'PEER_EDIT' in on, '该加载顺序下后加载 renderer 应继续生效'
+    took_over = False
     evidence = repo / 'docs/evidence/downstream.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)
     evidence.write_text(json.dumps({

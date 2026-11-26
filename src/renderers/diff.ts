@@ -31,6 +31,7 @@ export function createDiffFactory(mode: 'edit' | 'hashline'): DiffFactory {
   return (original) => ({
     ...(native ? {} : { renderShell: 'self' as const }),
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
+      try {
       if (!options.isPartial && (!native || !context.isError)) {
         const cached = context.state[cacheKey] as CachedDiff | undefined;
         const { durationMs, toolCallId } = context;
@@ -45,6 +46,9 @@ export function createDiffFactory(mode: 'edit' | 'hashline'): DiffFactory {
           context.state[cacheKey] = { details: result.details, durationMs, theme, expanded: options.expanded, model, view };
           return view;
         }
+      }
+      } catch {
+        // 下游 renderer 是安全回退；异常不能冒泡到宿主。
       }
       if (original.renderResult !== undefined) return original.renderResult(result, options, theme, context);
       const text = result.content.flatMap((block) => block.type === 'text' ? [block.text] : []).join('\n');

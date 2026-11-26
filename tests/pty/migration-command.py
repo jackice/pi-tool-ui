@@ -58,6 +58,7 @@ def interact(agent, root, steps):
     finally:
         os.close(master)
         Path('/tmp/migrate-last.log').write_bytes(bytes(output))
+    return bytes(output)
 
 
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-migrate-') as directory:
@@ -81,4 +82,4 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-migrate-') as directory:
     interact(cancel_agent, root, [(None, b'PROBE_DONE'), (b'/tool-ui-migrate force', None), (b'\r', '应用 toolUi 迁移'.encode()),
                                   (b'\x1b', None)])
     assert 'toolUi' not in json.loads((cancel_agent / 'settings.json').read_text())
-    print('迁移命令：dry 不落盘；取消不写入；force 写入由 migrate.test.ts 覆盖')
+    print('迁移命令：dry 不落盘；取消不写入；force 由 command.test.ts 覆盖')
