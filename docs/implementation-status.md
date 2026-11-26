@@ -100,8 +100,15 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T2-03 | passed | pi-ui `CodeBlock`，单测 head/tail、折行、缺省编号、零宽。 |
 | T2-04 | passed | pi-ui `OutputBlock` + 受限 SGR；剥离 OSC/CSI/bidi。 |
 | T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；126 单测通过。 |
-| T2-05/T2-07 | pending | 高亮注入与 pi-ui 版本/发布/旧消费者回归。 |
-| G2-Shared（Bash） | pending | 需独立 Reviewer；T3 仍待 adapter/BashView 接线。 |
+| T2-07 | passed | pi-ui 0.6.0 发布到 next（latest 仍 0.4.2）；tarball 安装后旧/新符号均可导入。 |
+| T2-05 | pending | 高亮注入仍待 Bash/Write/Read 适配层统一。 |
+| G2-Shared（Bash） | pending | 共享组件与 BashView 已接线；需独立 Reviewer。 |
+| T3-01 | passed | `adaptBash`：status/command/output/duration/truncation/fullOutputPath，单测 5 例。 |
+| T3-02 | passed | `BashView` 命令 6 行/输出 12 行、截断与路径提示；gallery 与单测。 |
+| T3-03 | passed | slot C renderer 只替换 result；真实 PTY 成功/截断/错误通过。 |
+| T3-04 | pending | resize、缓存、历史、异常与下游回退矩阵。 |
+| T3-05 | pending | 产品 renderer 下 Gate/Compressor OFF/ON 等价与独立评审。 |
+| G3-Bash | pending | 依赖 G0/G2 与 T3-04/05。 |
 
 ### T1 门禁记录
 
