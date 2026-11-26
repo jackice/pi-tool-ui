@@ -1,0 +1,7 @@
+╭─ Edit ─ success · <MS> ╮
+│ ✓ update notes.txt notes.txt                                                               +1 -1 │
+│ 1 1 │   alpha                                                                                    │
+│ 2   │ - beta                                                                                     │
+│   2 │ + beta2                                                                                    │
+│ 3 3 │   gamma                                                                                    │
+╰─╯
