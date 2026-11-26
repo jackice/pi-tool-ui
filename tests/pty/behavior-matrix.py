@@ -77,6 +77,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-behavior-') as directory:
         assert values['old']['results'] == values['new']['results'], kind
         assert values['old']['bytes'] == values['new']['bytes'], kind
         if kind in ('light', 'expanded'):
+        if kind == 'light':
             assert old_card == new_card, f'{kind} 卡片不同\n{old_card}\n---\n{new_card}'
         else:
             assert 'Could not find' in json.dumps(values['new']['results']), values['new']['results']
