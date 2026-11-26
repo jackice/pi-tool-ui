@@ -1,0 +1,24 @@
+{
+  "clean_pack": [
+    "dist/adapters/native-edit.d.ts",
+    "dist/adapters/native-edit.js",
+    "dist/config.d.ts",
+    "dist/config.js",
+    "dist/guards.d.ts",
+    "dist/guards.js",
+    "dist/index.d.ts",
+    "dist/index.js",
+    "dist/integration/resolver.d.ts",
+    "dist/integration/resolver.js",
+    "dist/migration.d.ts",
+    "dist/migration.js",
+    "dist/renderers/diff.d.ts",
+    "dist/renderers/diff.js"
+  ],
+  "tarball_install": true,
+  "no_pi_runtime": true,
+  "file_bytes_equal": true,
+  "tool_results_equal": true,
+  "card_matches_golden": true,
+  "dual_load_disabled": true
+}

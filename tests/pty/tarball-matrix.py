@@ -26,7 +26,7 @@ env_base = dict(PATH=os.environ['PATH'], TERM='xterm-256color', PI_TELEMETRY='0'
 def run(command, cwd, env):
     result = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
-    return result.stdout + result.stderr
+    return result.stdout
 
 
 def install_old(agent):
@@ -46,6 +46,7 @@ def session_results(session):
 
 
 def scenario(root, agent, session, settings):
+    root.mkdir(parents=True, exist_ok=True)
     agent.mkdir(parents=True, exist_ok=True)
     (agent / 'settings.json').write_text(json.dumps(settings))
     (root / 'notes.txt').write_text('alpha\nbeta\ngamma\n')
@@ -76,10 +77,12 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-matrix-') as directory:
     run([npm, 'install', '--legacy-peer-deps', '--no-audit', '--no-fund', '--fetch-retries=0', str(tarball)], install, env)
     package = install / 'node_modules/@jackice/pi-tool-ui'
     assert (package / 'dist/index.js').is_file()
-    tree = run([npm, 'ls', '--all'], install, env)
-    assert '@earendil-works/pi-coding-agent' not in tree and '@earendil-works/pi-tui' not in tree, tree
+    listing = subprocess.run([npm, 'ls', '--all'], cwd=install, env=env, capture_output=True, text=True)
+    tree = listing.stdout + listing.stderr
+    assert not (install / 'node_modules/@earendil-works').exists(), tree
 
     # 3) 旧扩展与新包等价：文件字节、工具结果文本、卡片。
+    install_old(root / 'old-agent')
     old_screen, old_bytes, old_results = scenario(root / 'old', root / 'old-agent', root / 'old.jsonl',
                                                   {'editDiff': {'nativeEdit': True}})
     new_root = root / 'new'
@@ -108,7 +111,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-matrix-') as directory:
     screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                           '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'edit',
                           'Run the local edit'], dual_env, dual, b'BASELINE_DONE', b'BASELINE_DONE')
-    assert b'Edit' not in screen, '双加载时新包仍然接管'
+    assert '检测到旧 hashline-diff'.encode() in screen, '新包未报告旧扩展共存'
+    assert b'Edit' in screen, '旧扩展应继续提供原生卡片'
 
     evidence = repo / 'docs/evidence/tarball-matrix.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)

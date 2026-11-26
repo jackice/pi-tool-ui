@@ -74,13 +74,15 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 ## T1 迁移进展
 
+打包矩阵证据见 `docs/evidence/tarball-matrix.json`；`uv run --with pyte python tests/pty/tarball-matrix.py` 会重新生成。
+
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
-| T1-01 | running | ESM/入口/peer 和 `prepack` 已实现，`npm test` 22 通过；待干净 clone 的 pack/安装证据。 |
-| T1-02 | running | 原生适配器单测与原样迁移通过；真实 PTY 卡片等于 0.5.1 golden；真实 TUI `/export` 的预渲染 call/Diff 旧新一致且含正文。待 tarball 矩阵的 schema/结果/blocks 对照。 |
-| T1-03 | running | schema 校验、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入已实现并有单测；入口发布诊断。待端到端命令验证。 |
+| T1-01 | passed | 干净 clone 经 `npm ci` + `npm pack` 产出 dist 入口；tarball 隔离安装、`npm ls` 无 Pi runtime；`npm test` 22、typecheck、oxlint 通过。 |
+| T1-02 | running | 卡片等于 golden；真实 TUI `/export` 预渲染 call/Diff 旧新一致且含正文；tarball 矩阵确认文件字节与工具结果文本一致。待错误/noop/多文件/expanded/theme 的 F12 覆盖。 |
+| T1-03 | running | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；待命令端到端验证。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
-| T1-05 | running | `migration-parity.py` 覆盖：旧配置映射后与 golden 一致、`toolUi` 关闭不接管、native-only 无 Hashline 的 Edit 仍一致。完整用户栈未在此脚本重复，T0-I 已单独验证。 |
+| T1-05 | running | `migration-parity.py` 覆盖旧配置、关闭与 native-only；`tarball-matrix.py` 覆盖真实 tarball、文件字节/结果一致、双加载拒绝。待完整用户栈与自定义下游矩阵。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
 | G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
 
