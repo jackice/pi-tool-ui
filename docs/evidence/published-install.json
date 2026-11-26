@@ -1,0 +1,7 @@
+{
+  "spec": "npm:@jackice/pi-tool-ui@0.1.0",
+  "installed_version": "0.1.0",
+  "pi_ui": "0.5.1",
+  "pi_runtime_in_tree": false,
+  "card_matches_golden": true
+}

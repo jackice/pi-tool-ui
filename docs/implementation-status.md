@@ -83,7 +83,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T1-03 | passed | schema、显式迁移上下文、`/tool-ui-migrate` 预览/备份/原子写入与入口诊断已实现并有单测；PTY 已验证 dry 不落盘、取消不写入；force 写入由单测覆盖，确认对话框 PTY 未打通。 |
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
 | T1-05 | passed | `migration-parity.py`、`tarball-matrix.py`、`full-stack-ab.py` 覆盖旧配置、关闭、native-only、真实 tarball、双加载拒绝与完整栈 A/B。后加载下游优先；未做 adapter 抛错的 peer 回退专项。 |
-| T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
+| T1-06 | passed | 用户批准后已发布 `0.1.0`；`pi install` 干净安装、golden 卡片、无 Pi runtime 均通过。npm 自动写入 `latest` 且 token 无权限移除，偏差见 release-evidence。 |
 | G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
 
 ### T1 门禁记录
