@@ -64,11 +64,11 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | 状态 | 待复审（首轮独立评审 blocked，整改已提交） |
 | owner | Main |
 | baseline SHA | `d02227b01fea8d9770b1dd8d5d22043b258902d8` |
-| implementation SHA | 本文件所在提交之后的最新 `test:` 提交 |
+| implementation SHA | `72ebc8b2312753cda73b5fdd87e2931b8305339a` |
 | 命令/环境 | `python3 tests/pty/smoke.py`、`package-smoke.py`、`managed-install-smoke.py`、`full-stack-smoke.py`、`uv run --with pyte python tests/pty/migration-baseline.py`；Pi 1.6.0，隔离 HOME/Agent dir/cwd |
 | 实际结果 | 脚本全部退出 0；T0-01 新增固定 commit tree 与源码 SHA；T0-04 新增 `outputPad`、call slot 复用断言 |
-| 限制 | 构建产物无法逐字节复现；未验证真实审批/Compressor；T0-RH 仅部分完成 |
-| 独立 Reviewer | G0BaseReview（首轮 2026-11-26）结论 blocked，原因 T0-01 缺隔离 checkout、T0-04 缺 `outputPad`/call 复用断言；整改后请求复审 |
+| 限制 | 构建产物无法逐字节复现；未验证真实审批/Compressor；T0-RH 隐藏锚点能力在 Hashline 0.1.2 标 unsupported |
+| 独立 Reviewer | G0BaseReview 首轮 blocked（T0-01 缺 checkout、T0-04 缺字段断言）；复审 T0-01 passed，T0-04 仍 blocked：`all(calls[1:])` 在仅一次 call 时为空真。已加 `len(calls) >= 2`，`smoke.py` 重跑退出 0（16 次 call 事件）。 |
 | follow-up | 复审结果写入本表；未通过前 G0-Base 保持非 passed |
 
 下一步复审 G0-Base；通过后进入 T1 迁移。
