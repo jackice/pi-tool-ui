@@ -1,5 +1,5 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { Text } from '@earendil-works/pi-tui';
+import { Container } from '@earendil-works/pi-tui';
 import { WriteView, fromPiTheme } from '@jackice/pi-ui';
 
 import { adaptWrite } from '../adapters/write.js';
@@ -16,6 +16,14 @@ interface ResultContext {
 
 const cacheKey = Symbol('pi-tool-ui-write');
 const callKey = Symbol('pi-tool-ui-write-call');
+
+interface CachedCall {
+  path: string;
+  content: string | undefined;
+  config: string;
+  theme: Theme;
+  view: WriteView;
+}
 
 
 
@@ -34,14 +42,37 @@ interface Cached {
 
 export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
   return (original) => ({
-    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown> }) {
+    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean }) {
+      if (context.argsComplete) return new Container();
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
-      const path = typeof record.path === 'string' ? record.path : '';
-      const cached = context.state[callKey] as { path: string; theme: Theme; component: Text } | undefined;
-      if (cached?.path === path && cached.theme === theme) return cached.component;
-      const component = new Text(theme.fg('muted', `write ${path}`), 0, 0);
-      context.state[callKey] = { path, theme, component };
-      return component;
+      const path = typeof record.path === 'string' ? record.path : undefined;
+      const rawContent = typeof record.content === 'string' ? record.content : undefined;
+      const content = rawContent === undefined ? undefined : rawContent.replace(/\r\n/g, '\n');
+      const write = getConfig().tools.write;
+      const config = JSON.stringify(write);
+      const cached = context.state[callKey] as CachedCall | undefined;
+      if (cached !== undefined && cached.path === (path ?? '') && cached.content === content && cached.config === config && cached.theme === theme) return cached.view;
+      const lineCount = content === undefined || content.length === 0
+        ? undefined
+        : content.endsWith('\n') ? content.split('\n').length - 1 : content.split('\n').length;
+      const view = new WriteView(fromPiTheme(theme), {
+        model: {
+          status: 'streaming',
+          argsComplete: false,
+          ...(path === undefined ? {} : { path }),
+          ...(content === undefined ? {} : { content }),
+          ...(lineCount === undefined ? {} : { lineCount }),
+        },
+        expanded: false,
+        config: {
+          previewLines: write.previewLines,
+          streamingPreviewLines: write.streamingPreviewLines,
+          maxPreviewRows: write.maxPreviewRows,
+          lineNumbers: write.lineNumbers,
+        },
+      });
+      context.state[callKey] = { path: path ?? '', content, config, theme, view };
+      return view;
     },
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       try {
@@ -73,7 +104,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             streamingPreviewLines: write.streamingPreviewLines,
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
-            showPath: false,
+            showPath: true,
           },
         });
         context.state[cacheKey] = {

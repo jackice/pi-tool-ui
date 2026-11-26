@@ -10,7 +10,7 @@ import termios
 import time
 
 
-def capture_tui(command, env, root, done, expected, key=None, after=None, rows=40, cols=100):
+def capture_tui(command, env, root, done, expected, key=None, after=None, rows=40, cols=100, stop=None):
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, cols, 0, 0))
     output = bytearray()
@@ -18,6 +18,18 @@ def capture_tui(command, env, root, done, expected, key=None, after=None, rows=4
         with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
             os.close(slave)
             try:
+                if stop is not None:
+                    deadline = time.monotonic() + 12
+                    while stop not in output and time.monotonic() < deadline:
+                        if select.select([master], [], [], 0.2)[0]:
+                            try:
+                                output.extend(os.read(master, 65536))
+                            except OSError as exc:
+                                if exc.errno == errno.EIO:
+                                    break
+                                raise
+                    assert stop in output, output[-4000:].decode(errors='replace')
+                    return bytes(output)
                 deadline = time.monotonic() + 12
                 while output.find(done) < 0 and time.monotonic() < deadline:
                     if select.select([master], [], [], 0.2)[0]:

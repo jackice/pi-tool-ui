@@ -152,10 +152,10 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | ID | 状态 | 证据 |
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
-| T4-02 | blocked | head 6、expanded error、尾随 LF、多行诊断、错误隐藏通过；实时 streaming tail 未交付（call 仅 path，历史/实时均不显示正文）。 |
+| T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；argsComplete=false 时 call 显示路径与 streaming tail，完成后 call 清空。证据 `write-call-stream.json`。 |
 | T4-03 | pending | 有界高亮未实现；`write.highlight` 标 unsupported（README/contract 已同步）。 |
-| T4-04 | passed | call 仅 path、result 独占正文；全屏 path/正文各一次；历史 final 显示 ✓ 与 head，无 streaming 误标。 |
-| T4-05 | running | 仅 success 场景 OFF/ON bytes/args/result/次数一致；failure/cancel/history 未做。 |
+| T4-04 | passed | 流式 call 预览、完成后 call 清空；result 独占最终正文/路径；全屏 path/正文各一次。 |
+| T4-05 | running | success 场景 OFF/ON bytes/args/result/次数一致；failure/cancel/history 未做。 |
 | G4-Write | blocked | T4-02 streaming 未交付、T4-03 pending、T4-05 矩阵不足。 |
 
 ### G2/G3 Bash 签署后 P3 记录
