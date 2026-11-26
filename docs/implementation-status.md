@@ -14,8 +14,9 @@
 | T0-B1 | passed | 真实 bash：成功/空/非零/流式 partial/final 均采集；final 权威，partial 计数与正文已记录（docs/evidence/bash-cases.json）。 |
 | T0-B2 | passed | 2100 行触发行截断（outputLines 2000）；60KB 输出触发字节截断（outputBytes 51200）；60KB 单行 truncatedBy=bytes 且 lastLinePartial=true。 |
 | T0-B3 | passed | 真实 Gate：允许后 chmod 执行（模式 000）；审批超时返回 Blocked 且模式保持 644、未执行。显式 Esc 拒绝与 Compressor 改写专项未单独跑。 |
+| Bash slot | blocked | 候选 A 探针显示 final result 之后没有 call slot 重绘，无法在同一 call 卡片更新最终状态；需验证候选 B（两 slot 组合）或 C（原生外壳 + 定制内部）。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
-| G0-Bash | running | T0-B1/B2 与 Bash 渲染探针已通过；T0-B3 与独立 Reviewer 待完成。 |
+| G0-Bash | running | T0-B1/B2/B3 通过；候选 A 因 final 后无 call 重绘被拒，需在 T3 原型中验证 B/C 后再冻结 slot。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
