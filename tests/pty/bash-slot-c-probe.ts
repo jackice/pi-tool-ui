@@ -5,7 +5,7 @@ import { appendFileSync } from 'node:fs';
 
 const cases: Record<string, string> = {
   success: "printf 'ok\\n'",
-  error: 'false',
+  error: "sh -c 'exit 3'",
   lines: 'seq 1 2100',
 };
 

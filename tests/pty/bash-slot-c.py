@@ -33,10 +33,12 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-slotc-') as directory:
         final = next(item for item in events if item['event'] == 'result' and not item['partial'])
         observed[case] = {'final': final, 'screen': screen}
 
+    commands = {'success': b"printf 'ok", 'error': b'exit 3', 'lines': b'seq 1 2100'}
     for case, value in observed.items():
         final = value['final']
         assert final['shell'] == 'default' and final['pad'] == 1, final
         assert value['screen'].count(b'CUSTOM_OUT') == 1, case
+        assert value['screen'].count(commands[case]) == 1, (case, value['screen'].count(commands[case]))
         assert final['text'], case
         if case == 'error':
             assert final['error'] is True

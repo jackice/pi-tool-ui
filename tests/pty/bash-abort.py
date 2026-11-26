@@ -57,6 +57,8 @@ def interact(root, agent, case, abort_ms, approve):
                     time.sleep(0.3)
                     os.write(master, b'\r')
                 wait_for(b'Operation aborted')
+                if case == 'risky_abort':
+                    time.sleep(5.5)
             finally:
                 if process.poll() is None:
                     process.kill()
@@ -82,18 +84,20 @@ def interact(root, agent, case, abort_ms, approve):
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-abort-') as directory:
     root = Path(directory)
     observed = {}
-    for name, abort_ms, approve in (('approval', 300, False), ('execution', 1500, True)):
+    for name, case, abort_ms, approve in (('approval', 'risky_slow', 300, False), ('execution', 'risky_abort', 1500, True)):
         work = root / name
         work.mkdir()
         agent = work / 'agent'
         (agent / 'extensions').mkdir(parents=True)
         shutil.copytree(gate, agent / 'extensions/approval-gate')
         (agent / 'settings.json').write_text('{}')
-        observed[name] = interact(work, agent, 'risky_slow', abort_ms, approve)
+        observed[name] = interact(work, agent, case, abort_ms, approve)
 
     for name, value in observed.items():
         assert value['error'] is True and value['runs'] == 0, (name, value)
         assert 'abort' in value['text_tail'].lower() or 'cancel' in value['text_tail'].lower(), (name, value)
+    assert 'aborted' in observed['execution']['text_tail'].lower() or 'abort' in observed['execution']['text_tail'].lower()
+    assert 'Full output:' in observed['execution']['text_tail'] or 'Showing lines' in observed['execution']['text_tail']
     evidence = repo / 'docs/evidence/bash-abort.json'
     evidence.write_text(json.dumps({'pi_version': version, **observed}, ensure_ascii=False, indent=2) + '\n')
     print('Bash AbortSignal：审批中与执行中取消均 error、计数 0、无迟到副作用')
