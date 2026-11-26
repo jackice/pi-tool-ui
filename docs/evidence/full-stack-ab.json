@@ -1,0 +1,7 @@
+{
+  "edit_card_equal": true,
+  "tool_results_equal": true,
+  "file_bytes_equal": true,
+  "old_stack": "all local extensions + old hashline-diff",
+  "new_stack": "all local extensions minus hashline-diff + pi-tool-ui"
+}
