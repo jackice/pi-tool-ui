@@ -1,0 +1,5 @@
+{
+  "off_returns_downstream": true,
+  "on_takes_over": false,
+  "load_order": "settings package before explicit -e peer"
+}
