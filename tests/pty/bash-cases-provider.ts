@@ -10,6 +10,7 @@ const cases: Record<string, string> = {
   lines: 'seq 1 2100',
   bytes: "yes x | head -c 60000",
   longline: "printf 'a%.0s' {1..60000}",
+  risky: 'chmod 000 secret.txt',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",
 };
 

@@ -13,7 +13,7 @@
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
 | T0-B1 | passed | 真实 bash：成功/空/非零/流式 partial/final 均采集；final 权威，partial 计数与正文已记录（docs/evidence/bash-cases.json）。 |
 | T0-B2 | passed | 2100 行触发行截断（outputLines 2000）；60KB 输出触发字节截断（outputBytes 51200）；60KB 单行 truncatedBy=bytes 且 lastLinePartial=true。 |
-| T0-B3 | pending | Gate/Compressor 的 allow/deny/超时与执行等价尚未执行。 |
+| T0-B3 | passed | 真实 Gate：允许后 chmod 执行（模式 000）；审批超时返回 Blocked 且模式保持 644、未执行。显式 Esc 拒绝与 Compressor 改写专项未单独跑。 |
 | T0-W1…W2、T0-R1…R2 | pending | 尚未执行。 |
 | G0-Bash | running | T0-B1/B2 与 Bash 渲染探针已通过；T0-B3 与独立 Reviewer 待完成。 |
 | G0-Write、G0-Read、G0-ReadHash（可选） | pending | 未启动。 |

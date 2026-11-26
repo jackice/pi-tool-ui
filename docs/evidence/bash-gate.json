@@ -1,0 +1,16 @@
+{
+  "allow": {
+    "error": false,
+    "text": [
+      "(no output)"
+    ],
+    "mode": 0
+  },
+  "deny": {
+    "error": true,
+    "text": [
+      "Blocked by approval gate (timeout); command was not executed."
+    ],
+    "mode": 420
+  }
+}
