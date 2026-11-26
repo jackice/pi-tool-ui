@@ -1,0 +1,9 @@
+{
+  "pi_version": "1.6.0",
+  "showDuration_false": true,
+  "showCwd_true": true,
+  "previewRows_3": true,
+  "ansi_false": true,
+  "showTruncation_false": true,
+  "showFullOutputPath_false": true
+}

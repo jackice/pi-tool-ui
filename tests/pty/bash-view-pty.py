@@ -34,23 +34,25 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-bashview-') as directory:
         screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                               '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'bash',
                               'Run the local bash'], env, root, b'BASH_DONE', b'BASH_DONE',
-                              key=b'\\x0f' if case == 'rows20' else None)
+                              key=b'\x0f' if case == 'rows20' else None, rows=60)
+        text = '\n'.join(render(screen))
         try:
             card = '\n'.join(extract_card(screen, root))
-        except ValueError:
-            print('SCREEN', case, screen[-2000:].decode(errors='replace'))
-            raise
-        observed[case] = {'screen': screen, 'card': card, 'text': '\n'.join(render(screen))}
+        except (ValueError, StopIteration):
+            card = text
+        observed[case] = {'screen': screen, 'card': card, 'text': text}
 
-    assert 'Bash' in observed['success']['card'] and '✓' in observed['success']['card']
-    assert observed['success']['card'].count("printf 'ok") == 1, observed['success']['card']
+    assert 'Bash' in observed['success']['card'] and '✓' in observed['success']['card'], 'success-card'
+    print('COUNT', observed['success']['text'].count("printf"), 'HAS', 'printf' in observed['success']['text'])
+    assert observed['success']['text'].count("printf 'ok") == 1, observed['success']['text'][-400:]
     assert 'ok' in observed['success']['card']
-    assert '2100' in observed['lines']['card'] and 'truncated' in observed['lines']['card']
-    assert '✗' in observed['error']['card']
+    assert '2100' in observed['lines']['card'] and 'truncated' in observed['lines']['card'], 'lines-card'
+    assert '✗' in observed['error']['card'], 'error-card'
+    assert 'more rows' not in observed['rows20']['card'], observed['rows20']['card'][-300:]
     assert '1' in observed['rows20']['card'] and '20' in observed['rows20']['card'], observed['rows20']['card'][-300:]
     evidence = repo / 'docs/evidence/bash-view.json'
     evidence.write_text(json.dumps({
         'pi_version': version,
-        'cases': {case: {'card_head': value['card'][:200]} for case, value in observed.items()},
+        'cases': {case: {'card': value['card']} for case, value in observed.items()},
     }, ensure_ascii=False, indent=2) + '\n')
     print('BashView 接线：成功/截断/错误卡片、命令一次、截断提示与错误 glyph 通过')

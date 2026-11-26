@@ -96,19 +96,19 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 | ID | 状态 | 证据 |
 |---|---|---|
-| T2-02 | passed | pi-ui `ToolCard`，单测宽度/空分区/控制字符。 |
-| T2-03 | passed | pi-ui `CodeBlock`，单测 head/tail、折行、缺省编号、零宽。 |
-| T2-04 | passed | pi-ui `OutputBlock` + 受限 SGR；剥离 OSC/CSI/bidi。 |
+| T2-02 | passed | `ToolCard` 单测 + snapshot；分区行保留白名单 SGR，宽度/空分区/控制字符覆盖。 |
+| T2-03 | passed | `CodeBlock` 单测 + snapshot；head/tail、折行、缺省编号、视觉截断提示与安全上限。 |
+| T2-04 | passed | `OutputBlock` + 安全 SGR；剥离 OSC/CSI/控制符/扩展 bidi，1 MiB/20k 行上限与提示。 |
 | T2-06 | passed（Bash） | pi-ui `BashView` + gallery fixture；126 单测通过。 |
-| T2-07 | passed | pi-ui 0.6.0 发布到 next（latest 仍 0.4.2）；tarball 安装后旧/新符号均可导入。 |
+| T2-07 | passed | pi-ui 0.6.1 发布到 next（latest 0.4.2）；README/API、contract 链接、138 单测与 tarball 导出回归完成。 |
 | T2-05 | pending | 高亮注入仍待 Bash/Write/Read 适配层统一。 |
-| G2-Shared（Bash） | pending | 已提交 G2G3BashReview；共享组件/BashView 与 PTY 证据见 handoff。 |
-| T3-01 | passed | `adaptBash`：status/command/output/duration/truncation/fullOutputPath，单测 5 例。 |
-| T3-02 | passed | `BashView` 命令 6 行/输出 12 行、截断与路径提示；gallery 与单测。 |
-| T3-03 | passed | slot C renderer 只替换 result；真实 PTY 成功/截断/错误通过。 |
-| T3-04 | passed | 宽度矩阵、展开 PTY、缓存复用、异常回退、历史新旧会话与产品 A/B 已通过；真实 PTY resize 未做。 |
-| T3-05 | passed | 产品 renderer 下 Gate+Compressor OFF/ON：各执行 1 次、模型结果一致、卡片 ON/OFF 正确。 |
-| G3-Bash | pending | 已提交 G2G3BashReview；T3-04/05 证据见 handoff。 |
+| G2-Shared（Bash） | pending | 首轮 blocked 已整改（snapshot/上限/SGR/配置）；等待复审。 |
+| T3-01 | passed | `adaptBash`：status/command/output/duration/truncation（含 lastLinePartial/truncatedBy/maxBytes）/fullOutputPath；CRLF 由 View 归一。 |
+| T3-02 | passed | `BashView`：命令 owner 为原生 call、输出 12 行 tail、截断/路径安全提示、配置字段与展开；PTY 全屏命令一次。 |
+| T3-03 | passed | slot C renderer 只替换 result；产品 PTY 命令/标题/正文各一次，成功/截断/错误/展开通过。 |
+| T3-04 | passed | 宽度矩阵、真实 resize 100→60、流式 running、展开、缓存 key、异常回退、历史新旧会话均通过。 |
+| T3-05 | passed | 产品 Gate+Compressor A/B：命令/args/result 一致、各执行 1 次、shellCompressor 1000→153；OFF 无 Bash 卡片；下游 PEER_BASH 回退。 |
+| G3-Bash | pending | 首轮 blocked 已整改（重复命令/截断/路径/CRLF/配置/cache/证据）；等待复审。 |
 
 ### T1 门禁记录
 

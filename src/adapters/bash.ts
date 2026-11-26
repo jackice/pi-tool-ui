@@ -5,13 +5,6 @@ interface ContentBlock {
   text?: string;
 }
 
-interface BashTruncationDetails {
-  totalLines: number;
-  outputLines: number;
-  totalBytes?: number;
-  outputBytes?: number;
-}
-
 export interface BashAdapterInput {
   args: unknown;
   result: { content: readonly ContentBlock[]; details?: unknown };
@@ -35,11 +28,17 @@ function truncationOf(details: unknown): BashTruncation | undefined {
   if (totalLines === undefined || outputLines === undefined) return undefined;
   const totalBytes = finite(source.totalBytes);
   const outputBytes = finite(source.outputBytes);
+  const maxBytes = finite(source.maxBytes);
+  const lastLinePartial = source.lastLinePartial === true;
+  const truncatedBy = source.truncatedBy === "lines" || source.truncatedBy === "bytes" ? source.truncatedBy : undefined;
   return {
     totalLines,
     outputLines,
     ...(totalBytes === undefined ? {} : { totalBytes }),
     ...(outputBytes === undefined ? {} : { outputBytes }),
+    ...(lastLinePartial ? { lastLinePartial } : {}),
+    ...(truncatedBy === undefined ? {} : { truncatedBy }),
+    ...(maxBytes === undefined ? {} : { maxBytes }),
   };
 }
 

@@ -1,0 +1,11 @@
+{
+  "pi_version": "1.6.0",
+  "off": {
+    "peer_visible": true,
+    "command_count": 1
+  },
+  "on": {
+    "peer_visible": true,
+    "command_count": 1
+  }
+}

@@ -10,6 +10,7 @@ const cases: Record<string, string> = {
   nonzero: 'false',
   lines: 'seq 1 2100',
   rows20: 'seq 1 20',
+  ansi_rows: "printf '\\033[31mred\\033[0m\\n'; for i in $(seq 1 20); do echo row $i; done",
   bytes: "for i in $(seq 1 1500); do printf 'line%04d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n' \"$i\"; done",
   longline: "printf 'a%.0s' {1..60000}",
   risky: "sh -c 'echo run >> count.txt'",

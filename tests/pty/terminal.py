@@ -10,9 +10,9 @@ import termios
 import time
 
 
-def capture_tui(command, env, root, done, expected, key=None, after=None):
+def capture_tui(command, env, root, done, expected, key=None, after=None, rows=40):
     master, slave = pty.openpty()
-    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, 100, 0, 0))
     output = bytearray()
     try:
         with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
@@ -73,7 +73,7 @@ def capture_tui(command, env, root, done, expected, key=None, after=None):
 
 def run_tui(command, env, root, expected_result, *, expand=False, reload=False, switch_theme=False):
     master, slave = pty.openpty()
-    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, 100, 0, 0))
     output = bytearray()
     try:
         with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
@@ -124,7 +124,7 @@ def run_tui(command, env, root, expected_result, *, expand=False, reload=False, 
 
 def export_tui(command, env, root, done, output_path):
     master, slave = pty.openpty()
-    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 40, 100, 0, 0))
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', rows, 100, 0, 0))
     output = bytearray()
     try:
         with subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, cwd=root, env=env) as process:
