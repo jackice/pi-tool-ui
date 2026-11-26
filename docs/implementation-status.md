@@ -145,7 +145,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T5-05 | passed | 原生 OFF/ON 覆盖 basic/range/zero/empty/truncated/process_fail/image；Hashline 0.1.2 range/truncated OFF/ON 锚点保留；content/details 一致、各执行一次。 |
 | G0-Read | signed | 第三轮复审 sign：伪行号已消除，T0-R1/R2 证据有效。 |
 | G2-Shared（Read） | signed | 第三轮复审 sign：ReadView 契约/单测/文档完成。 |
-| G5-Read | ready | G0/G2 已签；T5-01/02/04/05 通过，T5-03 为可选未来协议；待最终签收。 |
+| G5-Read | ready | G0/G2 已签；T5-01/02/04/05 通过；pi-ui 0.6.9 修复全无编号预览；待 delta 复签。 |
 
 ## T4 Write 进展
 

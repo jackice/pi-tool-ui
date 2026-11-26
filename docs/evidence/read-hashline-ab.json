@@ -1,5 +1,6 @@
 {
   "pi_version": "1.6.0",
+  "hashline_version": "0.1.2",
   "range_equal": true,
   "truncated_equal": true,
   "runs": 1,

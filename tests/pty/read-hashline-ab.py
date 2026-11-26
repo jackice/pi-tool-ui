@@ -19,6 +19,8 @@ repo = workspace / 'pi-tool-ui'
 provider = repo / 'tests/pty/read-cases-provider.ts'
 hashline = Path.home() / '.pi/agent/npm/node_modules/@jackice/hashline'
 assert hashline.exists(), '缺少 @jackice/hashline 0.1.2'
+hashline_version = json.loads((hashline / 'package.json').read_text())['version']
+assert hashline_version == '0.1.2', hashline_version
 
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rhash-ab-') as directory:
     root = Path(directory)
@@ -64,7 +66,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rhash-ab-') as directory:
         assert 'Read' in on['text'], on['text'][-600:]
         assert 'Read' not in off['text'], off['text'][-600:]
     evidence = repo / 'docs/evidence/read-hashline-ab.json'
-    evidence.write_text(json.dumps({'pi_version': version, 'range_equal': True, 'truncated_equal': True,
+    evidence.write_text(json.dumps({'pi_version': version, 'hashline_version': hashline_version,
+                                    'range_equal': True, 'truncated_equal': True,
                                     'runs': 1, 'anchors_preserved': True, 'card_on': True, 'card_off': False},
                                    ensure_ascii=False, indent=2) + '\n')
     print('Read Hashline A/B：range/truncated content/details 一致、各执行一次，锚点保留；ON 卡片、OFF 原生')
