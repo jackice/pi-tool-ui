@@ -82,7 +82,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
 | T1-05 | passed | `migration-parity.py` 覆盖：旧配置映射后与 golden 一致、`toolUi` 关闭不接管、native-only 无 Hashline 的 Edit 仍一致。完整用户栈未在此脚本重复，T0-I 已单独验证。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
-| G1-Migration | pending | T1-01..05 开发者证据齐全；等待独立评审签署。T1-06 与生产切换需用户批准。 |
+| G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
 
 ### 迁移等价实测
 
