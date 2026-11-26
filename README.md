@@ -5,7 +5,7 @@ Pi 工具结果卡片。当前为 **Migration profile**：只接管 `edit` 与 `
 ## 状态
 
 - 默认全部关闭；全新安装不改变原生行为。
-- 旧 `hashline-diff` 配置会一次性映射到 `toolUi`，见 [docs/migration.md](docs/migration.md)。
+- 存在 `editDiff.nativeEdit` 或 `PI_HASHLINE_DIFF` 时自动迁移旧配置；两者都没有的旧安装用 `/tool-ui-migrate` 显式预览/应用。见 [docs/migration.md](docs/migration.md)。
 - Bash / Write / Read 尚未交付，配置中的 `bash`、`write`、`read` 开关目前只会保持关闭行为。
 
 ## 安装

@@ -1,6 +1,6 @@
 # 实施状态
 
-当前批次：T0 起步；未改生产设置、未发布、未进入 renderer 产品实现。基线和指纹见 [compatibility.md](compatibility.md)。
+当前批次：T1 Migration profile 已实现；未改生产设置、未发布、未切换生产。基线与指纹见 [compatibility.md](compatibility.md)，门禁见文末。
 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
@@ -85,6 +85,19 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T1-05 | running | `migration-parity.py` 覆盖旧配置、关闭与 native-only；`tarball-matrix.py` 覆盖真实 tarball、文件字节/结果一致、双加载拒绝。待完整用户栈与自定义下游矩阵。 |
 | T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
 | G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
+
+### T1 门禁记录
+
+| 字段 | 内容 |
+|---|---|
+| 状态 | 待 G1 复审（T1-01 passed；02/03/05 running；06 pending） |
+| baseline SHA | `2352122097` |
+| implementation SHA | `71dae42e22` |
+| 命令/环境 | `npm test`、`npm run typecheck`、`npm run lint`；`uv run --with pyte python tests/pty/{migration-parity,export-parity,tarball-matrix,behavior-matrix}.py`；Pi 1.6.0 隔离 HOME/Agent dir |
+| 实际结果 | 22 单测通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；卡片/字节/结果一致；真实 `/export` 保留 Diff；light 与错误回退通过 |
+| 限制 | 未覆盖 noop、多文件、expanded 快捷键、完整用户栈、自定义下游；`/tool-ui-migrate` 未做端到端 PTY |
+| 独立 Reviewer | G1MigrationReview 首轮 blocked（F1–F5）；整改后退回复审 |
+| follow-up | 复审结论写入本表；未通过前 G1 保持非 passed |
 
 ### 迁移等价实测
 

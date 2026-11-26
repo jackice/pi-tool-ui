@@ -17,6 +17,15 @@
 3. 不存在 `toolUi` 且存在任一旧来源时使用旧映射；源标记为 `legacy`。
 4. 两者都不存在时保持默认全关闭；源标记为 `default`。
 
+## 显式迁移命令
+
+旧安装若既没有 `editDiff` 也没有设置 `PI_HASHLINE_DIFF`，自动检测无法区分“全新安装”和“沿用旧默认”。此时使用：
+
+- `/tool-ui-migrate` 或 `/tool-ui-migrate dry`：预览将写入的 edit/hashline/enabled 值，不落盘。
+- `/tool-ui-migrate force`：确认后备份 `settings.json`，再用临时文件 + rename 原子写入 `toolUi`。
+
+全新安装不运行该命令，保持全部关闭。若检测到 `extensions/hashline-diff` 仍存在，启动会禁用本包并提示，避免双加载。
+
 ## 校验
 
 - `enabled` 必须是布尔值；顶层无效则全部关闭。
