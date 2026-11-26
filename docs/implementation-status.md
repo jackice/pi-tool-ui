@@ -13,7 +13,8 @@
 | T0-RH | passed | 范围改写、错误跳过、截断与 details 共存、图片保留、历史回放均已实测；0.1.2 无锚点隐藏能力，标 unsupported。 |
 | T0-B1…B3、T0-W1…W2、T0-R1…R2 | pending | 公共 Read 探针不替代各工具的专用探针。 |
 | G0-Base、G0-Bash、G0-Write、G0-Read、G0-ReadHash（可选） | pending | G0-Base 已提交独立评审请求；Bash/Write/Read 未启动。 |
-| G1-Migration、G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
+| G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
+| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | 未到进入条件。 |
 
 ### Resolver 顺序实测
 
@@ -84,20 +85,20 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
 | T1-05 | passed | `migration-parity.py`、`tarball-matrix.py`、`full-stack-ab.py` 覆盖旧配置、关闭、native-only、真实 tarball、双加载拒绝与完整栈 A/B。后加载下游优先；未做 adapter 抛错的 peer 回退专项。 |
 | T1-06 | passed | 用户批准后已发布 `0.1.0`；`pi install` 干净安装、golden 卡片、无 Pi runtime 均通过。npm 自动写入 `latest` 且 token 无权限移除，偏差见 release-evidence。 |
-| G1-Migration | pending | 已提交独立评审 G1MigrationReview；T1-06 与生产切换需用户批准。 |
+| G1-Migration | passed | G1MigrationReview 最终签署（correct，0.99）；`latest` 偏差接受为非阻断限制。 |
 
 ### T1 门禁记录
 
 | 字段 | 内容 |
 |---|---|
-| 状态 | T1-01/02/03/04/05 passed；T1-06 待用户批准；G1 待签署 |
+| 状态 | T1-01…T1-06 与 G1-Migration 全部 passed |
 | baseline SHA | `2352122097` |
-| implementation SHA | `5010381725` |
+| implementation SHA | `a36fca048c` |
 | 命令/环境 | `npm test`、`npm run typecheck`、`npm run lint`；`uv run --with pyte python tests/pty/{migration-parity,export-parity,tarball-matrix,behavior-matrix}.py`；Pi 1.6.0 隔离 HOME/Agent dir |
 | 实际结果 | 28 单测、typecheck、lint 通过；干净 clone 打包含 dist；tarball 安装无 Pi runtime；Edit/Hashline 卡片/字节/结果一致；真实 `/export` 逐字段一致且保留 Diff；light、Ctrl+O 展开、错误回退、noop、多文件、完整栈 A/B、迁移 dry/cancel、force 单测通过 |
-| 限制 | migrate force 的确认对话框未打通 PTY（写入/备份由命令单测覆盖）；T1-06 发布与生产切换待用户批准 |
-| 独立 Reviewer | 首轮 blocked；复审确认 F1/F3 解除、F2/F4 核心缺陷解除；F5 矩阵与 G1 仍待签署 |
-| follow-up | 复审结论写入本表；未通过前 G1 保持非 passed |
+| 限制 | migrate force 确认框未打通 PTY（写入/备份由单测覆盖）；`latest=0.1.0` 无法移除（token 403），接受为非阻断；生产切换需用户手动执行 |
+| 独立 Reviewer | G1MigrationReview：首轮 blocked；二轮确认 F1/F3 解除；最终签署 G1 passed（correct，0.99） |
+| follow-up | 已签署；`latest` 待有权限后调整；生产切换由用户执行 |
 
 ### 迁移等价实测
 
