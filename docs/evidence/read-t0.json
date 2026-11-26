@@ -184,6 +184,29 @@
       ],
       "text_head": "Read image file [image/png]",
       "truncation": null
+    },
+    "corrupt": {
+      "error": false,
+      "args": {
+        "path": "bad.png"
+      },
+      "kinds": [
+        "text"
+      ],
+      "text_head": "not-a-png",
+      "truncation": null
+    },
+    "image_unsupported": {
+      "error": false,
+      "args": {
+        "path": "pixel.png"
+      },
+      "kinds": [
+        "text",
+        "image"
+      ],
+      "text_head": "Read image file [image/png]",
+      "truncation": null
     }
   }
 }

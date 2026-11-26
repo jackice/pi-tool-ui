@@ -27,14 +27,15 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     (root / 'large.txt').write_text(''.join(f'line{index:04d}-' + 'x' * 30 + '\n' for index in range(1, 1501)))
     (root / 'notes.md').write_text('# Title\n\n- item\n')
     (root / 'pixel.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='))
+    (root / 'bad.png').write_bytes(b'not-a-png')
     agent = root / 'agent'
     agent.mkdir()
     (agent / 'settings.json').write_text('{}')
     observed = {}
-    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image'):
+    for case in ('basic', 'range', 'eof', 'zero', 'empty', 'notice', 'truncated', 'longline', 'invalid_offset', 'fractional', 'bytes', 'markdown', 'image', 'corrupt', 'image_unsupported'):
         log = root / f'{case}.jsonl'
         env = dict(PATH=os.environ['PATH'], HOME=str(root), TERM='xterm-256color', PI_TELEMETRY='0',
-                   PI_CODING_AGENT_DIR=str(agent), PI_READ_CASE=case, PI_READ_VISION='1', PI_TOOL_UI_PROBE_LOG=str(log))
+                   PI_CODING_AGENT_DIR=str(agent), PI_READ_CASE=case, PI_READ_VISION='1' if case != 'image_unsupported' else '0', PI_TOOL_UI_PROBE_LOG=str(log))
         capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                      '-e', str(provider), '--model', 'tool-ui-probe/local', '--tools', 'read',
                      'Run the local read'], env, root, b'READ_T0_DONE', b'READ_T0_PROBE', rows=50)
@@ -55,6 +56,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readt0-') as directory:
     assert byte_trunc['truncatedBy'] == 'bytes', byte_trunc
     assert '# Title' in observed['markdown']['text']
     assert 'image' in observed['image']['kinds'], observed['image']['kinds']
+    assert 'image' not in observed['corrupt']['kinds'] and observed['corrupt']['text'], observed['corrupt']
+    assert 'image' in observed['image_unsupported']['kinds'] and 'Read image file' in observed['image_unsupported']['text'], observed['image_unsupported']
     assert observed['invalid_offset']['error'] is True or observed['invalid_offset']['text']
     assert observed['fractional']['args']
 

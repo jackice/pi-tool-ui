@@ -17,6 +17,8 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
   bytes: { path: 'large.txt' },
   markdown: { path: 'notes.md' },
   image: { path: 'pixel.png' },
+  corrupt: { path: 'bad.png' },
+  image_unsupported: { path: 'pixel.png' },
 };
 
 export default function (pi: ExtensionAPI) {
@@ -32,6 +34,9 @@ export default function (pi: ExtensionAPI) {
     fauxAssistantMessage('READ_T0_DONE'),
   ]);
   pi.registerProvider(faux.provider);
+  pi.on('tool_call', (event) => {
+    if (event.toolName === 'read') appendFileSync(logPath, '{"event":"tool-execution"}\n');
+  });
   if (process.env.PI_TOOL_UI_PROBE_RENDER !== '0') pi.registerToolRenderer((tool, next) => {
     const original = next();
     if (tool !== 'read' || !original) return original;
