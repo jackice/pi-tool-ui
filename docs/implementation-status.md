@@ -61,7 +61,7 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 
 | 字段 | 内容 |
 |---|---|
-| 状态 | 待复审（首轮独立评审 blocked，整改已提交） |
+| 状态 | passed（G0BaseReview 复审：correct，confidence 1.0） |
 | owner | Main |
 | baseline SHA | `d02227b01fea8d9770b1dd8d5d22043b258902d8` |
 | implementation SHA | `72ebc8b2312753cda73b5fdd87e2931b8305339a` |
@@ -69,6 +69,21 @@ Pi 分别以 `--use-theme dark/light` 启动；公开 `getLanguageFromPath` 将 
 | 实际结果 | 脚本全部退出 0；T0-01 新增固定 commit tree 与源码 SHA；T0-04 新增 `outputPad`、call slot 复用断言 |
 | 限制 | 构建产物无法逐字节复现；未验证真实审批/Compressor；T0-RH 隐藏锚点能力在 Hashline 0.1.2 标 unsupported |
 | 独立 Reviewer | G0BaseReview 首轮 blocked（T0-01 缺 checkout、T0-04 缺字段断言）；复审 T0-01 passed，T0-04 仍 blocked：`all(calls[1:])` 在仅一次 call 时为空真。已加 `len(calls) >= 2`，`smoke.py` 重跑退出 0（16 次 call 事件）。 |
-| follow-up | 复审结果写入本表；未通过前 G0-Base 保持非 passed |
+| follow-up | 复审通过，无剩余阻断；后续 SDK/slot/配置契约变化需重新打开 |
+| G0-Base | passed（reviewer G0BaseReview，2026-11-26） |
 
-下一步复审 G0-Base；通过后进入 T1 迁移。
+## T1 迁移进展
+
+| ID | 状态 | 证据与缺口 |
+|---|---|---|
+| T1-01 | passed | ESM + TypeScript 包，`pi.extensions` 指向 `dist/index.js`；`npm test` 19 通过、typecheck/build 通过、`npm pack --dry-run` 仅含 dist 与文档。 |
+| T1-02 | running | 旧 `adaptNativeEdit` 原样迁入并通过单测；真实 PTY 下 `edit-native` 与 `hashline` 卡片均与旧 0.5.1 golden 一致。Hashline `/export` 的 call/Diff HTML 对照未做。 |
+| T1-03 | passed | `src/config.ts` 实现 schema 校验、冻结默认值与旧配置 dry-run 映射；覆盖 `PI_HASHLINE_DIFF` 未设置/`0`、`nativeEdit` 非 true、冲突与新配置优先。 |
+| T1-04 | passed | `src/integration/resolver.ts` 每次调用 `next()` 一次；Edit 只换 `renderResult`，Hashline 换 shell 与 result，call 保留；关闭/未知/无下游返回原对象。 |
+| T1-05 | running | `uv run --with pyte python tests/pty/migration-parity.py`：旧配置映射后与 golden 一致，`toolUi` 关闭时不接管。原生-only 无 Hashline 与完整用户栈 A/B 尚未用新包重跑。 |
+| T1-06 | pending | 发布 Migration candidate 与生产切换需用户明确批准。 |
+| G1-Migration | pending | 依赖 T1-02 的导出对照、T1-05 剩余环境及独立评审。 |
+
+### 迁移等价实测
+
+`tests/pty/migration-parity.py` 以本机构建产物作为 settings 的本地 package，隔离 Agent dir，执行与 T0-02 相同的 edit/hashline 场景。开启时两张卡片逐行等于 `tests/fixtures/migration/*-0.5.1.txt`；`toolUi.enabled=false` 时屏幕不再出现 Edit 卡片。旧 `editDiff.nativeEdit=true` 能映射为 Edit+Hashline 启用。

@@ -1,0 +1,37 @@
+{
+  "name": "@jackice/pi-tool-ui",
+  "version": "0.1.0",
+  "description": "Tool renderer cards for Pi: migration-compatible Edit/Hashline diff views.",
+  "type": "module",
+  "license": "MIT",
+  "author": "jackice",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackice/pi-tool-ui.git"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "pi": {
+    "extensions": ["./dist/index.js"]
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@jackice/pi-ui": "0.5.1"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "1.6.0",
+    "@earendil-works/pi-tui": "^1.6.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "1.6.0",
+    "@earendil-works/pi-tui": "1.6.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
