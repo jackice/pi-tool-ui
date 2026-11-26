@@ -1,0 +1,95 @@
+{
+  "pi_version": "1.6.0",
+  "cases": {
+    "basic": {
+      "error": false,
+      "args": {
+        "path": "short.txt"
+      },
+      "text_head": "alpha\nbeta\ngamma\n",
+      "truncation": null
+    },
+    "range": {
+      "error": false,
+      "args": {
+        "path": "long.txt",
+        "offset": 5,
+        "limit": 3
+      },
+      "text_head": "line 5\nline 6\nline 7\n\n[2094 more lines in file. Use offset=8 to continue.]",
+      "truncation": null
+    },
+    "eof": {
+      "error": true,
+      "args": {
+        "path": "short.txt",
+        "offset": 99
+      },
+      "text_head": "Offset 99 is beyond end of file (4 lines total)",
+      "truncation": null
+    },
+    "zero": {
+      "error": false,
+      "args": {
+        "path": "long.txt",
+        "limit": 0
+      },
+      "text_head": "\n\n[2101 more lines in file. Use offset=1 to continue.]",
+      "truncation": null
+    },
+    "empty": {
+      "error": false,
+      "args": {
+        "path": "empty.txt"
+      },
+      "text_head": "",
+      "truncation": null
+    },
+    "notice": {
+      "error": false,
+      "args": {
+        "path": "notice.txt"
+      },
+      "text_head": "alpha\n[Showing lines 1-2 of 99. Use offset=3 to continue.]\ngamma\n",
+      "truncation": null
+    },
+    "truncated": {
+      "error": false,
+      "args": {
+        "path": "long.txt"
+      },
+      "text_head": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\nline 21\nline 22\nline 23\nline 24\nline 25\nline 26\nl",
+      "truncation": {
+        "truncated": true,
+        "truncatedBy": "lines",
+        "totalLines": 2100,
+        "totalBytes": 19893,
+        "outputLines": 2000,
+        "outputBytes": 18892,
+        "lastLinePartial": false,
+        "firstLineExceedsLimit": false,
+        "maxLines": 2000,
+        "maxBytes": 51200
+      }
+    },
+    "longline": {
+      "error": false,
+      "args": {
+        "path": "longline.txt"
+      },
+      "text_head": "[Line 1 is 58.6KB, exceeds 50.0KB limit. Use bash: sed -n '1p' longline.txt | head -c 51200]",
+      "truncation": {
+        "truncated": true,
+        "truncatedBy": "bytes",
+        "totalLines": 1,
+        "totalBytes": 60000,
+        "outputLines": 0,
+        "outputBytes": 0,
+        "lastLinePartial": false,
+        "firstLineExceedsLimit": true,
+        "maxLines": 2000,
+        "maxBytes": 51200
+      }
+    }
+  }
+}
