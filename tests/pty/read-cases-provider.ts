@@ -7,6 +7,7 @@ const cases: Record<string, { path: string; offset?: number; limit?: number }> =
   range: { path: 'long.txt', offset: 5, limit: 3 },
   missing: { path: 'missing.txt' },
   truncated: { path: 'long.txt' },
+  image: { path: 'pixel.png' },
 };
 
 export default function (pi: ExtensionAPI) {
