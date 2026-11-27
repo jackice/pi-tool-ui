@@ -60,7 +60,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
             card = ''
         observed[case] = {'text': text, 'card': card}
 
-    assert 'Read' in observed['basic']['card'] and '1' in observed['basic']['card'] and 'gamma' in observed['basic']['card']
+    assert 'Read' in observed['basic']['card'] and 'short.txt' in observed['basic']['card'] and '1' in observed['basic']['card'] and 'gamma' in observed['basic']['card']
+    assert observed['basic']['text'].count('short.txt') == 1, observed['basic']['text'][-600:]
     assert observed['basic']['text'].count('alpha') == 1, observed['basic']['text'][-500:]
     assert 'truncated' in observed['truncated']['card'], observed['truncated']['card'][-400:]
     assert '# Title' in observed['markdown']['card'], observed['markdown']['card'][-400:]
@@ -76,7 +77,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
     assert not re.search(r'│\s*\d+\s+\[2101', observed['zero']['card']), observed['zero']['card'][-500:]
     assert 'offset=-1' in observed['short_negative_limit']['card'] and not re.search(r'│\s*\d+\s+(?:alpha|beta|\[6)', observed['short_negative_limit']['card']), observed['short_negative_limit']['card'][-500:]
     assert 'offset=-0.5' in observed['short_fractional_limit']['card'] and not re.search(r'│\s*\d+\s+(?:alpha|beta|gamma|\[5)', observed['short_fractional_limit']['card']), observed['short_fractional_limit']['card'][-500:]
-    assert 'alpha' not in observed['empty']['card'] and len(observed['empty']['card'].splitlines()) == 2, observed['empty']['card'][-400:]
+    assert 'empty.txt' in observed['empty']['card'] and 'alpha' not in observed['empty']['card'], observed['empty']['card'][-400:]
+    assert not any(re.search(r'│\s*\d+\s', line) for line in observed['empty']['card'].splitlines()), observed['empty']['card'][-400:]
     assert 'Line 1 is' in observed['longline']['card'], observed['longline']['card'][-500:]
     assert not any(re.search(r'│\s*1\s+\[Line', line) for line in observed['longline']['card'].splitlines()), observed['longline']['card'][-500:]
     assert 'Read image file' in observed['text_like_image']['card'], observed['text_like_image']['card'][-500:]
@@ -86,6 +88,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-readview-') as directory:
     evidence = repo / 'docs/evidence/read-view.json'
     evidence.write_text(json.dumps({'pi_version': version, 'text_card': True, 'truncation_notice': True,
                                     'markdown_source': True, 'image_native': True,
+                                    'path_in_card': True,
                                     'range_notice_unnumbered': True, 'zero_notice_only': True,
                                     'empty_no_rows': True, 'longline_raw': True,
                                     'image_text_diagnostic_raw': True, 'show_images_no_read_card': True, 'unsupported_warning_native': True},

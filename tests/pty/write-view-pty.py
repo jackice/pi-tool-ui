@@ -46,6 +46,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
     assert 'const value' in observed['code']['card'], observed['code']['card'][-400:]
     print('HAS_WRITE', 'Write' in observed['success']['text'])
     assert 'Write' in observed['success']['card'] and '✓' in observed['success']['card'], observed['success']['text'][-800:]
+    assert 'out.txt' in observed['success']['card'], observed['success']['card'][-500:]
     assert observed['success']['text'].count('out.txt') == 1
     assert observed['success']['text'].count('alpha') == 1 and observed['success']['text'].count('beta') == 1
     assert 'line 1' in observed['many']['card'] and 'line 6' in observed['many']['card']
@@ -56,6 +57,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-writeview-') as directory:
     evidence.write_text(json.dumps({
         'pi_version': version,
         'path_once': True,
+        'path_in_card': True,
         'head_preview_6': True,
         'error_hides_content': True,
     }, ensure_ascii=False, indent=2) + '\n')

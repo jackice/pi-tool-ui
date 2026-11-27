@@ -56,11 +56,11 @@ describe('renderer resolver', () => {
     expect(result.renderShell).toBe('default');
   });
 
-  test('Read 只替换 renderResult，保留 shell 与 call', () => {
+  test('Read 替换 renderCall/renderResult，保留 shell', () => {
     const resolve = createResolver(() => config({ read: { ...DEFAULT_CONFIG.tools.read, enabled: true } }), { read: factory });
     const result = resolve('read', () => original)!;
     expect(result.renderResult).not.toBe(original.renderResult);
-    expect(result.renderCall).toBe(original.renderCall);
+    expect(result.renderCall).not.toBe(original.renderCall);
     expect(result.renderShell).toBe('default');
   });
 

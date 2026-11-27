@@ -16,7 +16,7 @@ const allowed: Partial<Record<ToolName, readonly (keyof RendererLike)[]>> = {
   hashline: ['renderShell', 'renderResult'],
   bash: ['renderResult'],
   write: ['renderCall', 'renderResult'],
-  read: ['renderResult'],
+  read: ['renderCall', 'renderResult'],
 };
 
 export function createResolver(getConfig: () => ToolUiConfig, factories: Partial<Record<ToolName, RendererFactory>>): ToolRendererResolver {

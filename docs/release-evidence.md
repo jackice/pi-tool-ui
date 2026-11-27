@@ -59,3 +59,8 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 - 完整 profile：Bash/Write/Read + Edit/Hashline migration；G7/T7-05 signed。
 - 发布验证：`published-verify-100.py`：安装后 README limits、Edit/Hashline golden、Write/Read/Bash/Edit/Hashline 卡片、无 Pi runtime；证据 `published-install-100.json`。
 - dist-tags：`latest=1.0.0`、`next=1.0.0`。
+
+## 1.1.0
+
+- Read/Write 单卡片：路径进入结果卡片，原生 call 行隐藏；Write 流式仍显示预览，图片 Read 保留原生 call。
+- 回归：read/write view、history、product A/B、call-stream、resolver 单测。

@@ -1,3 +1,8 @@
+# 1.1.0
+
+- Read/Write 结果卡片直接显示路径，隐藏原生 call 行；Write 流式预览保留。
+- 图片 Read 仍保留原生 call 以维持媒体路径。
+
 # 1.0.0
 
 - 完整 profile：Bash、Write、Read 与 Edit/Hashline Migration。

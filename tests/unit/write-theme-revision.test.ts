@@ -18,6 +18,7 @@ describe('Write 主题 revision', () => {
       highlightCode,
       getLanguageFromPath: () => undefined,
       Text: class { constructor(public text: string) {} render() { return [this.text]; } } as never,
+      Container: class { render() { return []; } } as never,
     };
     const full = highlightWrite('const a = 1;\nconst b = 2;', 'typescript', deps);
     const head = highlightWrite('const a = 1;', 'typescript', deps);

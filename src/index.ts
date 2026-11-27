@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 import { getLanguageFromPath, highlightCode, type ExtensionAPI } from '@earendil-works/pi-coding-agent';
-import { Text } from '@earendil-works/pi-tui';
+import { Container, Text } from '@earendil-works/pi-tui';
 
 import { cloneDefaultConfig, mapLegacyConfig, type ToolUiConfig } from './config.js';
 import { createRequire } from 'node:module';
@@ -11,7 +11,7 @@ import { createResolver, type RendererFactory, type RendererLike } from './integ
 import { migrateSettingsFile, migrationReport } from './migration.js';
 
 const requireLocal = createRequire(import.meta.url);
-const uiDeps = { highlightCode, getLanguageFromPath, Text };
+const uiDeps = { highlightCode, getLanguageFromPath, Text, Container };
 
 function lazyViewFactory(path: string, exportName: string, config: () => ToolUiConfig, deps: object): RendererFactory {
   return (original: RendererLike) => {

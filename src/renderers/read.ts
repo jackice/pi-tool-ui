@@ -30,12 +30,25 @@ interface Cached {
 export interface ReadDeps {
   highlightCode: (code: string, language?: string) => readonly string[];
   getLanguageFromPath: (path: string) => string | undefined;
+  Container: new () => { render(width: number): string[] };
 }
 
-export const defaultReadDeps: ReadDeps = { highlightCode: () => [], getLanguageFromPath: () => undefined };
+export const defaultReadDeps: ReadDeps = {
+  highlightCode: () => [],
+  getLanguageFromPath: () => undefined,
+  Container: class { render() { return []; } } as never,
+};
+
+const IMAGE_EXTENSION = /\.(?:png|jpe?g|gif|webp|bmp|tiff?)$/i;
 
 export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG, deps: ReadDeps = defaultReadDeps): (original: RendererLike) => RendererPatch {
   return (original) => ({
+    renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown> }) {
+      const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
+      const path = typeof record.path === 'string' ? record.path : '';
+      if (IMAGE_EXTENSION.test(path)) return original.renderCall?.(args, theme, context);
+      return new deps.Container();
+    },
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       if (result.content.some((block) => block.type === 'image')) {
         return original.renderResult?.(result, options, theme, context);
@@ -72,7 +85,7 @@ export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
             previewLines: read.previewLines,
             maxPreviewRows: read.maxPreviewRows,
             lineNumbers: read.lineNumbers,
-            showPath: false,
+            showPath: true,
             ...(read.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language) } : {}),
           },
         });

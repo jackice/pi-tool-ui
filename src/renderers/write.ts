@@ -49,12 +49,14 @@ export interface WriteDeps {
   highlightCode: (code: string, language?: string) => readonly string[];
   getLanguageFromPath: (path: string) => string | undefined;
   Text: new (text: string, paddingX: number, paddingY: number) => { render(width: number): string[] };
+  Container: new () => { render(width: number): string[] };
 }
 
 export const defaultWriteDeps: WriteDeps = {
   highlightCode: () => [],
   getLanguageFromPath: () => undefined,
   Text: class { constructor(public text: string) {} render() { return [this.text]; } } as never,
+  Container: class { render() { return []; } } as never,
 };
 
 export function highlightWrite(code: string, language?: string, deps: WriteDeps = defaultWriteDeps): readonly string[] {
@@ -69,7 +71,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
       const themeKey = theme.fg('text', 'x');
       const themeRevision = () => writeThemeRevision(theme);
       if (context.argsComplete || !context.isPartial) {
-        return new deps.Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
+        return new deps.Container();
       }
       const rawContent = typeof record.content === 'string' ? record.content : undefined;
       const content = rawContent === undefined ? undefined : rawContent.replace(/\r\n/g, '\n');
@@ -140,7 +142,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             streamingPreviewLines: write.streamingPreviewLines,
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
-            showPath: false,
+            showPath: true,
             ...(write.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language), themeRevision } : {}),
           },
         });

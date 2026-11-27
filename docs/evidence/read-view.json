@@ -4,6 +4,7 @@
   "truncation_notice": true,
   "markdown_source": true,
   "image_native": true,
+  "path_in_card": true,
   "range_notice_unnumbered": true,
   "zero_notice_only": true,
   "empty_no_rows": true,
