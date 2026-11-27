@@ -176,5 +176,5 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T6-03 | signed | 安全复审 sign：Gate+产品卡片 ✓/✗、deny/timeout/cancel 0 次、uv guard ON/OFF 0 次、Compressor ON/OFF；R2/R3 为 Gate 已知开项。 |
 | T6-04 | passed | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 0.5.0）同会话：HUD、band、Write/Read 卡片；Gate 审批焦点由 security-stack navigate/allow 覆盖。 |
 | T6-05 | partial | `headless-ab.py` + `rpc-ab.py`：Read/Write `--print`/RPC content/details/files 一致；`!` 与 nested 未做。 |
-| T6-06 | partial | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Write/Read 卡片可用；Bash 未在产物中验。 |
+| T6-06 | passed | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Bash/Write/Read 卡片可用。 |
 | G6 | pending | 依赖 T6-01..06。 |

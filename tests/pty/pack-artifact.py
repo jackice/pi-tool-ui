@@ -38,6 +38,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-artifact-') as directory:
     for tool, provider, variable, done, marker in (
         ('write', repo / 'tests/pty/write-cases-provider.ts', 'PI_WRITE_CASE', b'WRITE_DONE', b'Write'),
         ('read', repo / 'tests/pty/read-t0-provider.ts', 'PI_READ_CASE', b'READ_T0_DONE', b'Read'),
+        ('bash', repo / 'tests/pty/bash-cases-provider.ts', 'PI_BASH_CASE', b'BASH_DONE', b'Bash'),
     ):
         work = root / tool
         work.mkdir()
@@ -48,7 +49,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-artifact-') as directory:
             'packages': [str(package)],
             'toolUi': {'enabled': True, 'tools': {tool: {'enabled': True}}},
         }))
-        case = 'success' if tool == 'write' else 'basic'
+        case = 'success' if tool in ('write', 'bash') else 'basic'
         tool_env = dict(PATH=os.environ['PATH'], HOME=str(work), TERM='xterm-256color', PI_TELEMETRY='0',
                         PI_CODING_AGENT_DIR=str(agent), PI_TOOL_UI_PROBE_LOG=str(work / 'events.jsonl'),
                         PI_TOOL_UI_PROBE_RENDER='0', **{variable: case})
@@ -60,8 +61,9 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-artifact-') as directory:
         observed[tool] = card
     assert 'Write' in observed['write'] and 'alpha' in observed['write'], observed['write'][-500:]
     assert 'Read' in observed['read'] and 'gamma' in observed['read'], observed['read'][-500:]
+    assert 'Bash' in observed['bash'] and 'ok' in observed['bash'], observed['bash'][-500:]
     evidence = repo / 'docs/evidence/pack-artifact.json'
     evidence.write_text(json.dumps({'package': 'pi-tool-ui-0.1.0.tgz', 'pi_ui': pi_ui,
-                                    'pi_runtime_in_tree': False, 'write_card': True, 'read_card': True,
+                                    'pi_runtime_in_tree': False, 'write_card': True, 'read_card': True, 'bash_card': True,
                                     'clean_agent': True}, ensure_ascii=False, indent=2) + '\n')
-    print('打包产物：干净安装 pi-tool-ui + pi-ui 0.7.2，无第二套 Pi runtime；Write/Read 卡片可用')
+    print('打包产物：干净安装 pi-tool-ui + pi-ui 0.7.2，无第二套 Pi runtime；Write/Read/Bash 卡片可用')

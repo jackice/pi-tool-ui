@@ -4,5 +4,6 @@
   "pi_runtime_in_tree": false,
   "write_card": true,
   "read_card": true,
+  "bash_card": true,
   "clean_agent": true
 }
