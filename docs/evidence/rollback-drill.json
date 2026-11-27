@@ -1,10 +1,15 @@
 {
   "pi_version": "1.6.0",
+  "tools": [
+    "read",
+    "write",
+    "bash"
+  ],
   "normal_card": true,
   "single_off_native": true,
   "global_off_native": true,
-  "corrupt_start_failed": true,
   "removed_native": true,
   "content_equal": true,
-  "load_error_reported": true
+  "corrupt_start_failed": true,
+  "corrupt_recovered_native": true
 }

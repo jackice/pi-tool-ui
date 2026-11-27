@@ -1,6 +1,6 @@
 # 实施状态
 
-当前批次：T1 Migration profile 已实现；未改生产设置、未发布、未切换生产。基线与指纹见 [compatibility.md](compatibility.md)，门禁见文末。
+当前批次：0.2.1 preview 已发布到 `next`；未改生产设置、未切换生产。基线与指纹见 [compatibility.md](compatibility.md)，门禁见文末。
 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
@@ -20,11 +20,12 @@
 | T0-R1 | passed | 基础/范围/EOF/limit=0/空文件/同形 notice/行截断/字节截断/超长首行/Markdown/非法 offset/历史回放均采集；非法 fractional limit 未单列。 |
 | T0-R2 | passed | 图片/unsupported/processImage 失败/mixed 与 showImages 上下文均已采集。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write | ready | T0-W1/W2：success/overwrite/error A/B、streaming 快照、取消/历史 ON；待独立签收。 |
+| G0-Write | signed | T0-W1/W2 + G4 复审签（correct，0.90）。 |
 | G0-Read | signed | 第三轮复审 sign（correct，0.93）：伪行号已消除，T0-R1/R2 证据有效。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
-| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash/Read/Write 与 G0/G2/G3/G4/G5 signed；G6/G7 未开始。 |
+| G2/G3/G4/G5/G6 | signed | Bash/Read/Write、安全栈、混合版本、集成矩阵已签。 |
+| G7 | pending | 0.2.1 preview 发布；T7-05 最终评审待复签。 |
 
 ### Resolver 顺序实测
 

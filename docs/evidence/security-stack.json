@@ -4,9 +4,9 @@
   "allow_runs": 1,
   "deny_runs": 0,
   "timeout_runs": 0,
-  "cancel_runs": 0,
   "cards_verified": true,
-  "uv_guard_on": true,
-  "uv_guard_off": true,
-  "uv_guard_message": "pip is disabled"
+  "uv_guard_message": "pip is disabled",
+  "product_on_guard_blocked": true,
+  "product_off_guard_blocked": true,
+  "exec_timeout_runs": 0
 }

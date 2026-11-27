@@ -8,13 +8,21 @@ Pi 工具结果卡片。保留原生执行、权限与工具 schema，只替换�
 - 存在 `editDiff.nativeEdit` 或 `PI_HASHLINE_DIFF` 时自动迁移旧配置；两者都没有的旧安装用 `/tool-ui-migrate` 显式预览/应用。见 [docs/migration.md](docs/migration.md)。
 - Bash、Write、Read 已通过各自 G0/G2/G3/G4/G5 与 G6 集成评审；默认关闭，需显式启用。
 
+## 已知限制
+
+- 发布标签：`next=0.2.1`，`latest=0.1.0`；按 `@next` 安装。
+- Approval Gate 继承 R2/R3（High、Open，见 `pi-approval-gate/docs/security-review.md`）；产品不扩大其范围。
+- `pi-ui` 的 ANSI 工具 vendored 自 pi-tui 1.6.0；升级 pi-tui 时需同步 oracle。pi-ui 根 `approval` 子路径仍需要宿主 pi-tui。
+- T7-02 已测 20 次启动/RSS 与 100/1000/10000 行渲染；未做 1000 次 partial/1000 历史工具行压力。
+- T7-04 覆盖 Bash/Write/Read 的回滚；Edit/Hashline 迁移回退需用户主动选择旧扩展。
+
 ## 安装
 
 ```bash
-pi install npm:@jackice/pi-tool-ui
+pi install npm:@jackice/pi-tool-ui@next
 ```
 
-依赖 `@jackice/pi-ui@0.7.2`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
+依赖 `@jackice/pi-ui@0.8.1`。Pi 宿主提供 `@earendil-works/pi-coding-agent` 与 `@earendil-works/pi-tui`，不要自行安装第二套。
 
 ## 配置
 

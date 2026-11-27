@@ -145,10 +145,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-secstack-') as directory:
         'allow_runs': 1,
         'deny_runs': 0,
         'timeout_runs': 0,
-        'cancel_runs': 0,
+        'exec_timeout_runs': 0,
         'cards_verified': True,
-        'uv_guard_on': guard_results['on']['runs'] == 0,
-        'uv_guard_off': guard_results['off']['runs'] == 0,
+        'product_on_guard_blocked': guard_results['on']['runs'] == 0,
+        'product_off_guard_blocked': guard_results['off']['runs'] == 0,
         'uv_guard_message': 'pip is disabled',
     }, ensure_ascii=False, indent=2) + '\n')
     print('Gate/uv + 产品：allow ✓ 1 次；deny/timeout/cancel ✗ 0 次；uv guard ON/OFF 均 0 次')

@@ -1,3 +1,8 @@
+# 0.2.1 (preview erratum)
+
+- 修正 README/CHANGELOG 依赖与安装说明。
+- 补充 LICENSE；随 pi-ui 0.8.1 发布 vendored ANSI 的 NOTICE。
+
 # 0.2.0 (preview)
 
 - Bash slot C：原生 shell/call，`BashView` 命令/输出/截断/全量路径。
