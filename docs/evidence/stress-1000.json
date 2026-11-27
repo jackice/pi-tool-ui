@@ -1,0 +1,29 @@
+
+> @jackice/pi-ui@0.8.1 stress
+> tsx scripts/stress.ts
+
+{
+  "node": "v25.9.0",
+  "platform": "darwin/arm64",
+  "partialWrite": {
+    "totalMs": 29.01802000000025,
+    "medianMs": 0.024790999999993346,
+    "p95Ms": 0.03841700000000969,
+    "maxMs": 1.4024160000000023,
+    "samples": 1000
+  },
+  "readHistory": {
+    "totalMs": 12.282155000000273,
+    "medianMs": 0.010917000000006283,
+    "p95Ms": 0.016334000000000515,
+    "maxMs": 0.14470799999999429,
+    "samples": 1000
+  },
+  "bashHistory": {
+    "totalMs": 4.773761000000135,
+    "medianMs": 0.004208999999988805,
+    "p95Ms": 0.006667000000007306,
+    "maxMs": 0.2542919999999924,
+    "samples": 1000
+  }
+}
