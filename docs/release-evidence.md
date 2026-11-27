@@ -26,7 +26,7 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 ## 0.2.0 preview
 
 - 包：`@jackice/pi-tool-ui@0.2.0`；发布时间 2026-11-27；tag `v0.2.0`；dist-tags `latest=0.1.0`、`next=0.2.0`。
-- 依赖：`@jackice/pi-ui@0.8.1`；产品自身 peer Pi 1.6.0 / pi-tui `^1.6.0` 仍为必需，pi-ui 的 pi-tui peer 已 optional。
+- 依赖：`@jackice/pi-ui@0.8.0`；产品自身 peer Pi 1.6.0 / pi-tui `^1.6.0`。
 - 验证：`published-verify-020.py`：`pi install npm:@jackice/pi-tool-ui@0.2.0` 成功；安装树无 `@earendil-works`；Write/Read 卡片可用。
 - 证据：`published-install-020.json`、`startup-rss.json`、`benchmark-views.txt`、`rollback-drill.json`。
 - Gate：Bash G3、Write G4、Read G5、G6 已签；T7-01/T7-02/T7-04 通过，T7-03 preview 发布，T7-05 最终评审待办。
@@ -40,3 +40,9 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 - 实际安装验证：`published-verify-021.py`，Write/Read/Bash/Edit 卡片，无 Pi runtime。
 - 验证证据：`published-install-021.json`。
 - 接受风险：Approval Gate R2/R3 High/Open；vendored ANSI 需随 pi-tui 升级同步；压力样本非完整 1000 partial/history。
+
+## 0.2.2 preview erratum
+
+- 包：`@jackice/pi-tool-ui@0.2.2`；依赖 `@jackice/pi-ui@0.8.1`；`next=0.2.2`，`latest=0.1.0`。
+- 已发布 README 包含 known limitations（R2/R3、T7-02/T7-04、vendored ANSI、next 安装）。
+- 证据：0.8.1 构建重跑 migration-parity（Edit+Hashline）、product A/B、security-stack/compressor、mixed-versions、integration-matrix、rollback（Bash/Write/Read + 损坏恢复）；published-verify-022。

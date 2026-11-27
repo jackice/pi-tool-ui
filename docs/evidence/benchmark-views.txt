@@ -1,32 +1,32 @@
 
-> @jackice/pi-ui@0.8.0 bench
+> @jackice/pi-ui@0.8.1 bench
 > tsx scripts/bench.ts
 
 Node v25.9.0 darwin/arm64
-CodeFrame 100-line first render            p95=   0.05 ms median=    0.03 ms ✓
+CodeFrame 100-line first render            p95=   0.07 ms median=    0.03 ms ✓
 CodeFrame 100-line cache hit               p95=   0.00 ms median=    0.00 ms ✓
-CodeFrame 100-line resize                  p95=   0.02 ms median=    0.02 ms ✓
-EditView 100-line first render             p95=   0.13 ms median=    0.08 ms ✓
+CodeFrame 100-line resize                  p95=   0.04 ms median=    0.02 ms ✓
+EditView 100-line first render             p95=   0.20 ms median=    0.10 ms ✓
 EditView 100-line cache hit                p95=   0.00 ms median=    0.00 ms ✓
-EditView 100-line resize                   p95=   0.09 ms median=    0.07 ms ✓
-CodeFrame 1000-line first render           p95=   0.12 ms median=    0.10 ms
-CodeFrame 10000-line first render          p95=   1.14 ms median=    0.90 ms
-EditView 1000-line first render            p95=   0.77 ms median=    0.65 ms
-EditView 10000-line first render           p95=   8.31 ms median=    7.73 ms
+EditView 100-line resize                   p95=   0.17 ms median=    0.09 ms ✓
+CodeFrame 1000-line first render           p95=   0.26 ms median=    0.13 ms
+CodeFrame 10000-line first render          p95=   1.41 ms median=    1.01 ms
+EditView 1000-line first render            p95=   0.97 ms median=    0.73 ms
+EditView 10000-line first render           p95=   8.16 ms median=    7.87 ms
 Panel cache hit                            p95=   0.00 ms median=    0.00 ms
 StatusLine cache hit                       p95=   0.00 ms median=    0.00 ms
-BashView 100-line first render             p95=   0.05 ms median=    0.04 ms ✓
-BashView 100-line cache hit                p95=   0.04 ms median=    0.03 ms ✓
+BashView 100-line first render             p95=   0.07 ms median=    0.03 ms ✓
+BashView 100-line cache hit                p95=   0.03 ms median=    0.03 ms ✓
 BashView 100-line resize                   p95=   0.03 ms median=    0.03 ms ✓
 WriteView 100-line first render            p95=   0.02 ms median=    0.01 ms ✓
 WriteView 100-line cache hit               p95=   0.01 ms median=    0.01 ms ✓
 WriteView 100-line resize                  p95=   0.01 ms median=    0.01 ms ✓
 WriteView 1000-line first render           p95=   0.03 ms median=    0.03 ms
-WriteView 10000-line first render          p95=   0.34 ms median=    0.17 ms
+WriteView 10000-line first render          p95=   0.17 ms median=    0.17 ms
 ReadView 100-line first render             p95=   0.02 ms median=    0.02 ms ✓
 ReadView 100-line cache hit                p95=   0.02 ms median=    0.01 ms ✓
 ReadView 100-line resize                   p95=   0.01 ms median=    0.01 ms ✓
-BashView 1000-line first render            p95=   0.20 ms median=    0.18 ms
-BashView 10000-line first render           p95=   2.08 ms median=    1.81 ms
+BashView 1000-line first render            p95=   0.20 ms median=    0.19 ms
+BashView 10000-line first render           p95=   2.24 ms median=    1.92 ms
 ReadView 1000-line first render            p95=   0.02 ms median=    0.02 ms
 ReadView 10000-line first render           p95=   0.05 ms median=    0.05 ms

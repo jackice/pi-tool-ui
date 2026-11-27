@@ -1,3 +1,8 @@
+# 0.2.2 (preview erratum)
+
+- 已发布 README 携带已知限制（R2/R3、T7-02/T7-04、vendored ANSI）。
+- 对齐 pi-ui 0.8.1 与发布证据。
+
 # 0.2.1 (preview erratum)
 
 - 修正 README/CHANGELOG 依赖与安装说明。

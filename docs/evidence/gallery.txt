@@ -1,5 +1,5 @@
 
-> @jackice/pi-ui@0.7.2 gallery
+> @jackice/pi-ui@0.8.1 gallery
 > tsx examples/gallery.ts
 
 pi-ui gallery · offline · no LLM · no file writes
