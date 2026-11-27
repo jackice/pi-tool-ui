@@ -59,8 +59,9 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rollback-') as directory:
     root = Path(directory)
     normal = {'packages': [str(repo)], 'toolUi': {'enabled': True, 'tools': {
         'read': {'enabled': True}, 'write': {'enabled': True}, 'bash': {'enabled': True}}}}
-    single_off = {'packages': [str(repo)], 'toolUi': {'enabled': True, 'tools': {
-        'read': {'enabled': False}, 'write': {'enabled': False}, 'bash': {'enabled': False}}}}
+    def single_off(tool):
+        return {'packages': [str(repo)], 'toolUi': {'enabled': True, 'tools': {
+            'read': {'enabled': tool != 'read'}, 'write': {'enabled': tool != 'write'}, 'bash': {'enabled': tool != 'bash'}}}}
     global_off = {'packages': [str(repo)], 'toolUi': {'enabled': False, 'tools': {
         'read': {'enabled': True}, 'write': {'enabled': True}, 'bash': {'enabled': True}}}}
     removed = {'packages': [], 'toolUi': {'enabled': True, 'tools': {
@@ -70,7 +71,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rollback-') as directory:
     for tool in tools:
         stages[tool] = {
             'normal': run(root, 'normal', normal, tool),
-            'single_off': run(root, 'single-off', single_off, tool),
+            'single_off': run(root, 'single-off', single_off(tool), tool),
             'global_off': run(root, 'global-off', global_off, tool),
             'removed': run(root, 'removed', removed, tool),
         }
@@ -80,7 +81,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rollback-') as directory:
         for name in ('single_off', 'global_off', 'removed'):
             assert stages[tool][name]['card'] is False, (tool, name)
             assert stages[tool][name]['content'] == baseline, (tool, name)
-        assert stages[tool]['normal']['files'] == stages[tool]['single_off']['files'] == stages[tool]['global_off']['files']
+        assert stages[tool]['normal']['files'] == stages[tool]['single_off']['files'] == stages[tool]['global_off']['files'] == stages[tool]['removed']['files']
 
     broken = root / 'broken-package'
     (broken / 'dist').mkdir(parents=True)
@@ -98,8 +99,11 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rollback-') as directory:
                                                                PI_TELEMETRY='0'), cwd=corrupt_work,
                             capture_output=True, text=True, timeout=30)
     assert 'Failed to load extension' in failed.stdout + failed.stderr
-    recovered = run(root, 'recovered', removed, 'read')
-    assert recovered['card'] is False and recovered['content'] == stages['read']['normal']['content']
+    recovered = {tool: run(root, f'recovered-{tool}', removed, tool) for tool in tools}
+    for tool in tools:
+        assert recovered[tool]['card'] is False
+        assert recovered[tool]['content'] == stages[tool]['normal']['content']
+        assert recovered[tool]['files'] == stages[tool]['normal']['files']
 
     evidence = repo / 'docs/evidence/rollback-drill.json'
     evidence.write_text(json.dumps({'pi_version': version, 'tools': list(tools),

@@ -46,3 +46,9 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 - 已发布 README 包含 known limitations（R2/R3、T7-02/T7-04、vendored ANSI、next 安装）。
 - 实际安装验证：`published-verify-022.py` 断言安装后 README 含 known limitations、Edit golden、Write/Read/Bash 卡片；证据 `published-install-022.json`。
 - 0.8.1 构建重跑 migration-parity（Edit+Hashline）、product A/B、security-stack/compressor、mixed-versions、integration-matrix、rollback（Bash/Write/Read + 损坏恢复）。
+
+## 0.2.3 preview erratum
+
+- 包：`@jackice/pi-tool-ui@0.2.3`；依赖 `@jackice/pi-ui@0.8.1`；`next=0.2.3`。
+- 已发布 README 修正 next 版本；CHANGELOG 0.2.0 历史依赖修正为 0.8.0。
+- 发布验证：`published-verify-023.py` 断言 README version/limits、Edit+Hashline golden、Write/Read/Bash 卡片；证据 `published-install-023.json`。

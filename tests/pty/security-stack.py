@@ -151,4 +151,4 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-secstack-') as directory:
         'product_off_guard_blocked': guard_results['off']['runs'] == 0,
         'uv_guard_message': 'pip is disabled',
     }, ensure_ascii=False, indent=2) + '\n')
-    print('Gate/uv + 产品：allow ✓ 1 次；deny/timeout/cancel ✗ 0 次；uv guard ON/OFF 均 0 次')
+    print('Gate/uv + 产品：allow ✓ 1 次；deny/timeout/exec_timeout ✗ 0 次；guard 在产品 ON/OFF 均阻断')

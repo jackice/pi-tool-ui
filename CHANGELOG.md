@@ -1,3 +1,8 @@
+# 0.2.3 (preview erratum)
+
+- 已发布 README 的 next 版本与 CHANGELOG 历史依赖修正。
+- 发布产物增加 Hashline golden 验证。
+
 # 0.2.2 (preview erratum)
 
 - 已发布 README 携带已知限制（R2/R3、T7-02/T7-04、vendored ANSI）。
@@ -14,7 +19,7 @@
 - Write：流式参数预览、最终 `WriteView`、Pi 公开 `highlightCode` 有界高亮。
 - Read：`ReadView` 行号/范围/截断、Hashline 原文、图片原生回退。
 - G6 集成、安全栈、混合 pi-ui、headless/RPC、回滚演练通过；G7 发布待办。
-- 依赖 `@jackice/pi-ui@0.7.2`。
+- 依赖 `@jackice/pi-ui@0.8.0`。
 
 # 0.1.0
 

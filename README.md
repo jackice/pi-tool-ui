@@ -10,7 +10,7 @@ Pi 工具结果卡片。保留原生执行、权限与工具 schema，只替换�
 
 ## 已知限制
 
-- 发布标签：`next=0.2.1`，`latest=0.1.0`；按 `@next` 安装。
+- 发布标签：`next=0.2.3`，`latest=0.1.0`；按 `@next` 安装。
 - Approval Gate 继承 R2/R3（High、Open，见 `pi-approval-gate/docs/security-review.md`）；产品不扩大其范围。
 - `pi-ui` 的 ANSI 工具 vendored 自 pi-tui 1.6.0；升级 pi-tui 时需同步 oracle。pi-ui 根 `approval` 子路径仍需要宿主 pi-tui。
 - T7-02 已测 20 次启动/RSS 与 100/1000/10000 行渲染；未做 1000 次 partial/1000 历史工具行压力。
