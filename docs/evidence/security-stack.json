@@ -1,0 +1,7 @@
+{
+  "pi_version": "1.6.0",
+  "gate_plus_product": true,
+  "allow_runs": 1,
+  "deny_runs": 0,
+  "deny_error": true
+}
