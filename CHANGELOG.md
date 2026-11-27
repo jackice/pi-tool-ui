@@ -1,3 +1,8 @@
+# 1.0.0
+
+- 完整 profile：Bash、Write、Read 与 Edit/Hashline Migration。
+- G0–G7 与 T7-05 签署；性能预算通过；0.2.x preview 文档/许可勘误合并。
+
 # 0.2.3 (preview erratum)
 
 - 已发布 README 的 next 版本与 CHANGELOG 历史依赖修正。
