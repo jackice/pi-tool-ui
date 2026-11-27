@@ -171,7 +171,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 
 | ID | 状态 | 证据 |
 |---|---|---|
-| T6-01 | partial | 各工具 OFF/ON、resolver 单测通过；全组合/reload 未做。 |
+| T6-01 | partial | Bash/Write/Read 同会话 OFF/ON content/details/files 一致、卡片互斥、`/reload` 不重跑；Edit/Hashline 组合沿用迁移 A/B。 |
 | T6-02 | partial | Edit/Hashline 旧新导出 HTML 一致；Write/Read HTML 导出未验。 |
 | T6-03 | pending | Approval Gate/security reviewer 未启动。 |
 | T6-04 | pending | TODO/Prompt 混合 pi-ui 版本未验。 |

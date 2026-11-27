@@ -1,0 +1,18 @@
+{
+  "pi_version": "1.6.0",
+  "tools": [
+    "bash",
+    "write",
+    "read"
+  ],
+  "results_equal": true,
+  "executions": {
+    "write": 1,
+    "read": 1,
+    "bash": 1
+  },
+  "files_equal": true,
+  "cards_on": true,
+  "cards_off": false,
+  "reload_re_executed": false
+}
