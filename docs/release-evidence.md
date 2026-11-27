@@ -25,7 +25,10 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 
 ## 0.2.0 preview
 
-- 包：`@jackice/pi-tool-ui@0.2.0`；依赖 `@jackice/pi-ui@0.8.0`。
+- 包：`@jackice/pi-tool-ui@0.2.0`；发布时间 2026-11-27；tag `v0.2.0`；dist-tags `latest=0.1.0`、`next=0.2.0`。
+- 依赖：`@jackice/pi-ui@0.8.0`；peer Pi 1.6.0 / pi-tui optional。
+- 验证：`published-verify-020.py`：`pi install npm:@jackice/pi-tool-ui@0.2.0` 成功；安装树无 `@earendil-works`；Write/Read 卡片可用。
+- 证据：`published-install-020.json`、`startup-rss.json`、`benchmark-views.txt`、`rollback-drill.json`。
 - Gate：Bash G3、Write G4、Read G5、G6 已签；T7-01/T7-02/T7-04 通过，T7-03 preview 发布，T7-05 最终评审待办。
 - 证据：`benchmark-views.txt`、`rollback-drill.json`、`integration-matrix.json`、`security-stack.json`、`mixed-versions.json`、`pack-artifact.json`、`gallery.txt`。
 - 本工作树未执行 npm publish；生产配置未修改。

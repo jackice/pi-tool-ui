@@ -184,8 +184,8 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | ID | 状态 | 证据 |
 |---|---|---|
 | T7-01 | passed | pi-ui Gallery 渲染 Bash/Write/Read/Edit/TODO/Approval；各 profile 单测/PTY 通过。 |
-| T7-02 | passed | 视图预算通过；解耦后 packed 惰性加载启动 +1.9ms、RSS +3.73MiB（≤20/5）；`startup-rss`/oracle 171 单测。 |
-| T7-03 | partial | README/CHANGELOG/release evidence 已同步；pi-ui 0.7.3 发布；产品版本与最终 publish 未做。 |
+| T7-02 | passed | 解耦后 packed 启动 +1.9ms、RSS +3.73MiB；视图预算通过；oracle 171 单测。 |
+| T7-03 | passed | pi-ui 0.8.0 + pi-tool-ui 0.2.0 发布到 next；实际 pi install/卡片验证；docs/lock 对账。 |
 | T7-04 | passed | 单工具/全局关闭回原生；损坏包启动失败；移除包恢复原生；content 一致。 |
 | T7-05 | pending | 最终独立 Reviewer 未启动。 |
 | G7 | pending | 依赖 T7-01..05。 |
