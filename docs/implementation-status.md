@@ -175,6 +175,17 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T6-02 | passed | `export-parity` 展开 Diff 正文断言、tools=1；Write/Read 模板导出正文保留；证据已重跑。 |
 | T6-03 | signed | 安全复审 sign：Gate+产品卡片 ✓/✗、deny/timeout/cancel 0 次、uv guard ON/OFF 0 次、Compressor ON/OFF；R2/R3 为 Gate 已知开项。 |
 | T6-04 | passed | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 0.5.0）同会话：HUD、band、Write/Read 卡片；Gate 审批焦点由 security-stack navigate/allow 覆盖。 |
-| T6-05 | partial | `--print`/RPC Read/Write/Bash 一致；`!`/`!!` 用户 Bash 各执行一次且无产品卡片；nested 未单独 PTY。 |
+| T6-05 | passed | `--print`/RPC Read/Write/Bash 一致；`!`/`!!` 各执行一次无卡片；nested 子会话不加载父 ambient extensions（架构不适用）。 |
 | T6-06 | passed | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Bash/Write/Read 卡片可用。 |
-| G6 | pending | 依赖 T6-01..06。 |
+| G6 | signed | 第三次复审 sign（correct，0.93）；T6-01..06 完成，nested 架构不适用。 |
+
+## T7 发布进展
+
+| ID | 状态 | 证据 |
+|---|---|---|
+| T7-01 | partial | 各 profile 单测/PTY 通过；Gallery/全部 fixture 汇总未单列。 |
+| T7-02 | partial | `benchmark-views.txt`：Bash/Write/Read 100 行首渲 ≤15ms、热渲 ≤2ms、resize ≤5ms 均通过；冷启动/RSS/模型请求未测。 |
+| T7-03 | pending | 版本/lock/README/changelog/双仓对账未完成。 |
+| T7-04 | pending | 两级回滚演练未做。 |
+| T7-05 | pending | 最终独立 Reviewer 未启动。 |
+| G7 | pending | 依赖 T7-01..05。 |
