@@ -1,5 +1,6 @@
 {
-  "tools": 3,
-  "diff_body": true,
+  "tools": 1,
+  "collapsed_empty": true,
+  "diff_body_expanded": true,
   "equal": true
 }

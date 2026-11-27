@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -30,6 +31,9 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
     root = Path(directory)
     agent = root / 'agent'
     agent.mkdir()
+    (agent / 'extensions').mkdir()
+    shutil.copyfile(workspace / 'dotfiles/pi/.pi/agent/extensions/goal.ts', agent / 'extensions/goal.ts')
+    shutil.copyfile(Path.home() / '.pi/agent/pi-prompt.json', agent / 'pi-prompt.json')
     (agent / 'settings.json').write_text(json.dumps({
         'packages': [str(repo), str(prompt), str(todo)],
         'toolUi': {'enabled': True, 'tools': {'write': {'enabled': True}, 'read': {'enabled': True}}},
@@ -43,7 +47,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
                          env, root, b'MIXED_DONE', b'MIXED_DONE', rows=60)
     text = '\n'.join(render(screen, lines=60))
     assert b'Failed to load extension' not in screen, screen[-3000:]
-    assert 'MIXED_TODO_TASK' in text, text[-2000:]
+    assert 'MIXED_TODO_TASK' in text and 'Phase  0/1' in text, text[-2000:]
+    assert not re.search(r'↓\d+ R\d', text), text[-2000:]
     assert '╰─' in text, text[-2000:]
     assert '╭─ Write' in text and '╭─ Read' in text, text[-2000:]
 
@@ -54,10 +59,14 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
         'shared_pi_ui': package_version(shared_ui),
         'prompt_version': package_version(prompt),
         'todo_version': package_version(todo),
+        'footer_mode': 'none',
+        'native_footer_absent': True,
         'todo_hud': True,
+        'todo_hud_phase': True,
         'prompt_band': True,
         'write_card': True,
         'read_card': True,
+        'goal_loaded': True,
         'failed_load': False,
     }, ensure_ascii=False, indent=2) + '\n')
-    print('混合 pi-ui：产品 0.7.2 + Prompt/TODO 共享 0.5.0，同时加载；HUD、band、Write/Read 卡片可用')
+    print('混合 pi-ui：产品 0.7.2 + Prompt(none)/TODO/Goal 共享 0.5.0；HUD、band、Write/Read 卡片可用')

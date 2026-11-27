@@ -17,9 +17,9 @@
 - 打包 tarball 干净安装，无第二套 Pi runtime；Bash/Write/Read 卡片。
 
 ## 已知限制
-- T6-01 未枚举全部 2^N 工具组合，未单测“产品重复加载”；依赖每工具 A/B + 三工具矩阵 + resolver 单测。
-- T6-05 nested 工具未单独 PTY；未知/无下游 resolver 有单测。
-- T6-06 未覆盖无 Hashline 下启用 Edit/Hashline（迁移 profile 由 G1 单独签）。
+- T6-01 未枚举 2^N；已补重复加载单卡片、三工具矩阵、resolver 单测。
+- T6-05 已补 `--print`/RPC Bash、`!`/`!!`；nested 工具未单独 PTY，未知/无下游 resolver 有单测。
+- T6-06 无 Hashline 环境下 Bash/Write/Read 卡片；Edit 由 tarball-matrix/G1 覆盖。
 
 ## 问题
 1. 上述限制是否阻止 G6 签署？

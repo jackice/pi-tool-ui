@@ -4,6 +4,7 @@
   "read_truncated": true,
   "write_success": true,
   "write_error": true,
+  "bash_success": true,
   "content_details_files_equal": true,
   "runs": 1
 }

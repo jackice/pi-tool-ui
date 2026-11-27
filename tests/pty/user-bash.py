@@ -46,7 +46,7 @@ def run(work, enabled):
                     if select.select([master], [], [], 0.2)[0]:
                         output.extend(os.read(master, 65536))
                 assert b'commands' in output, output[-2000:].decode(errors='replace')
-                os.write(master, b"!printf 'USER_BASH_OK\\n' > user-bash.txt\r")
+                os.write(master, b"!printf 'USER_BASH_OK\\n' >> user-bash.txt\r")
                 deadline = time.monotonic() + 12
                 while b'USER_BASH_OK' not in output and time.monotonic() < deadline:
                     if select.select([master], [], [], 0.2)[0]:
@@ -57,6 +57,8 @@ def run(work, enabled):
                                 break
                             raise
                 time.sleep(0.3)
+                os.write(master, b"!!printf 'SILENT_OK\\n' >> user-bash.txt\r")
+                time.sleep(0.6)
                 while select.select([master], [], [], 0)[0]:
                     output.extend(os.read(master, 65536))
             finally:
@@ -76,11 +78,11 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-userbash-') as directory:
     on = run(root / 'on', True) if (root / 'on').mkdir() is None else None
     off = run(root / 'off', False) if (root / 'off').mkdir() is None else None
     for name, result in (('on', on), ('off', off)):
-        assert result['file'] == 'USER_BASH_OK\n', (name, result)
+        assert result['file'] == 'USER_BASH_OK\nSILENT_OK\n', (name, result)
         assert 'USER_BASH_OK' in result['screen'], (name, result['screen'][-1000:])
         assert '╭─ Bash' not in result['screen'], (name, result['screen'][-1000:])
     evidence = repo / 'docs/evidence/user-bash.json'
-    evidence.write_text(json.dumps({'pi_version': version, 'user_bash_runs': 1,
+    evidence.write_text(json.dumps({'pi_version': version, 'user_bash_runs': 1, 'silent_bang_bang': True,
                                     'product_card': False, 'on_off_equal': True},
                                    ensure_ascii=False, indent=2) + '\n')
     print('用户 ! Bash：ON/OFF 各执行一次；输出保留；产品不渲染工具卡片')

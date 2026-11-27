@@ -46,7 +46,8 @@ def run_rpc(work, agent, provider, tool, variable, case):
 with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rpc-') as directory:
     root = Path(directory)
     cases = [('read', repo / 'tests/pty/read-t0-provider.ts', 'PI_READ_CASE', 'basic'),
-             ('write', repo / 'tests/pty/write-cases-provider.ts', 'PI_WRITE_CASE', 'success')]
+             ('write', repo / 'tests/pty/write-cases-provider.ts', 'PI_WRITE_CASE', 'success'),
+             ('bash', repo / 'tests/pty/bash-cases-provider.ts', 'PI_BASH_CASE', 'success')]
     observed = {}
     for tool, provider, variable, case in cases:
         for enabled in (False, True):
@@ -79,7 +80,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rpc-') as directory:
         assert on['details'] == off['details'], tool
         assert on['files'] == off['files'], tool
     evidence = repo / 'docs/evidence/rpc-ab.json'
-    evidence.write_text(json.dumps({'pi_version': version, 'read': True, 'write': True,
+    evidence.write_text(json.dumps({'pi_version': version, 'read': True, 'write': True, 'bash': True,
                                     'content_details_files_equal': True, 'agent_settled': True},
                                    ensure_ascii=False, indent=2) + '\n')
     print('RPC A/B：Read/Write ON/OFF content/details/files 一致，agent_settled 正常')

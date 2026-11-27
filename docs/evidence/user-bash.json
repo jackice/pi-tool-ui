@@ -1,6 +1,7 @@
 {
   "pi_version": "1.6.0",
   "user_bash_runs": 1,
+  "silent_bang_bang": true,
   "product_card": false,
   "on_off_equal": true
 }

@@ -78,14 +78,13 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-export-') as directory:
         assert 'resultHtmlExpanded' in value, (name, tool_id, sorted(value))
         entry = {field: re.sub(r'· \d+(?:\.\d+)?m?s', '· <MS>', value[field]) if field in value else None
                  for field in fields}
-        visible = html_lib.unescape(re.sub(r'<[^>]+>', '', (entry['resultHtmlCollapsed'] or '') + entry['resultHtmlExpanded']))
-        assert 'beta2' in visible, visible[-400:]
+        collapsed = html_lib.unescape(re.sub(r'<[^>]+>', '', entry['resultHtmlCollapsed'] or ''))
+        expanded = html_lib.unescape(re.sub(r'<[^>]+>', '', entry['resultHtmlExpanded'] or ''))
+        assert 'beta2' in expanded, expanded[-400:]
         ids[name] = entry
     assert ids['old'] == ids['new'], '旧扩展与新包的 call/collapsed/expanded HTML 不同'
-    has_diff = True
     evidence = repo / 'docs/evidence/export-parity.json'
     evidence.parent.mkdir(parents=True, exist_ok=True)
-    evidence.write_text(json.dumps({'tools': len(ids['old']), 'diff_body': has_diff, 'equal': True},
+    evidence.write_text(json.dumps({'tools': 1, 'collapsed_empty': collapsed == '', 'diff_body_expanded': True, 'equal': True},
                                    ensure_ascii=False, indent=2) + '\n')
-    print(f'Hashline TUI /export：旧新预渲染 HTML 一致；Diff 正文存在={has_diff}')
-    assert has_diff, '真实 /export 未保留 Diff 正文'
+    print('Hashline TUI /export：旧新预渲染 HTML 一致；展开 Diff 正文存在')

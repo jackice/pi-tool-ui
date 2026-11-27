@@ -4,9 +4,13 @@
   "shared_pi_ui": "0.5.0",
   "prompt_version": "0.2.1",
   "todo_version": "0.1.2",
+  "footer_mode": "none",
+  "native_footer_absent": true,
   "todo_hud": true,
+  "todo_hud_phase": true,
   "prompt_band": true,
   "write_card": true,
   "read_card": true,
+  "goal_loaded": true,
   "failed_load": false
 }

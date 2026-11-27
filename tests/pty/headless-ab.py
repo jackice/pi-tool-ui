@@ -19,7 +19,8 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-headless-') as directory:
     root = Path(directory)
     observed = {}
     cases = [('read', 'basic', read_provider, 'PI_READ_CASE'), ('read', 'truncated', read_provider, 'PI_READ_CASE'),
-             ('write', 'success', write_provider, 'PI_WRITE_CASE'), ('write', 'error', write_provider, 'PI_WRITE_CASE')]
+             ('write', 'success', write_provider, 'PI_WRITE_CASE'), ('write', 'error', write_provider, 'PI_WRITE_CASE'),
+             ('bash', 'success', repo / 'tests/pty/bash-cases-provider.ts', 'PI_BASH_CASE')]
     for tool, case, provider, variable in cases:
         for enabled in (False, True):
             work = root / f'{tool}-{case}-{"on" if enabled else "off"}'
@@ -64,7 +65,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-headless-') as directory:
         assert on['files'] == off['files'], (tool, case)
     evidence = repo / 'docs/evidence/headless-ab.json'
     evidence.write_text(json.dumps({'pi_version': version, 'read_basic': True, 'read_truncated': True,
-                                    'write_success': True, 'write_error': True,
+                                    'write_success': True, 'write_error': True, 'bash_success': True,
                                     'content_details_files_equal': True, 'runs': 1},
                                    ensure_ascii=False, indent=2) + '\n')
     print('Headless --print A/B：Read/Write 的 content/details/files 一致，各执行一次')
