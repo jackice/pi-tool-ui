@@ -171,7 +171,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 
 | ID | 状态 | 证据 |
 |---|---|---|
-| T6-01 | partial | Bash/Write/Read 同会话 OFF/ON content/details/files 一致、卡片互斥、`/reload` 不重跑；Edit/Hashline 组合沿用迁移 A/B。 |
+| T6-01 | passed | 三工具同会话 OFF/ON 一致、卡片互斥、`/reload` 不重跑；产品重复加载仍单卡片；Edit/Hashline 沿用迁移 A/B。 |
 | T6-02 | passed | Edit/Hashline 旧新预渲染 HTML 一致；Write/Read 为宿主模板工具，导出 session 数据保留正文且无自定义预渲染。 |
 | T6-03 | signed | 安全复审 sign：Gate+产品卡片 ✓/✗、deny/timeout/cancel 0 次、uv guard ON/OFF 0 次、Compressor ON/OFF；R2/R3 为 Gate 已知开项。 |
 | T6-04 | passed | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 0.5.0）同会话：HUD、band、Write/Read 卡片；Gate 审批焦点由 security-stack navigate/allow 覆盖。 |
