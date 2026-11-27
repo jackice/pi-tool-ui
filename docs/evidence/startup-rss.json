@@ -1,0 +1,20 @@
+{
+  "off": {
+    "startup_ms": 265.6219790078467,
+    "rss_mib": 133.234375,
+    "samples": 20
+  },
+  "on": {
+    "startup_ms": 287.2093545011012,
+    "rss_mib": 141.265625,
+    "samples": 20
+  },
+  "startup_delta_ms": 21.587375493254513,
+  "rss_delta_mib": 8.03125,
+  "pi_version": "1.6.0",
+  "budget": {
+    "startup_delta_ms": 20,
+    "rss_delta_mib": 5
+  },
+  "passed": false
+}

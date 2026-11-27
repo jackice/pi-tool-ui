@@ -1,6 +1,8 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
 import { Text } from '@earendil-works/pi-tui';
-import { EditView, adaptHashlineDetails, fromPiTheme, type EditViewModel } from '@jackice/pi-ui';
+import { fromPiTheme } from '@jackice/pi-ui/core/theme';
+import { adaptHashlineDetails, type EditViewModel } from '@jackice/pi-ui/diff';
+import { EditView } from '@jackice/pi-ui/views/edit';
 
 import { adaptNativeEdit } from '../adapters/native-edit.js';
 import type { RendererLike, RendererPatch } from '../integration/resolver.js';

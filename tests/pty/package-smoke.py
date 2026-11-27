@@ -23,7 +23,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-pack-') as directory:
     manifest = {
         'name': 'pi-tool-ui-loader-probe', 'version': '0.0.0', 'type': 'module',
         'files': ['dist'], 'pi': {'extensions': ['./dist/index.js']},
-        'dependencies': {'@jackice/pi-ui': '0.7.0'},
+        'dependencies': {'@jackice/pi-ui': '0.7.3'},
         'peerDependencies': {'@earendil-works/pi-coding-agent': '1.6.0', '@earendil-works/pi-tui': '1.6.0'},
     }
     (source / 'package.json').write_text(json.dumps(manifest))
@@ -54,8 +54,8 @@ export default function () {
     modules = install / 'node_modules'
     assert not list(modules.rglob('@earendil-works/pi-*/package.json')), '安装树含第二套 Pi runtime'
     package = modules / manifest['name']
-    assert json.loads((modules / '@jackice/pi-ui/package.json').read_text())['version'] == '0.7.0'
+    assert json.loads((modules / '@jackice/pi-ui/package.json').read_text())['version'] == '0.7.3'
     (agent / 'settings.json').write_text(json.dumps({'packages': [str(package)]}))
     output = run([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--list-models', 'pi-tool-ui-nonexistent'], root, env)
     assert 'PACKED_ENTRY_LOADED' in output, output
-    print('干净安装：Pi 通过 package.json 的 pi.extensions 加载 dist/index.js；宿主 SDK 与 pi-ui@0.7.0 均可用')
+    print('干净安装：Pi 通过 package.json 的 pi.extensions 加载 dist/index.js；宿主 SDK 与 pi-ui@0.7.3 均可用')

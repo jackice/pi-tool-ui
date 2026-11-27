@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-artifact-') as directory:
     package = modules / '@jackice/pi-tool-ui'
     assert (package / 'dist/index.js').is_file()
     pi_ui = json.loads((modules / '@jackice/pi-ui/package.json').read_text())['version']
-    assert pi_ui == '0.7.2', pi_ui
+    assert pi_ui == '0.7.3', pi_ui
     assert not list(modules.rglob('@earendil-works/pi-*/package.json')), '安装树含第二套 Pi runtime'
 
     observed = {}
@@ -66,4 +66,4 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-artifact-') as directory:
     evidence.write_text(json.dumps({'package': 'pi-tool-ui-0.1.0.tgz', 'pi_ui': pi_ui,
                                     'pi_runtime_in_tree': False, 'write_card': True, 'read_card': True, 'bash_card': True,
                                     'clean_agent': True}, ensure_ascii=False, indent=2) + '\n')
-    print('打包产物：干净安装 pi-tool-ui + pi-ui 0.7.2，无第二套 Pi runtime；Write/Read/Bash 卡片可用')
+    print('打包产物：干净安装 pi-tool-ui + pi-ui 0.7.3，无第二套 Pi runtime；Write/Read/Bash 卡片可用')

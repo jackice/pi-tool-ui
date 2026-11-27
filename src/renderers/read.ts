@@ -1,6 +1,7 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
 import { highlightCode } from '@earendil-works/pi-coding-agent';
-import { ReadView, fromPiTheme } from '@jackice/pi-ui';
+import { fromPiTheme } from '@jackice/pi-ui/core/theme';
+import { ReadView } from '@jackice/pi-ui/views/read';
 
 import { adaptRead } from '../adapters/read.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';

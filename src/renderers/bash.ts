@@ -1,5 +1,6 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { BashView, fromPiTheme } from '@jackice/pi-ui';
+import { fromPiTheme } from '@jackice/pi-ui/core/theme';
+import { BashView } from '@jackice/pi-ui/views/bash';
 
 import { adaptBash } from '../adapters/bash.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';

@@ -1,7 +1,8 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
 import { highlightCode } from '@earendil-works/pi-coding-agent';
 import { Text } from '@earendil-works/pi-tui';
-import { WriteView, fromPiTheme } from '@jackice/pi-ui';
+import { fromPiTheme } from '@jackice/pi-ui/core/theme';
+import { WriteView } from '@jackice/pi-ui/views/write';
 
 import { adaptWrite } from '../adapters/write.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';
