@@ -22,3 +22,5 @@ Out of scope：Bash/Read 门禁、发布、生产切换。
 - pi-ui 167 单测；产品 57 单测；typecheck/lint/build。
 - write-call-stream、write-view、write-stream、write-product-ab（success/overwrite/error）、write-history、write-cancel。
 - 证据：`write-call-stream.json`、`write-view.json`、`write-stream.json`、`write-product-ab.json`、`write-history.json`、`write-cancel.json`。
+
+最终：G0-Write、T4-03、T4-04、T4-05、G4-Write signed（confidence 0.90）。

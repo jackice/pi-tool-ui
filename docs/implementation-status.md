@@ -24,7 +24,7 @@
 | G0-Read | signed | 第三轮复审 sign（correct，0.93）：伪行号已消除，T0-R1/R2 证据有效。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
-| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash/Read/G2-Read/G5-Read signed；Write/G4 blocked；G6/G7 未开始。 |
+| G2-Shared（Bash/Write/Read）、G3-Bash、G4-Write、G5-Read、G5-ReadHash（可选）、G6、G7 | pending | Bash/Read/Write 与 G0/G2/G3/G4/G5 signed；G6/G7 未开始。 |
 
 ### Resolver 顺序实测
 
@@ -153,10 +153,10 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
 | T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；流式 call 显示路径与 tail，完成/历史 call 仅 `write <path>` 行。证据 `write-call-stream.json`。 |
-| T4-03 | passed | 折叠 6/12、展开 200、10k/256KiB 上限；完整 colors revision；append/replace/path 与真实 highlighter oracle 已测。 |
+| T4-03 | signed | 折叠 6/12、展开 200、10k/256KiB；完整 colors revision；append/replace/path 与真实 oracle；复审 sign。 |
 | T4-04 | passed | 流式 call 预览；完成/历史 call 仅 `write path` 行；result 独占正文，path/正文各一次。 |
 | T4-05 | passed | success/overwrite/error OFF/ON bytes/args/result/次数一致；history 未重跑；参数流式取消不执行/不写文件。 |
-| G4-Write | blocked | T4-03/04/05 候选通过；待 G0-Write 与 G4 独立签署。 |
+| G4-Write | signed | G0/T4-03/04/05 均已签（correct，0.90），附已记录限制。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 
