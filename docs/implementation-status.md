@@ -20,7 +20,7 @@
 | T0-R1 | passed | 基础/范围/EOF/limit=0/空文件/同形 notice/行截断/字节截断/超长首行/Markdown/非法 offset/历史回放均采集；非法 fractional limit 未单列。 |
 | T0-R2 | passed | 图片/unsupported/processImage 失败/mixed 与 showImages 上下文均已采集。 |
 | G0-Bash | passed | G0BashReview 第五轮签署（correct，0.99）：Pi 1.6.0、顶层 Bash、Gate 0.1.6、已验 Compressor、slot C。 |
-| G0-Write | blocked | T0-W1/W2 仅部分矩阵；streaming 预览与历史 call 状态问题已记录。 |
+| G0-Write | ready | T0-W1/W2：success/overwrite/error A/B、streaming 快照、取消/历史 ON；待独立签收。 |
 | G0-Read | signed | 第三轮复审 sign（correct，0.93）：伪行号已消除，T0-R1/R2 证据有效。 |
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
@@ -153,10 +153,10 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
 | T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；argsComplete=false 时 call 显示路径与 streaming tail，完成后 call 清空。证据 `write-call-stream.json`。 |
-| T4-03 | passed | 注入 Pi 公开 `highlightCode`；折叠 6/12、展开 200；10k 行/256 KiB 上限与组件缓存；pi-ui 0.7.1。 |
+| T4-03 | passed | 注入 Pi 公开 `highlightCode`；折叠 6/12、展开 200；10k 行/256 KiB；缓存含 themeRevision；pi-ui 0.7.2。 |
 | T4-04 | passed | 流式 call 预览；完成/历史 call 仅 `write path` 行；result 独占正文，path/正文各一次。 |
 | T4-05 | passed | success/error OFF/ON bytes/args/result/次数一致；history 未重跑；参数流式取消不执行/不写文件。 |
-| G4-Write | ready | T4-01..05 通过；待独立评审。 |
+| G4-Write | blocked | T4-03/04/05 候选通过；待 G0-Write 与 G4 独立签署。 |
 
 ### G2/G3 Bash 签署后 P3 记录
 

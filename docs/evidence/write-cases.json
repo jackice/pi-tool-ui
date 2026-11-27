@@ -60,10 +60,10 @@
     "error": true,
     "args": {
       "path": "dir",
-      "content": "x"
+      "content": "SECRET_SENTINEL"
     },
     "text": [
-      "EISDIR: illegal operation on a directory, open '/private/var/folders/gy/mgqndl815b70zf9p_4spxjw80000gn/T/pi-tool-ui-write-2pzgyjy9/error/dir'"
+      "EISDIR: illegal operation on a directory, open '/private/var/folders/gy/mgqndl815b70zf9p_4spxjw80000gn/T/pi-tool-ui-write-n9a0khby/error/dir'"
     ],
     "files": {},
     "executions": 1

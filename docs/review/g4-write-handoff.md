@@ -5,7 +5,7 @@
 
 ## 范围
 - `src/adapters/write.ts`、`src/renderers/write.ts`、`src/integration/resolver.ts`
-- pi-ui `src/views/write.ts`、`src/components/code-block.ts`（0.7.0）
+- pi-ui `src/views/write.ts`、`src/components/code-block.ts`（0.7.2）
 - `tests/unit/write-adapter.test.ts`、`tests/unit/resolver.test.ts`
 - `tests/pty/write-*.{py,ts}`、`docs/evidence/write-*.json`
 - `docs/implementation-status.md`
@@ -19,6 +19,6 @@ Out of scope：Bash/Read 门禁、发布、生产切换。
 - 刻意不做：跨组件/跨会话高亮缓存；未知语言由 highlighter 回退纯文本。
 
 ## 验证
-- pi-ui 165 单测；产品 57 单测；typecheck/lint/build。
-- write-call-stream、write-view、write-stream、write-product-ab（success/error）、write-history、write-cancel。
+- pi-ui 167 单测；产品 57 单测；typecheck/lint/build。
+- write-call-stream、write-view、write-stream、write-product-ab（success/overwrite/error）、write-history、write-cancel。
 - 证据：`write-call-stream.json`、`write-view.json`、`write-stream.json`、`write-product-ab.json`、`write-history.json`、`write-cancel.json`。

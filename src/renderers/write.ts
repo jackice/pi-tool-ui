@@ -22,7 +22,7 @@ interface CachedCall {
   path: string;
   content: string | undefined;
   config: string;
-  theme: Theme;
+  themeKey: string;
   view: WriteView;
 }
 
@@ -37,7 +37,7 @@ interface Cached {
   argsComplete: boolean;
   args: unknown;
   config: string;
-  theme: Theme;
+  themeKey: string;
   view: WriteView;
 }
 
@@ -46,6 +46,8 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
     renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean; isPartial: boolean }) {
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
       const path = typeof record.path === 'string' ? record.path : undefined;
+      const themeKey = theme.fg('text', 'x');
+      const themeRevision = () => `${theme.name ?? ''}:${theme.appearance}:${theme.colors.text}:${theme.colors.accent}`;
       if (context.argsComplete || !context.isPartial) {
         return new Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
       }
@@ -54,7 +56,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
       const write = getConfig().tools.write;
       const config = JSON.stringify(write);
       const cached = context.state[callKey] as CachedCall | undefined;
-      if (cached !== undefined && cached.path === (path ?? '') && cached.content === content && cached.config === config && cached.theme === theme) return cached.view;
+      if (cached !== undefined && cached.path === (path ?? '') && cached.content === content && cached.config === config && cached.themeKey === themeKey) return cached.view;
       const lineCount = content === undefined || content.length === 0
         ? undefined
         : content.endsWith('\n') ? content.split('\n').length - 1 : content.split('\n').length;
@@ -72,16 +74,18 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           streamingPreviewLines: write.streamingPreviewLines,
           maxPreviewRows: write.maxPreviewRows,
           lineNumbers: write.lineNumbers,
-          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
+          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language), themeRevision } : {}),
         },
       });
-      context.state[callKey] = { path: path ?? '', content, config, theme, view };
+      context.state[callKey] = { path: path ?? '', content, config, themeKey, view };
       return view;
     },
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       try {
         const write = getConfig().tools.write;
         const config = JSON.stringify(write);
+        const themeKey = theme.fg('text', 'x');
+        const themeRevision = () => `${theme.name ?? ''}:${theme.appearance}:${theme.colors.text}:${theme.colors.accent}`;
         const cached = context.state[cacheKey] as Cached | undefined;
         const same = cached !== undefined
           && cached.content === result.content
@@ -92,7 +96,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           && cached.argsComplete === context.argsComplete
           && cached.args === context.args
           && cached.config === config
-          && cached.theme === theme;
+          && cached.themeKey === themeKey;
         if (same) return cached.view;
         const model = adaptWrite({
           args: context.args,
@@ -109,13 +113,13 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
             showPath: false,
-            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
+            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language), themeRevision } : {}),
           },
         });
         context.state[cacheKey] = {
           content: result.content, details: result.details, expanded: options.expanded,
           isPartial: options.isPartial, isError: context.isError === true, argsComplete: context.argsComplete,
-          args: context.args, config, theme, view,
+          args: context.args, config, themeKey, view,
         };
         return view;
       } catch {
