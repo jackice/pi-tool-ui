@@ -68,3 +68,4 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 ## 1.1.1
 
 - Hashline Read 隐藏独立 path 行，避免与锚点重复；只读 smoke 与 read-hashline A/B 通过。
+- 安装验证：`published-verify-111.py`；证据 `published-install-111.json`。
