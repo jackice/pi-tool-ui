@@ -153,7 +153,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T4-01 | passed | `adaptWrite`：path/content/argsComplete/CRLF/lineCount/error notices，5 单测。 |
 | T4-02 | passed | head 6、expanded error、尾随 LF、多行诊断、错误隐藏；流式 call 显示路径与 tail，完成/历史 call 仅 `write <path>` 行。证据 `write-call-stream.json`。 |
-| T4-03 | blocked | 完整主题调色板 revision 修复中；折叠 6/12、展开 200、10k/256KiB 已通过。 |
+| T4-03 | passed | 折叠 6/12、展开 200、10k/256KiB 上限；完整 colors revision；append/replace/path 与真实 highlighter oracle 已测。 |
 | T4-04 | passed | 流式 call 预览；完成/历史 call 仅 `write path` 行；result 独占正文，path/正文各一次。 |
 | T4-05 | passed | success/overwrite/error OFF/ON bytes/args/result/次数一致；history 未重跑；参数流式取消不执行/不写文件。 |
 | G4-Write | blocked | T4-03/04/05 候选通过；待 G0-Write 与 G4 独立签署。 |

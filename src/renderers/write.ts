@@ -41,6 +41,10 @@ interface Cached {
   view: WriteView;
 }
 
+export function highlightWrite(code: string, language?: string): readonly string[] {
+  return highlightCode(code, language);
+}
+
 export function writeThemeRevision(theme: Theme): string {
   return `${theme.name ?? ''}:${theme.appearance}:${JSON.stringify(theme.colors)}`;
 }
@@ -78,7 +82,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           streamingPreviewLines: write.streamingPreviewLines,
           maxPreviewRows: write.maxPreviewRows,
           lineNumbers: write.lineNumbers,
-          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language), themeRevision } : {}),
+          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightWrite(code, language), themeRevision } : {}),
         },
       });
       context.state[callKey] = { path: path ?? '', content, config, themeKey, view };
@@ -117,7 +121,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
             showPath: false,
-            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language), themeRevision } : {}),
+            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightWrite(code, language), themeRevision } : {}),
           },
         });
         context.state[cacheKey] = {
