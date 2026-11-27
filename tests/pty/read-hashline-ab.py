@@ -63,7 +63,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-rhash-ab-') as directory:
         assert on['executions'] == off['executions'] == 1, case
         text = on['content'][0]['text']
         assert text.startswith('[long.txt#') and '5:line 5' in text, text[:200]
-        assert 'Read' in on['text'], on['text'][-600:]
+        assert 'Read' in on['text'] and on['text'].count('long.txt') == 1, on['text'][-800:]
         assert 'Read' not in off['text'], off['text'][-600:]
     evidence = repo / 'docs/evidence/read-hashline-ab.json'
     evidence.write_text(json.dumps({'pi_version': version, 'hashline_version': hashline_version,

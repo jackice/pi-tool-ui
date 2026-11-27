@@ -64,3 +64,7 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 
 - Read/Write 单卡片：路径进入结果卡片，原生 call 行隐藏；Write 流式仍显示预览，图片 Read 保留原生 call。
 - 回归：read/write view、history、product A/B、call-stream、resolver 单测。
+
+## 1.1.1
+
+- Hashline Read 隐藏独立 path 行，避免与锚点重复；只读 smoke 与 read-hashline A/B 通过。

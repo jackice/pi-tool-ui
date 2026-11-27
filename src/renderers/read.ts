@@ -85,7 +85,7 @@ export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
             previewLines: read.previewLines,
             maxPreviewRows: read.maxPreviewRows,
             lineNumbers: read.lineNumbers,
-            showPath: true,
+            showPath: model.source !== 'hashline',
             ...(read.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language) } : {}),
           },
         });
