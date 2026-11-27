@@ -6,7 +6,7 @@ Pi 工具结果卡片。保留原生执行、权限与工具 schema，只替换�
 
 - 默认全部关闭；全新安装不改变原生行为。
 - 存在 `editDiff.nativeEdit` 或 `PI_HASHLINE_DIFF` 时自动迁移旧配置；两者都没有的旧安装用 `/tool-ui-migrate` 显式预览/应用。见 [docs/migration.md](docs/migration.md)。
-- Bash 已交付；Write 参数流式预览已接入，highlight 与 failure/cancel 矩阵未完成；Read 预览已接入，门禁复审中。
+- Bash、Write、Read 已通过各自 G0/G2/G3/G4/G5 与 G6 集成评审；默认关闭，需显式启用。
 
 ## 安装
 
@@ -24,7 +24,10 @@ pi install npm:@jackice/pi-tool-ui
     "enabled": true,
     "tools": {
       "edit": { "enabled": true },
-      "hashline": { "enabled": true }
+      "hashline": { "enabled": true },
+      "bash": { "enabled": true },
+      "write": { "enabled": true },
+      "read": { "enabled": true }
     }
   }
 }

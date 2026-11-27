@@ -1,7 +1,9 @@
 # Unreleased
 
-- 新增 Bash slot C：保留原生 shell/call，使用 `BashView` 渲染命令、输出、截断与全量路径。
-- 新增 Write 参数流式预览与 Read `ReadView`（预览）。
+- Bash slot C：原生 shell/call，`BashView` 命令/输出/截断/全量路径。
+- Write：流式参数预览、最终 `WriteView`、Pi 公开 `highlightCode` 有界高亮。
+- Read：`ReadView` 行号/范围/截断、Hashline 原文、图片原生回退。
+- G6 集成、安全栈、混合 pi-ui、headless/RPC、回滚演练通过；G7 发布待办。
 - 依赖 `@jackice/pi-ui@0.7.2`。
 
 # 0.1.0
