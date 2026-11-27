@@ -1,10 +1,10 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { highlightCode } from '@earendil-works/pi-coding-agent';
-import { fromPiTheme } from '@jackice/pi-ui/core/theme';
-import { ReadView } from '@jackice/pi-ui/views/read';
+import type * as ReadViewModule from '@jackice/pi-ui/views/read';
+import type * as ThemeModule from '@jackice/pi-ui/core/theme';
 
 import { adaptRead } from '../adapters/read.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';
+import { loadPiUi } from '../integration/pi-ui-lazy.js';
 import type { RendererLike, RendererPatch } from '../integration/resolver.js';
 
 interface ResultContext {
@@ -24,10 +24,17 @@ interface Cached {
   args: unknown;
   config: string;
   theme: Theme;
-  view: ReadView;
+  view: import('@jackice/pi-ui/views/read').ReadView;
 }
 
-export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
+export interface ReadDeps {
+  highlightCode: (code: string, language?: string) => readonly string[];
+  getLanguageFromPath: (path: string) => string | undefined;
+}
+
+export const defaultReadDeps: ReadDeps = { highlightCode: () => [], getLanguageFromPath: () => undefined };
+
+export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG, deps: ReadDeps = defaultReadDeps): (original: RendererLike) => RendererPatch {
   return (original) => ({
     renderResult(result: AgentToolResult<unknown>, options: ToolRenderResultOptions, theme: Theme, context: ResultContext) {
       if (result.content.some((block) => block.type === 'image')) {
@@ -52,6 +59,12 @@ export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
           options: { isPartial: options.isPartial, expanded: options.expanded },
           context: { isError: context.isError },
         });
+        const { ReadView } = loadPiUi<typeof ReadViewModule>('@jackice/pi-ui/views/read');
+        const { fromPiTheme } = loadPiUi<typeof ThemeModule>('@jackice/pi-ui/core/theme');
+        if (model.language === undefined && model.path !== undefined) {
+          const language = deps.getLanguageFromPath(model.path);
+          if (language !== undefined) model.language = language;
+        }
         const view = new ReadView(fromPiTheme(theme), {
           model,
           expanded: options.expanded,
@@ -60,7 +73,7 @@ export function createReadFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
             maxPreviewRows: read.maxPreviewRows,
             lineNumbers: read.lineNumbers,
             showPath: false,
-            ...(read.highlight ? { highlighter: (code: string, language?: string) => highlightCode(code, language) } : {}),
+            ...(read.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language) } : {}),
           },
         });
         context.state[cacheKey] = {

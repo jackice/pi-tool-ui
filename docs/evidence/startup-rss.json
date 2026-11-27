@@ -1,20 +1,20 @@
 {
   "off": {
-    "startup_ms": 265.6219790078467,
-    "rss_mib": 133.234375,
+    "startup_ms": 256.7022504954366,
+    "rss_mib": 133.3515625,
     "samples": 20
   },
   "on": {
-    "startup_ms": 287.2093545011012,
-    "rss_mib": 141.265625,
+    "startup_ms": 258.5912085196469,
+    "rss_mib": 137.078125,
     "samples": 20
   },
-  "startup_delta_ms": 21.587375493254513,
-  "rss_delta_mib": 8.03125,
+  "startup_delta_ms": 1.8889580242102966,
+  "rss_delta_mib": 3.7265625,
   "pi_version": "1.6.0",
   "budget": {
     "startup_delta_ms": 20,
     "rss_delta_mib": 5
   },
-  "passed": false
+  "passed": true
 }

@@ -1,11 +1,10 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { highlightCode } from '@earendil-works/pi-coding-agent';
-import { Text } from '@earendil-works/pi-tui';
-import { fromPiTheme } from '@jackice/pi-ui/core/theme';
-import { WriteView } from '@jackice/pi-ui/views/write';
+import type * as WriteViewModule from '@jackice/pi-ui/views/write';
+import type * as ThemeModule from '@jackice/pi-ui/core/theme';
 
 import { adaptWrite } from '../adapters/write.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';
+import { loadPiUi } from '../integration/pi-ui-lazy.js';
 import type { RendererLike, RendererPatch } from '../integration/resolver.js';
 
 interface ResultContext {
@@ -24,7 +23,7 @@ interface CachedCall {
   content: string | undefined;
   config: string;
   themeKey: string;
-  view: WriteView;
+  view: import('@jackice/pi-ui/views/write').WriteView;
 }
 
 
@@ -39,18 +38,30 @@ interface Cached {
   args: unknown;
   config: string;
   themeKey: string;
-  view: WriteView;
-}
-
-export function highlightWrite(code: string, language?: string): readonly string[] {
-  return highlightCode(code, language);
+  view: import('@jackice/pi-ui/views/write').WriteView;
 }
 
 export function writeThemeRevision(theme: Theme): string {
   return `${theme.name ?? ''}:${theme.appearance}:${JSON.stringify(theme.colors)}`;
 }
 
-export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
+export interface WriteDeps {
+  highlightCode: (code: string, language?: string) => readonly string[];
+  getLanguageFromPath: (path: string) => string | undefined;
+  Text: new (text: string, paddingX: number, paddingY: number) => { render(width: number): string[] };
+}
+
+export const defaultWriteDeps: WriteDeps = {
+  highlightCode: () => [],
+  getLanguageFromPath: () => undefined,
+  Text: class { constructor(public text: string) {} render() { return [this.text]; } } as never,
+};
+
+export function highlightWrite(code: string, language?: string, deps: WriteDeps = defaultWriteDeps): readonly string[] {
+  return deps.highlightCode(code, language);
+}
+
+export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG, deps: WriteDeps = defaultWriteDeps): (original: RendererLike) => RendererPatch {
   return (original) => ({
     renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean; isPartial: boolean }) {
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
@@ -58,7 +69,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
       const themeKey = theme.fg('text', 'x');
       const themeRevision = () => writeThemeRevision(theme);
       if (context.argsComplete || !context.isPartial) {
-        return new Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
+        return new deps.Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
       }
       const rawContent = typeof record.content === 'string' ? record.content : undefined;
       const content = rawContent === undefined ? undefined : rawContent.replace(/\r\n/g, '\n');
@@ -69,6 +80,8 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
       const lineCount = content === undefined || content.length === 0
         ? undefined
         : content.endsWith('\n') ? content.split('\n').length - 1 : content.split('\n').length;
+      const { WriteView } = loadPiUi<typeof WriteViewModule>('@jackice/pi-ui/views/write');
+      const { fromPiTheme } = loadPiUi<typeof ThemeModule>('@jackice/pi-ui/core/theme');
       const view = new WriteView(fromPiTheme(theme), {
         model: {
           status: 'streaming',
@@ -83,7 +96,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           streamingPreviewLines: write.streamingPreviewLines,
           maxPreviewRows: write.maxPreviewRows,
           lineNumbers: write.lineNumbers,
-          ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightWrite(code, language), themeRevision } : {}),
+          ...(write.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language), themeRevision } : {}),
         },
       });
       context.state[callKey] = { path: path ?? '', content, config, themeKey, view };
@@ -113,6 +126,12 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
           options: { isPartial: options.isPartial, expanded: options.expanded, argsComplete: context.argsComplete },
           context: { isError: context.isError },
         });
+        const { WriteView } = loadPiUi<typeof WriteViewModule>('@jackice/pi-ui/views/write');
+        const { fromPiTheme } = loadPiUi<typeof ThemeModule>('@jackice/pi-ui/core/theme');
+        if (model.language === undefined && model.path !== undefined) {
+          const language = deps.getLanguageFromPath(model.path);
+          if (language !== undefined) model.language = language;
+        }
         const view = new WriteView(fromPiTheme(theme), {
           model,
           expanded: options.expanded,
@@ -122,7 +141,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
             maxPreviewRows: write.maxPreviewRows,
             lineNumbers: write.lineNumbers,
             showPath: false,
-            ...(write.highlight ? { highlighter: (code: string, language?: string) => highlightWrite(code, language), themeRevision } : {}),
+            ...(write.highlight ? { highlighter: (code: string, language?: string) => deps.highlightCode(code, language), themeRevision } : {}),
           },
         });
         context.state[cacheKey] = {

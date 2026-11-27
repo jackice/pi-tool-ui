@@ -1,4 +1,4 @@
-import { initTheme, type Theme } from '@earendil-works/pi-coding-agent';
+import { highlightCode, initTheme, type Theme } from '@earendil-works/pi-coding-agent';
 import { describe, expect, test } from 'vitest';
 
 import { WriteView } from '@jackice/pi-ui';
@@ -14,8 +14,13 @@ initTheme('dark');
 
 describe('Write 主题 revision', () => {
   test('真实 highlighter 的预览前缀与完整内容 head 一致', () => {
-    const full = highlightWrite('const a = 1;\nconst b = 2;', 'typescript');
-    const head = highlightWrite('const a = 1;', 'typescript');
+    const deps = {
+      highlightCode,
+      getLanguageFromPath: () => undefined,
+      Text: class { constructor(public text: string) {} render() { return [this.text]; } } as never,
+    };
+    const full = highlightWrite('const a = 1;\nconst b = 2;', 'typescript', deps);
+    const head = highlightWrite('const a = 1;', 'typescript', deps);
     expect(full).toHaveLength(2);
     expect(full[0]).toBe(head[0]);
     expect(full[0]).toContain('\u001b[');

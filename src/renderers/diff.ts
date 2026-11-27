@@ -1,10 +1,10 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { Text } from '@earendil-works/pi-tui';
-import { fromPiTheme } from '@jackice/pi-ui/core/theme';
-import { adaptHashlineDetails, type EditViewModel } from '@jackice/pi-ui/diff';
-import { EditView } from '@jackice/pi-ui/views/edit';
+import type * as DiffModule from '@jackice/pi-ui/diff';
+import type * as ThemeModule from '@jackice/pi-ui/core/theme';
+import type * as EditViewModule from '@jackice/pi-ui/views/edit';
 
 import { adaptNativeEdit } from '../adapters/native-edit.js';
+import { loadPiUi } from '../integration/pi-ui-lazy.js';
 import type { RendererLike, RendererPatch } from '../integration/resolver.js';
 
 const cacheKey = Symbol('pi-tool-ui-diff');
@@ -14,8 +14,8 @@ interface CachedDiff {
   durationMs: number | undefined;
   theme: Theme;
   expanded: boolean;
-  model: EditViewModel;
-  view: EditView;
+  model: DiffModule.EditViewModel;
+  view: EditViewModule.EditView;
 }
 
 interface ResultContext {
@@ -28,7 +28,9 @@ interface ResultContext {
 
 export type DiffFactory = (original: RendererLike) => RendererPatch;
 
-export function createDiffFactory(mode: 'edit' | 'hashline'): DiffFactory {
+export interface DiffDeps { Text: new (text: string, paddingX: number, paddingY: number) => { render(width: number): string[] } }
+
+export function createDiffFactory(mode: 'edit' | 'hashline', deps: DiffDeps = { Text: class { constructor(public text: string) {} render() { return [this.text]; } } as never }): DiffFactory {
   const native = mode === 'edit';
   return (original) => ({
     ...(native ? {} : { renderShell: 'self' as const }),
@@ -42,8 +44,10 @@ export function createDiffFactory(mode: 'edit' | 'hashline'): DiffFactory {
         const timing = { toolCallId, ...(durationMs === undefined ? {} : { durationMs }) };
         const model = sameResult ? cached.model : native
           ? adaptNativeEdit(result.details, context.args, timing)
-          : adaptHashlineDetails(result.details, timing);
+          : loadPiUi<typeof DiffModule>('@jackice/pi-ui/diff').adaptHashlineDetails(result.details, timing);
         if (model !== undefined) {
+          const { EditView } = loadPiUi<typeof EditViewModule>('@jackice/pi-ui/views/edit');
+          const { fromPiTheme } = loadPiUi<typeof ThemeModule>('@jackice/pi-ui/core/theme');
           const view = new EditView(fromPiTheme(theme), { model, expanded: options.expanded });
           context.state[cacheKey] = { details: result.details, durationMs, theme, expanded: options.expanded, model, view };
           return view;
@@ -54,7 +58,7 @@ export function createDiffFactory(mode: 'edit' | 'hashline'): DiffFactory {
       }
       if (original.renderResult !== undefined) return original.renderResult(result, options, theme, context);
       const text = result.content.flatMap((block) => block.type === 'text' ? [block.text] : []).join('\n');
-      return new Text(theme.fg('toolOutput', text), 0, 0);
+      return new deps.Text(theme.fg('toolOutput', text), 0, 0);
     },
   } as RendererPatch);
 }

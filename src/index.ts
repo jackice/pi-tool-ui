@@ -2,15 +2,31 @@ import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { getLanguageFromPath, highlightCode, type ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { Text } from '@earendil-works/pi-tui';
 
 import { cloneDefaultConfig, mapLegacyConfig, type ToolUiConfig } from './config.js';
-import { createResolver } from './integration/resolver.js';
+import { createRequire } from 'node:module';
+import { createResolver, type RendererFactory, type RendererLike } from './integration/resolver.js';
 import { migrateSettingsFile, migrationReport } from './migration.js';
-import { createBashFactory } from './renderers/bash.js';
-import { createReadFactory } from './renderers/read.js';
-import { createWriteFactory } from './renderers/write.js';
-import { editFactory, hashlineFactory } from './renderers/diff.js';
+
+const requireLocal = createRequire(import.meta.url);
+const uiDeps = { highlightCode, getLanguageFromPath, Text };
+
+function lazyViewFactory(path: string, exportName: string, config: () => ToolUiConfig, deps: object): RendererFactory {
+  return (original: RendererLike) => {
+    const module = requireLocal(path) as Record<string, unknown>;
+    const create = module[exportName] as (config: () => ToolUiConfig, deps: object) => RendererFactory;
+    return create(config, deps)(original);
+  };
+}
+
+function lazyDiffFactory(mode: 'edit' | 'hashline'): RendererFactory {
+  return (original: RendererLike) => {
+    const module = requireLocal('./renderers/diff.js') as { createDiffFactory: (mode: string, deps: object) => RendererFactory };
+    return module.createDiffFactory(mode, { Text })(original);
+  };
+}
 
 interface Settings {
   toolUi?: unknown;
@@ -88,10 +104,10 @@ export default async function (pi: ExtensionAPI) {
   });
 
   pi.registerToolRenderer(createResolver(() => config, {
-    edit: editFactory,
-    hashline: hashlineFactory,
-    bash: createBashFactory(() => config),
-    write: createWriteFactory(() => config),
-    read: createReadFactory(() => config),
+    edit: lazyDiffFactory('edit'),
+    hashline: lazyDiffFactory('hashline'),
+    bash: lazyViewFactory('./renderers/bash.js', 'createBashFactory', () => config, {}),
+    write: lazyViewFactory('./renderers/write.js', 'createWriteFactory', () => config, uiDeps),
+    read: lazyViewFactory('./renderers/read.js', 'createReadFactory', () => config, uiDeps),
   }) as never);
 }

@@ -1,5 +1,4 @@
 import type { WriteViewModel } from '@jackice/pi-ui';
-import { getLanguageFromPath } from '@earendil-works/pi-coding-agent';
 
 interface ContentBlock {
   type: string;
@@ -44,14 +43,12 @@ export function adaptWrite(input: WriteAdapterInput): WriteViewModel {
       .map((block) => block.text ?? '')
       .filter((text) => text.length > 0)
     : [];
-  const language = path === undefined ? undefined : getLanguageFromPath(path);
   return {
     status,
     ...(path === undefined ? {} : { path }),
     ...(content === undefined ? {} : { content }),
     argsComplete: input.options.argsComplete,
     ...(content === undefined ? {} : { lineCount: countLines(content) }),
-    ...(language === undefined ? {} : { language }),
     ...(notices.length === 0 ? {} : { notices }),
   };
 }

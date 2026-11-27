@@ -1,9 +1,10 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from '@earendil-works/pi-coding-agent';
-import { fromPiTheme } from '@jackice/pi-ui/core/theme';
-import { BashView } from '@jackice/pi-ui/views/bash';
+import type * as BashViewModule from '@jackice/pi-ui/views/bash';
+import type * as ThemeModule from '@jackice/pi-ui/core/theme';
 
 import { adaptBash } from '../adapters/bash.js';
 import { DEFAULT_CONFIG, type ToolUiConfig } from '../config.js';
+import { loadPiUi } from '../integration/pi-ui-lazy.js';
 import type { RendererLike, RendererPatch } from '../integration/resolver.js';
 
 interface ResultContext {
@@ -27,7 +28,7 @@ interface Cached {
   args: unknown;
   config: string;
   theme: Theme;
-  view: BashView;
+  view: import('@jackice/pi-ui/views/bash').BashView;
 }
 
 export function createBashFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
@@ -54,6 +55,8 @@ export function createBashFactory(getConfig: () => ToolUiConfig = () => DEFAULT_
           options: { isPartial: options.isPartial, expanded: options.expanded },
           context: { isError: context.isError, durationMs: context.durationMs, cwd: context.cwd },
         });
+        const { BashView } = loadPiUi<typeof BashViewModule>('@jackice/pi-ui/views/bash');
+        const { fromPiTheme } = loadPiUi<typeof ThemeModule>('@jackice/pi-ui/core/theme');
         const view = new BashView(fromPiTheme(theme), {
           model,
           expanded: options.expanded,

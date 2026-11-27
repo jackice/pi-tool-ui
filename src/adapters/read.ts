@@ -1,5 +1,4 @@
 import type { ReadContentKind, ReadLine, ReadTruncation, ReadViewModel } from '@jackice/pi-ui';
-import { getLanguageFromPath } from '@earendil-works/pi-coding-agent';
 
 interface ContentBlock {
   type: string;
@@ -116,7 +115,6 @@ export function adaptRead(input: ReadAdapterInput): ReadViewModel {
     ...(requestedLimit === undefined ? {} : { requestedLimit }),
     source: 'native',
     contentKind: contentKind(path),
-    ...(path === undefined ? {} : getLanguageFromPath(path) === undefined ? {} : { language: getLanguageFromPath(path) }),
     lines,
     ...(truncation === undefined ? {} : { truncation }),
   };
