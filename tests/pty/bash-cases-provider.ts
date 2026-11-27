@@ -22,6 +22,7 @@ const cases: Record<string, string> = {
   write: "printf 'ok\\n' > out.txt",
   compress: 'for i in $(seq 1 500); do echo same-line; done',
   stream: "printf 'first\\n'; sleep 0.4; printf 'second\\n'",
+  guard_pip: 'pip install requests',
 };
 
 export default function (pi: ExtensionAPI) {

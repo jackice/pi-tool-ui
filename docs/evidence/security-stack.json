@@ -3,5 +3,10 @@
   "gate_plus_product": true,
   "allow_runs": 1,
   "deny_runs": 0,
-  "deny_error": true
+  "timeout_runs": 0,
+  "cancel_runs": 0,
+  "cards_verified": true,
+  "uv_guard_on": true,
+  "uv_guard_off": true,
+  "uv_guard_message": "pip is disabled"
 }
