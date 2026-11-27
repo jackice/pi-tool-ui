@@ -1,0 +1,12 @@
+{
+  "pi_version": "1.6.0",
+  "product_pi_ui": "0.7.2",
+  "shared_pi_ui": "0.5.0",
+  "prompt_version": "0.2.1",
+  "todo_version": "0.1.2",
+  "todo_hud": true,
+  "prompt_band": true,
+  "write_card": true,
+  "read_card": true,
+  "failed_load": false
+}
