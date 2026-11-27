@@ -66,7 +66,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-published-020-') as director
     evidence = repo / 'docs/evidence/published-install-022.json'
     evidence.write_text(json.dumps({
         'spec': spec,
-        'installed_version': '0.2.1',
+        'installed_version': '0.2.2',
         'pi_ui': '0.8.1',
         'pi_runtime_in_tree': False,
         'write_card': True,

@@ -1,0 +1,11 @@
+{
+  "spec": "npm:@jackice/pi-tool-ui@0.2.2",
+  "installed_version": "0.2.2",
+  "pi_ui": "0.8.1",
+  "pi_runtime_in_tree": false,
+  "write_card": true,
+  "readme_limitations": true,
+  "read_card": true,
+  "bash_card": true,
+  "edit_card": true
+}

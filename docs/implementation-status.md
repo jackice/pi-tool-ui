@@ -1,6 +1,6 @@
 # 实施状态
 
-当前批次：0.2.1 preview 已发布到 `next`；未改生产设置、未切换生产。基线与指纹见 [compatibility.md](compatibility.md)，门禁见文末。
+当前批次：0.2.2 preview 已发布到 `next`；未改生产设置、未切换生产。基线与指纹见 [compatibility.md](compatibility.md)，门禁见文末。
 
 | ID | 状态 | 证据与缺口 |
 |---|---|---|
@@ -25,7 +25,7 @@
 | G0-ReadHash（可选） | pending | 未启动。 |
 | G1-Migration | passed | Migration profile 已由 G1MigrationReview 签署（correct，0.99），范围仅 Edit/Hashline。 |
 | G2/G3/G4/G5/G6 | signed | Bash/Read/Write、安全栈、混合版本、集成矩阵已签。 |
-| G7 | pending | 0.2.1 preview 发布；T7-05 最终评审待复签。 |
+| G7 | pending | 0.2.2 preview 发布；T7-05 最终评审待复签。 |
 
 ### Resolver 顺序实测
 
@@ -175,9 +175,9 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T6-01 | passed | 三工具同会话 OFF/ON 一致、卡片互斥、`/reload` 不重跑；产品重复加载仍单卡片；Edit/Hashline 沿用迁移 A/B。 |
 | T6-02 | passed | `export-parity` 展开 Diff 正文断言、tools=1；Write/Read 模板导出正文保留；证据已重跑。 |
 | T6-03 | signed | 安全复审 sign：Gate+产品卡片 ✓/✗、deny/timeout/cancel 0 次、uv guard ON/OFF 0 次、Compressor ON/OFF；R2/R3 为 Gate 已知开项。 |
-| T6-04 | passed | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 0.5.0）同会话：HUD、band、Write/Read 卡片；Gate 审批焦点由 security-stack navigate/allow 覆盖。 |
+| T6-04 | passed | 产品 0.8.1 + Prompt/TODO（共享 0.5.0）同会话：HUD、band、Write/Read、subagent/goal；Gate 焦点覆盖。 |
 | T6-05 | passed | `--print`/RPC Read/Write/Bash 一致；`!`/`!!` 各执行一次无卡片；nested 子会话不加载父 ambient extensions（架构不适用）。 |
-| T6-06 | passed | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Bash/Write/Read 卡片可用。 |
+| T6-06 | passed | `pack-artifact.py`：干净安装 tarball + pi-ui 0.8.1、无第二套 runtime、无 Hashline 环境 Bash/Write/Read 卡片可用。 |
 | G6 | signed | 第三次复审 sign（correct，0.93）；T6-01..06 完成，nested 架构不适用。 |
 
 ## T7 发布进展
@@ -186,7 +186,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T7-01 | passed | pi-ui Gallery 渲染 Bash/Write/Read/Edit/TODO/Approval；各 profile 单测/PTY 通过。 |
 | T7-02 | passed | 解耦后 packed 启动 +1.9ms、RSS +3.73MiB；视图预算通过；oracle 171 单测。 |
-| T7-03 | passed | pi-ui 0.8.0 + pi-tool-ui 0.2.0 发布到 next；实际 pi install/卡片验证；docs/lock 对账。 |
-| T7-04 | passed | 单工具/全局关闭回原生；损坏包启动失败；移除包恢复原生；content 一致。 |
+| T7-03 | passed | pi-ui 0.8.1 + pi-tool-ui 0.2.2 发布到 next；安装后 README/Edit golden/四工具卡片验证；docs/lock 对账。 |
+| T7-04 | passed | Bash/Write/Read 单工具/全局/移除回原生；损坏包失败并恢复；content/files 一致。 |
 | T7-05 | pending | 最终独立 Reviewer 未启动。 |
 | G7 | pending | 依赖 T7-01..05。 |
