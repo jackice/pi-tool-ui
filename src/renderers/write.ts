@@ -41,13 +41,17 @@ interface Cached {
   view: WriteView;
 }
 
+export function writeThemeRevision(theme: Theme): string {
+  return `${theme.name ?? ''}:${theme.appearance}:${JSON.stringify(theme.colors)}`;
+}
+
 export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT_CONFIG): (original: RendererLike) => RendererPatch {
   return (original) => ({
     renderCall(args: unknown, theme: Theme, context: { state: Record<PropertyKey, unknown>; argsComplete: boolean; isPartial: boolean }) {
       const record = typeof args === 'object' && args !== null ? args as Record<string, unknown> : {};
       const path = typeof record.path === 'string' ? record.path : undefined;
       const themeKey = theme.fg('text', 'x');
-      const themeRevision = () => `${theme.name ?? ''}:${theme.appearance}:${theme.colors.text}:${theme.colors.accent}`;
+      const themeRevision = () => writeThemeRevision(theme);
       if (context.argsComplete || !context.isPartial) {
         return new Text(theme.fg('muted', `write ${path ?? ''}`), 0, 0);
       }
@@ -85,7 +89,7 @@ export function createWriteFactory(getConfig: () => ToolUiConfig = () => DEFAULT
         const write = getConfig().tools.write;
         const config = JSON.stringify(write);
         const themeKey = theme.fg('text', 'x');
-        const themeRevision = () => `${theme.name ?? ''}:${theme.appearance}:${theme.colors.text}:${theme.colors.accent}`;
+        const themeRevision = () => writeThemeRevision(theme);
         const cached = context.state[cacheKey] as Cached | undefined;
         const same = cached !== undefined
           && cached.content === result.content
