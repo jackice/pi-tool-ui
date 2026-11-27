@@ -1,0 +1,7 @@
+{
+  "pi_version": "1.6.0",
+  "product_on": true,
+  "compressor_on": true,
+  "compressor_off": true,
+  "model_sees_compressed": true
+}
