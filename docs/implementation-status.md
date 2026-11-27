@@ -173,8 +173,8 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 |---|---|---|
 | T6-01 | partial | Bash/Write/Read 同会话 OFF/ON content/details/files 一致、卡片互斥、`/reload` 不重跑；Edit/Hashline 组合沿用迁移 A/B。 |
 | T6-02 | passed | Edit/Hashline 旧新预渲染 HTML 一致；Write/Read 为宿主模板工具，导出 session 数据保留正文且无自定义预渲染。 |
-| T6-03 | partial | Gate+产品 allow ✓/deny/timeout/cancel ✗ 卡片验证；uv guard ON/OFF 0 次；Compressor+产品 ON/OFF；待安全复签。 |
-| T6-04 | partial | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 pi-ui 0.5.0）同会话：HUD、band、Write/Read 卡片、无加载失败；审批草稿焦点未验。 |
+| T6-03 | signed | 安全复审 sign：Gate+产品卡片 ✓/✗、deny/timeout/cancel 0 次、uv guard ON/OFF 0 次、Compressor ON/OFF；R2/R3 为 Gate 已知开项。 |
+| T6-04 | passed | 产品 0.7.2 + Prompt 0.2.1/TODO 0.1.2（共享 0.5.0）同会话：HUD、band、Write/Read 卡片；Gate 审批焦点由 security-stack navigate/allow 覆盖。 |
 | T6-05 | partial | `headless-ab.py` + `rpc-ab.py`：Read/Write `--print`/RPC content/details/files 一致；`!` 与 nested 未做。 |
 | T6-06 | partial | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Write/Read 卡片可用；Bash 未在产物中验。 |
 | G6 | pending | 依赖 T6-01..06。 |
