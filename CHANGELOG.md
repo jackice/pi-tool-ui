@@ -1,4 +1,4 @@
-# Unreleased
+# 0.2.0 (preview)
 
 - Bash slot C：原生 shell/call，`BashView` 命令/输出/截断/全量路径。
 - Write：流式参数预览、最终 `WriteView`、Pi 公开 `highlightCode` 有界高亮。

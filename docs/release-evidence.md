@@ -23,9 +23,9 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 - 关闭 `toolUi` 或移除包加载入口，重启恢复原生/下游 renderer。
 - 生产配置未在本仓库外自动修改；切换由用户手动执行。
 
-## Unreleased full profile
+## 0.2.0 preview
 
-- 包：`@jackice/pi-tool-ui` 工作树（未发布）；依赖 `@jackice/pi-ui@0.7.2`。
-- Gate：Bash G3、Write G4、Read G5、G6 已签；T7-01/T7-04 通过，T7-02 部分（视图预算通过，启动/RSS/模型请求待测），T7-03/T7-05 待办。
+- 包：`@jackice/pi-tool-ui@0.2.0`；依赖 `@jackice/pi-ui@0.8.0`。
+- Gate：Bash G3、Write G4、Read G5、G6 已签；T7-01/T7-02/T7-04 通过，T7-03 preview 发布，T7-05 最终评审待办。
 - 证据：`benchmark-views.txt`、`rollback-drill.json`、`integration-matrix.json`、`security-stack.json`、`mixed-versions.json`、`pack-artifact.json`、`gallery.txt`。
 - 本工作树未执行 npm publish；生产配置未修改。
