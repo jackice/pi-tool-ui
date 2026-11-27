@@ -176,5 +176,5 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 | T6-03 | pending | Approval Gate/security reviewer 未启动。 |
 | T6-04 | pending | TODO/Prompt 混合 pi-ui 版本未验。 |
 | T6-05 | partial | `headless-ab.py`：Read/Write `--print` content/details/files 一致、各一次；RPC/`!`/nested 未做。 |
-| T6-06 | partial | `package-smoke.py`：干净安装、无第二套 Pi runtime、ReadView/WriteView 导出；无 Hashline 工具卡片未验。 |
+| T6-06 | partial | `pack-artifact.py`：干净安装 tarball + pi-ui 0.7.2、无第二套 runtime、无 Hashline 环境 Write/Read 卡片可用；Bash 未在产物中验。 |
 | G6 | pending | 依赖 T6-01..06。 |

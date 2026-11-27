@@ -1,0 +1,8 @@
+{
+  "package": "pi-tool-ui-0.1.0.tgz",
+  "pi_ui": "0.7.2",
+  "pi_runtime_in_tree": false,
+  "write_card": true,
+  "read_card": true,
+  "clean_agent": true
+}
