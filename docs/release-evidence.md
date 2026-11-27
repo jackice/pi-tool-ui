@@ -57,4 +57,5 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 
 - 包：`@jackice/pi-tool-ui@1.0.0`；依赖 `@jackice/pi-ui@0.8.1`；`latest=1.0.0`。
 - 完整 profile：Bash/Write/Read + Edit/Hashline migration；G7/T7-05 signed。
-- 发布验证：`published-verify-100.py`：安装后 README limits、Edit/Hashline golden、Write/Read/Bash 卡片、无 Pi runtime。
+- 发布验证：`published-verify-100.py`：安装后 README limits、Edit/Hashline golden、Write/Read/Bash/Edit/Hashline 卡片、无 Pi runtime；证据 `published-install-100.json`。
+- dist-tags：`latest=1.0.0`、`next=1.0.0`。
