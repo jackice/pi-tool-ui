@@ -166,3 +166,15 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 - `cwdKind='execution'` 由 adapter 无条件设置；history/spawnHook cwd 未单独区分。
 - 错误结果尾部折叠尚未单独实现；现有 fixture 诊断在尾部可见。
 - resize 后卡片本身仍无直接像素断言，已记录。
+
+## T6 集成进展
+
+| ID | 状态 | 证据 |
+|---|---|---|
+| T6-01 | partial | 各工具 OFF/ON、resolver 单测通过；全组合/reload 未做。 |
+| T6-02 | partial | Edit/Hashline 旧新导出 HTML 一致；Write/Read HTML 导出未验。 |
+| T6-03 | pending | Approval Gate/security reviewer 未启动。 |
+| T6-04 | pending | TODO/Prompt 混合 pi-ui 版本未验。 |
+| T6-05 | partial | `headless-ab.py`：Read/Write `--print` content/details/files 一致、各一次；RPC/`!`/nested 未做。 |
+| T6-06 | partial | `package-smoke.py`：干净安装、无第二套 Pi runtime、ReadView/WriteView 导出；无 Hashline 工具卡片未验。 |
+| G6 | pending | 依赖 T6-01..06。 |

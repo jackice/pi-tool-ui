@@ -1,0 +1,9 @@
+{
+  "pi_version": "1.6.0",
+  "read_basic": true,
+  "read_truncated": true,
+  "write_success": true,
+  "write_error": true,
+  "content_details_files_equal": true,
+  "runs": 1
+}
