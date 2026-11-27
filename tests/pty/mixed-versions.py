@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
     shutil.copyfile(workspace / 'dotfiles/pi/.pi/agent/extensions/goal.ts', agent / 'extensions/goal.ts')
     shutil.copyfile(Path.home() / '.pi/agent/pi-prompt.json', agent / 'pi-prompt.json')
     (agent / 'settings.json').write_text(json.dumps({
-        'packages': [str(repo), str(prompt), str(todo)],
+        'packages': [str(repo), str(prompt), str(todo), str(Path.home() / '.pi/agent/npm/node_modules/pi-subagents')],
         'toolUi': {'enabled': True, 'tools': {'write': {'enabled': True}, 'read': {'enabled': True}}},
     }))
     log = root / 'events.jsonl'
@@ -43,13 +43,14 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
                PI_CODING_AGENT_DIR=str(agent), PI_TOOL_UI_PROBE_LOG=str(log))
     screen = capture_tui([pi, '--offline', '--no-approve', '--no-mcp', '-nc', '--no-session',
                           '-e', str(provider), '--model', 'tool-ui-probe/local',
-                          '--tools', 'session_todo,write,read', 'Run the mixed versions'],
+                          '--tools', 'subagent,get_goal,session_todo,write,read', 'Run the mixed versions'],
                          env, root, b'MIXED_DONE', b'MIXED_DONE', rows=60)
     text = '\n'.join(render(screen, lines=60))
     assert b'Failed to load extension' not in screen, screen[-3000:]
     assert 'MIXED_TODO_TASK' in text and 'Phase  0/1' in text, text[-2000:]
+    assert 'get_goal' in text and 'subagent' in text, text[-2000:]
     assert not re.search(r'↓\d+ R\d', text), text[-2000:]
-    assert '╰─' in text, text[-2000:]
+    assert '╰─' in text and 'π' in text, text[-2000:]
     assert '╭─ Write' in text and '╭─ Read' in text, text[-2000:]
 
     evidence = repo / 'docs/evidence/mixed-versions.json'
@@ -66,7 +67,10 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-mixed-') as directory:
         'prompt_band': True,
         'write_card': True,
         'read_card': True,
-        'goal_loaded': True,
+        'goal_extension_loaded': True,
+        'goal_tool_called': True,
+        'subagents_loaded': True,
+        'subagent_tool_called': True,
         'failed_load': False,
     }, ensure_ascii=False, indent=2) + '\n')
     print('混合 pi-ui：产品 0.7.2 + Prompt(none)/TODO/Goal 共享 0.5.0；HUD、band、Write/Read 卡片可用')

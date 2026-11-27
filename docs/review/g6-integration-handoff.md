@@ -18,7 +18,7 @@
 
 ## 已知限制
 - T6-01 未枚举 2^N；已补重复加载单卡片、三工具矩阵、resolver 单测。
-- T6-05 已补 `--print`/RPC Bash、`!`/`!!`；nested 工具未单独 PTY，未知/无下游 resolver 有单测。
+- T6-05 已补 `--print`/RPC Bash、`!`/`!!`；nested 子会话不进入父 renderer（架构事实），未单独 PTY；未知/无下游 resolver 有单测。
 - T6-06 无 Hashline 环境下 Bash/Write/Read 卡片；Edit 由 tarball-matrix/G1 覆盖。
 
 ## 问题

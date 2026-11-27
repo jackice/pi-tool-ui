@@ -80,6 +80,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-export-') as directory:
                  for field in fields}
         collapsed = html_lib.unescape(re.sub(r'<[^>]+>', '', entry['resultHtmlCollapsed'] or ''))
         expanded = html_lib.unescape(re.sub(r'<[^>]+>', '', entry['resultHtmlExpanded'] or ''))
+        assert collapsed == '', collapsed[-200:]
         assert 'beta2' in expanded, expanded[-400:]
         ids[name] = entry
     assert ids['old'] == ids['new'], '旧扩展与新包的 call/collapsed/expanded HTML 不同'

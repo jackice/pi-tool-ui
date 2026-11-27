@@ -4,6 +4,8 @@ import { fauxProvider, fauxAssistantMessage, fauxToolCall } from '@earendil-work
 export default function (pi: ExtensionAPI) {
   const faux = fauxProvider({ provider: 'tool-ui-probe', models: [{ id: 'local' }] });
   faux.setResponses([
+    fauxAssistantMessage(fauxToolCall('subagent', { action: 'list' }, { id: 'mixed-subagent' }), { stopReason: 'toolUse' }),
+    fauxAssistantMessage(fauxToolCall('get_goal', {}, { id: 'mixed-goal' }), { stopReason: 'toolUse' }),
     fauxAssistantMessage(fauxToolCall('session_todo', {
       action: 'init',
       phases: [{ name: 'Phase', tasks: [{ content: 'MIXED_TODO_TASK' }] }],

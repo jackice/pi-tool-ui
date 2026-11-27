@@ -11,6 +11,9 @@
   "prompt_band": true,
   "write_card": true,
   "read_card": true,
-  "goal_loaded": true,
+  "goal_extension_loaded": true,
+  "goal_tool_called": true,
+  "subagents_loaded": true,
+  "subagent_tool_called": true,
   "failed_load": false
 }
