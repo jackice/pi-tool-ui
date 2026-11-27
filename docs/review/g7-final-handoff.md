@@ -14,7 +14,7 @@
 - 安装：`published-install-023.json`、`pack-artifact.json`。
 - 集成/安全：`integration-matrix.json`、`security-stack.json`、`security-compressor.json`、`mixed-versions.json`。
 - 视图：`gallery.txt`、各 PTY 证据。
-- 解耦：pi-ui 0.8.1 vendored pi-tui ANSI + oracle `ansi-oracle.test.ts`；pi-tui peer optional。
+- 解耦：pi-ui 0.8.1 vendored pi-tui ANSI + oracle `ansi-oracle.test.ts`；pi-ui 子路径无需 pi-tui；产品自身 peer 仍必需，pi-ui root/approval 仍需宿主 pi-tui。
 
 ## 已知限制
 - T7-02 只做 20 次启动/RSS 与视图预算；未做 1000 历史工具/1000 partial 压力。

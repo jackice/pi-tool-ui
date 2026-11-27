@@ -11,5 +11,6 @@
   "removed_native": true,
   "content_equal": true,
   "corrupt_start_failed": true,
-  "corrupt_recovered_native": true
+  "corrupt_recovered_native": true,
+  "files_equal": true
 }

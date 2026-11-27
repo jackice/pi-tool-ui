@@ -36,7 +36,7 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 
 - 包：`@jackice/pi-tool-ui@0.2.1`；依赖 `@jackice/pi-ui@0.8.1`；dist-tags `latest=0.1.0`、`next=0.2.1`。
 - 修正 0.2.0 README/CHANGELOG 依赖与 `@next` 安装说明；随包 LICENSE，pi-ui 随包 THIRD_PARTY_NOTICES。
-- 实际安装验证：`published-verify-021.py`，Write/Read/Bash/Edit 卡片，无 Pi runtime。
+- 实际安装验证：`published-install-021.json`，Write/Read/Bash/Edit 卡片，无 Pi runtime。
 - 验证证据：`published-install-021.json`。
 - 接受风险：Approval Gate R2/R3 High/Open；vendored ANSI 需随 pi-tui 升级同步；压力样本非完整 1000 partial/history。
 
@@ -44,7 +44,7 @@ npm 对包的首个版本会自动写入 `latest`，本次 `dist-tags` 为 `{"la
 
 - 包：`@jackice/pi-tool-ui@0.2.2`；依赖 `@jackice/pi-ui@0.8.1`；`next=0.2.2`，`latest=0.1.0`。
 - 已发布 README 包含 known limitations（R2/R3、T7-02/T7-04、vendored ANSI、next 安装）。
-- 实际安装验证：`published-verify-022.py` 断言安装后 README 含 known limitations、Edit golden、Write/Read/Bash 卡片；证据 `published-install-022.json`。
+- 实际安装验证：`published-install-022.json` 断言安装后 README 含 known limitations、Edit golden、Write/Read/Bash 卡片；证据 `published-install-022.json`。
 - 0.8.1 构建重跑 migration-parity（Edit+Hashline）、product A/B、security-stack/compressor、mixed-versions、integration-matrix、rollback（Bash/Write/Read + 损坏恢复）。
 
 ## 0.2.3 preview erratum
