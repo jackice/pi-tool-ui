@@ -78,7 +78,7 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-published-020-') as director
     evidence = repo / 'docs/evidence/published-install-023.json'
     evidence.write_text(json.dumps({
         'spec': spec,
-        'installed_version': '0.2.2',
+        'installed_version': '0.2.3',
         'pi_ui': '0.8.1',
         'pi_runtime_in_tree': False,
         'write_card': True,
@@ -88,4 +88,4 @@ with tempfile.TemporaryDirectory(prefix='pi-tool-ui-published-020-') as director
         'edit_card': True,
         'hashline_card': True,
     }, ensure_ascii=False, indent=2) + '\n')
-    print('npm 0.2.3：pi install 成功；Write/Read/Bash/Edit 卡片可用；安装树无 Pi runtime')
+    print('npm 0.2.3：pi install 成功；Write/Read/Bash/Edit/Hashline 卡片可用；安装树无 Pi runtime')
