@@ -183,7 +183,7 @@ Hashline `/export`：`tests/pty/export-parity.py` 在真实 PTY 中执行 `/expo
 
 | ID | 状态 | 证据 |
 |---|---|---|
-| T7-01 | partial | 各 profile 单测/PTY 通过；Gallery/全部 fixture 汇总未单列。 |
+| T7-01 | passed | pi-ui Gallery 渲染 Bash/Write/Read/Edit/TODO/Approval；各 profile 单测/PTY 通过。 |
 | T7-02 | partial | `benchmark-views.txt`：Bash/Write/Read 100 行首渲 ≤15ms、热渲 ≤2ms、resize ≤5ms 均通过；冷启动/RSS/模型请求未测。 |
 | T7-03 | pending | 版本/lock/README/changelog/双仓对账未完成。 |
 | T7-04 | passed | 单工具/全局关闭回原生；损坏包启动失败；移除包恢复原生；content 一致。 |
